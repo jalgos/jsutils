@@ -1,9 +1,12 @@
 Package: jsutils
-Title: What the Package Does (one line, title case)
+Title: Jalgos util functions
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Authors@R: c(person("Sébastien", "Lamy de la Chapelle", email = "sebastien@jalgos.com", role = c("aut", "cre")),
+	   person("Julien", "Murésianu", email = "julien@jalgos.com", role = c("aut")),
+	   person("Michael", "Pursey", email = "michael@jalgos.com", role = c("contrib")))
+Description: A bundle of functions to perform tasks commonly faced in the Jalgos projects
 Depends: R (>= 3.2.3)
-License: What license is it under?
+Imports: Matrix, data.table, stringr
+License: Jalgos License
 Encoding: UTF-8
 LazyData: true

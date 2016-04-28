@@ -603,15 +603,6 @@ const_fun <- function(val=0,...)
     val
 }
 
-change_double_cols <- function(TAB, ter1, ter2, termination2 = "\\.1", termination1 = "")
-{
-    nm = grep(termination2, names(TAB), value = TRUE)
-    nmw = gsub(termination2, termination1, nm)
-    nm1 = gsub(termination2, ter1, nm)
-    nm2 = gsub(termination2, ter2, nm)
-    setnames(TAB, c(nmw, nm), c(nm1, nm2))
-}
-
 mpaste <- function(c1, c2, ...)
 {
     unlist(lapply(c1, paste, c2, ...))
@@ -691,12 +682,6 @@ nearly_in_set <- function(x, set, tol = .Machine$double.eps ^ .5)
 {
     if(is.null(set)) return(FALSE)
     over(lapply(set, nearly_equal, x = x, tol = tol), "|")
-}
-
-add_token_key <- function(D)
-{
-    if(dim(D)[1] > 0) D[, key := 1L]
-    else D[, key := integer(0)]
 }
 
 random_distrib <- function(N, skew)
@@ -1061,16 +1046,6 @@ mem_usage <- function(LOBJS = NULL,
 {
     if(is.null(LOBJS)) sort(sapply(ls(envir = envir, all.names = TRUE),function(x){mb_object_size(get(x, envir = envir))}), decreasing = TRUE)[1:N]
     else sort(sapply(LOBJS, mb_object_size), decreasing = TRUE)[1:N]
-}
-
-## safe standard generic to avoid creating generics at each file sourcing
-## With this function generics can be defined anywhere
-
-safeGeneric <- function(f,
-                         ...)
-{
-    if(isGeneric(f)) return()
-    setGeneric(f, ...)
 }
 
 safe_system <- function(command,

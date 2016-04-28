@@ -1,50 +1,79 @@
 ## Toolbox to measure function complexity regarding to an arbitray number of parameters"
 
-one_run <- function(fun,
-                    par,
-                    nms,
-                    nrep,
-                    prefun = function(...) NULL,
-                    ...,
-                    logger = JLoggerFactory("Complexity"))
+#' Measuring function runtime
+#'
+#' Measure the time a function takes to run by running it severl times
+#' @param fun Function for which you want to run the measure
+#' @param par Parameters of the function
+#' @param nrep Number of time the function will run
+#' @param nms Names of the parameters
+#' @param prefun Optional function to get the real parameters of the function from the parameters provided
+#' @param ... Additional parameters to pass on to the function
+#' @param logger jlogger::JLogger to use in case of an error
+#' @seealso average.time.map
+#' @export
+average.time.fun <- function(fun,
+                             par,
+                             nrep,
+                             nms = names(par),
+                             prefun = function(...) list(...),
+                             ...,
+                             logger = jlogger::JLoggerFactory("Complexity"))
 {
-    jlog.debug(logger, "Computing function for:", paste(nms, unlist(par), sep = " = "), "nrep:", nrep)
-    names(par) = nms
-    args = do.call(prefun, par, ...)
-    if(!is.list(args)) args = list(args)
+    if(!missing(nms))
+    {
+        jlogger::jlog.debug(logger, "Computing function runtime for:", paste(nms, unlist(par), sep = " = "), "nrep:", nrep)
+        names(par) <- nms
+    }
+    else
+        jlogger::jlog.debug(logger, "Computing function runtime for:", par, "nrep:", nrep)
+    args <- do.call(prefun, par, ...)
+    if(!is.list(args)) args <- list(args)
     T <- tryCatch(system.time(for(i in 1:nrep) do.call(fun, args))[3],
                   error = function(e){
-                      jlog.error(logger, "Following error occured during timing of function:", e$message)
+                      jlogger::jlog.error(logger, "Following error occured during timing of function:", e$message)
                       c(elapsed = NaN)
                   })
     T / nrep
 }
 
-fun_complexity <- function(par_down,
-                           par_up,
-                           par_nchunks,
-                           par_names = names(par_down),
-                           filter = TRUE,
-                           ...,
-                           logger = JLoggerFactory("Complexity"))
+#' Measuring impact of parameters on runtime
+#' 
+#' Computes runtime as a function of a set of parameters. It will produce a grid and run average.time.fun for each parameter combination.
+#' @param par.down lower bounds of the parameters
+#' @param par.up upper bounds of the parameters
+#' @param par.nchunks Number of points in the grid. One entry per parameter.
+#' @param par.names Names of the parameters
+#' @param filter expression to filter out some prameters combinations
+#' @param ... Arguments to be passed to average.time.fun
+#' @param logger jlogger::JLogger to output info on the state of computations
+#' @seealso average.time.fun
+#' @export
+average.time.map <- function(par.down,
+                             par.up,
+                             par.nchunks,
+                             par.names = names(par.down),
+                             filter = TRUE,
+                             ...,
+                             logger = jlogger::JLoggerFactory("Complexity"))
 {
-    L = mapply(par_down, par_up, par_nchunks, FUN = function(d, u, n) as.integer(seq(d, u, length.out = n)))
-    names(L) = par_names
-    PARS = create_cartesian_dt(L)[eval(filter)]
-    jlog.info(logger, "Computing:", nrow(PARS), "function evaluations")
-    PARS[, one_run(par = .BY, nms = names(PARS), ..., logger  = logger), by = names(PARS)]
+    L <- mapply(par.down, par.up, par.nchunks, FUN = function(d, u, n) as.integer(seq(d, u, length.out = n)))
+    names(L) <- par.names
+    PARS <- create.cartesian.dt(L)[eval(filter)]
+    jlogger::jlog.info(logger, "Computing:", nrow(PARS), "function evaluations")
+    PARS[, average.time.fun(par = .BY, nms = names(PARS), ..., logger  = logger), by = names(PARS)]
 }
                            
 ### Example ###
 
 example <- function()
 {
-    fun_complexity(par_down = c(n = 10, N = 25),
-                   par_up = c(n = 1000, N = 100000),
-                   par_nchunks = c(30, 20),
+    fun.complexity(par.down = c(n = 10, N = 25),
+                   par.up = c(n = 1000, N = 100000),
+                   par.nchunks = c(30, 20),
                    nrep = 10,
                    fun = solve,
-                   prefun = random_sparse_matrix,
+                   prefun = random.sparse.matrix,
                    filter = expression(N < n ^ 2))
 }
 
@@ -55,12 +84,12 @@ example2 <- function()
                        m,
                        N2)
     {        
-        list(a = random_sparse_matrix(n = n, N = N1),
-             b = random_sparse_matrix(nr = n, nc = m, N = N2))
+        list(a = random.sparse.matrix(n = n, N = N1),
+             b = random.sparse.matrix(nr = n, nc = m, N = N2))
     }
-    fun_complexity(par_down = c(n = 10, N1 = 25, m = 1, N2 = 10),
-                   par_up = c(n = 1000, N1 = 100000, m = 1000, N2 = 100000),
-                   par_nchunks = c(15, 7, 7 ,7),
+    fun.complexity(par.down = c(n = 10, N1 = 25, m = 1, N2 = 10),
+                   par.up = c(n = 1000, N1 = 100000, m = 1000, N2 = 100000),
+                   par.nchunks = c(15, 7, 7 ,7),
                    nrep = 10,
                    fun = solve,
                    prefun = prefun,

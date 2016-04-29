@@ -18,7 +18,7 @@ safeGeneric <- function(f,
 #'
 #' An elegant way to build objects that require a lot of logic in their construction
 #' @export
-safeGeneric("init", function(obj, ...) standardGeneric("init"))
+setGeneric("init", function(obj, ...) standardGeneric("init"))
 
 constructor.init <- function(.Class)
 {
@@ -38,7 +38,7 @@ setClassJ <- function(class,
 
 #' Updating object
 #'
-#' Creates a copy of the object which slots and paraents can be updated via new.
+#' Creates a copy of the object which slots and parents can be updated via new.
 #' @details S4 classes slots cannot be modified. Solution such as \code{obj@@slot <- new.value} are discouraged as the operation creates a copy of obj everytime.\cr
 #' The proper way to update an S4 object is to use the \code{new} operator. The problem with new is that it requires the class name. Hardcoding it prevents sub classes to use a parent function properly.\cr
 #' The solution is to give the class of the object to be updated as a parameter of new. To be DRY we provide this function.

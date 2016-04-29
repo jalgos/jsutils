@@ -1,4 +1,13 @@
-earthDist <- function (lon1, lat1, lon2, lat2)
+#' Earth Distance
+#'
+#' Second order estimation of the distance between two points parametrized by latitude and longitude
+#' @param lon1 Longitude of the first point
+#' @param lat1 Latitude of the second point
+#' @param lon2 Longitude of the first point
+#' @param lat2 Latitude of the second point
+#' @return Second order approximation of the distance between the two points in kilometers. 
+#' @export
+earth.dist <- function(lon1, lat1, lon2, lat2)
 {
     rad <- pi / 180
     a1 <- lat1 * rad

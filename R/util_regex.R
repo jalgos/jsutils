@@ -13,8 +13,8 @@
 #' @param match.names Each match can be named in which case a data.table which columns are the matches and column names this parameter will be returned. A list is returned otherwise
 #' @param grep.fun Which regex function should be used in mgrep
 NULL
-#' describeIn text.to.data
-#' Replaces the entirety of a string with the replacement pattern. Useful when we are more concerned with discarding everything that doesn't match than the contrary.
+
+#' describeIn text.to.data Replaces the entirety of a string with the replacement pattern. Useful when we are more concerned with discarding everything that doesn't match than the contrary.
 #' @export
 replace.whole.string <- function(pattern,
                                  replacement,
@@ -25,8 +25,7 @@ replace.whole.string <- function(pattern,
     gsub(pattern = pattern , replacement = replacement, x = text, ...)
 }
 
-#' @describeIn text.to.data
-#' Returns either a 2 elements list describing the matches. The first element is a vector giving the indices that match. The second element is an array with as many columns as they are patterns to capture (ie '(...)') and which elements are the strings captured.
+#' @describeIn text.to.data Returns either a 2 elements list describing the matches. The first element is a vector giving the indices that match. The second element is an array with as many columns as they are patterns to capture (ie '(...)') and which elements are the strings captured.
 #' @export
 grep.matches <- function(pattern,
                          text,
@@ -55,8 +54,7 @@ grep.matches <- function(pattern,
     list(match.indices = F, match.values = M)
 }
 
-#' @describeIn text.to.data
-#' 
+#' @describeIn text.to.data Returns the patterns captured or an empty string for strings that didn't match. There is an option for setting the names of each pattern captured.
 #' @export
 to.matches.or.null <- function(text,
                                ...,
@@ -87,6 +85,7 @@ to.matches.or.null <- function(text,
 }
 
 
+#' @describeIn text.to.data Matches a set of pattern
 #' @export
 mgrep <- function(patterns, ..., grep.fun = grep)
 {
@@ -94,7 +93,7 @@ mgrep <- function(patterns, ..., grep.fun = grep)
     grep.fun(pattern, ...)
 }
 
-## greps string that entirely match the pattern
+#' @describeIn text.to.data Matches the entire string. Will return FALSE if only part of the string matches.
 #' @export
 grep.whole <- function(pattern, ..., grep.fun = grep)
 {

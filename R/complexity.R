@@ -1,16 +1,23 @@
 ## Toolbox to measure function complexity regarding to an arbitray number of parameters"
 
-#' Measuring function runtime
+#' @name complexity
+#' @title Measuring function runtime
 #'
-#' Measure the time a function takes to run by running it severl times
 #' @param fun Function for which you want to run the measure
 #' @param par Parameters of the function
 #' @param nrep Number of time the function will run
 #' @param nms Names of the parameters
 #' @param prefun Optional function to get the real parameters of the function from the parameters provided
-#' @param ... Additional parameters to pass on to the function
-#' @param logger jlogger::JLogger to use in case of an error
-#' @seealso average.time.map
+#' @param par.down lower bounds of the parameters
+#' @param par.up upper bounds of the parameters
+#' @param par.nchunks Number of points in the grid. One entry per parameter.
+#' @param par.names Names of the parameters
+#' @param filter expression to filter out some prameters combinations
+#' @param ... Arguments to be passed to average.time.fun and the function 'fun'
+#' @param logger jlogger::JLogger to output info on the state of computations
+NULL
+
+#' @describeIn complexity Measure the time a function takes to run by running it several times
 #' @export
 average.time.fun <- function(fun,
                              par,
@@ -37,17 +44,7 @@ average.time.fun <- function(fun,
     T / nrep
 }
 
-#' Measuring impact of parameters on runtime
-#' 
-#' Computes runtime as a function of a set of parameters. It will produce a grid and run average.time.fun for each parameter combination.
-#' @param par.down lower bounds of the parameters
-#' @param par.up upper bounds of the parameters
-#' @param par.nchunks Number of points in the grid. One entry per parameter.
-#' @param par.names Names of the parameters
-#' @param filter expression to filter out some prameters combinations
-#' @param ... Arguments to be passed to average.time.fun
-#' @param logger jlogger::JLogger to output info on the state of computations
-#' @seealso average.time.fun
+#' @describeIn complexity Computes runtime as a function of a set of parameters. It will produce a grid and run average.time.fun for each parameter combination.
 #' @export
 average.time.map <- function(par.down,
                              par.up,

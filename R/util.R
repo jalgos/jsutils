@@ -77,6 +77,9 @@ with_missing <- function(conv_fun, default_val, null_val = "")
     }
 }
 
+
+add.ellipsis <- function(f) function(x, ...) f(x)
+
 util.type_conv_map <- list(IDate = convIDate,
                            ITime = function(x)as.ITime(x, format = "%H:%M:%S"),
                            factor = as.factor,
@@ -1015,12 +1018,6 @@ get_memory_usage <- function()
 mb_object_size <- function(x)
 {
     return(object.size(x) / 2 ^ 20)
-}
-
-#Total volatility contained in a covariance matrix
-total_vol <- function(S)
-{
-    sum(diag(S))
 }
 
 #identity for object of class Matrix

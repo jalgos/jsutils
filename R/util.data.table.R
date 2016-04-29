@@ -207,11 +207,14 @@ get.dt.names <- function(reg.names,
 }
 #' @title Building expressions
 #' @name build.expr
-#' One way to parameterize complex expression in the 'j' argument of "[" for data.tables is to yse expressions.
+#' @description One way to parameterize complex expression in the 'j' argument of "[" for data.tables is to use expressions.
 #' @param funstring Function to apply to args as a string
 #' @param args Character vector for the arguments of the function. The value is the variable name anf the names are the parameter names of the function
 #' @param ... not used
 #' @details 'fun.expr' produces expression of the form 'f(a, b ,c)'. 'assign.expr' produces expression such as 'c("a", "b") := list(f(c), g(d))'
+NULL
+
+#' @describeIn build.expr Builds the expression that is the application of a function to some parameters
 #' @examples fun.expr("atan2", c(x = 3, y = 4))
 fun.expr <- function(funstring, args, ...)
 {
@@ -222,7 +225,7 @@ fun.expr <- function(funstring, args, ...)
     paste(c(funstring, "(", args, ")"), collapse = "")
 }
 
-#' @rdname buld.expr
+#' @describeIn build.expr Builds an assignation expression (:=)
 #' @param var new variable names to be assigned. character vector
 #' @param exprst string for computing the new columns
 #' @examples assign.expr(c("a", "b"), "list(x + y, cos(z))")
@@ -241,6 +244,9 @@ assign.expr <- function(var, exprst)
 #' @param numeric.cols Numeric columns in the table, defaults to the entire table
 #' @param good.fun Function that filters out bad values. It should return FALSE for the unwanted values. It will be applied on each column one by one
 #' @param ... Extra parameters to be passed on to 'dt.filter.na' and 'good.fun'
+NULL
+
+#' @rdname filter.na
 #' @export
 dt.filter.na <- function(DT,
                          numeric.cols = names(DT),
@@ -249,6 +255,7 @@ dt.filter.na <- function(DT,
 {
     DT[, over(lapply(.SD, good.fun, ...), "&"), .SDcols = numeric.cols]
 }
+#' @rdname filter.na
 #' @export
 dt.filter.out.na <- function(DT,
                              ...)

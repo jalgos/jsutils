@@ -1,5 +1,3 @@
-library("xtable")
-
 sweave.logger <- function() JLoggerFactory("Sweave")
 
 sweave_and_tex <- function(filename,

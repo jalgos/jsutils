@@ -27,7 +27,8 @@ load_or_install <- function(library_name)
 }
 
 ###Type handling and stuff#######
-
+#' Test
+#' @export
 empty_date = function() as.IDate("1970-01-01")[0]
 empty_time = function() as.ITime("00:00:00")[0]
 empty_posix = function() as.POSIXct(numeric(0), origin = "1970-01-01")

@@ -143,9 +143,6 @@ vec.array <- function(A)
      matrix(A, dim(A)[1] * dim(A)[2], dim(A)[3])
 }
 
-#Equivalent to Matrix's norm(M, "f")
-setMethod("norm", c("vector", "ANY"), function(x, type) norm(as.matrix(x), type))
-
 #' @name matrix.norm
 #' @title Norms of a Matrix
 #' @param M a matrix
@@ -178,6 +175,13 @@ matrix.scal <- function(M1, M2, normalized = FALSE)
     return(sum(M1 * M2) / N ^ 2)
 }
 
+##Equivalent to Matrix's norm(M, "f")
+#' Norm
+#' 
+#' Generic for vectors
+#' @export
+setMethod("norm", c("vector", "ANY"), function(x, type) norm(as.matrix(x), type))
+
 #' Trace of a matrix
 #' @export
 matrix.trace <- function(M) sum(diag(M))
@@ -192,7 +196,7 @@ gen.vech <- function(M,
     dms <- c(size, 1)
     if(isDiagonal(M))
     {
-        if(size < 2 ^ 31)
+        if(size <= .Machine$integer.max)
         {
             if(!keep.diag)
                 return(Matrix(0, size, 1))
@@ -211,7 +215,7 @@ gen.vech <- function(M,
     if(keep.diag) F <- M@i <= M@j
     else F <- M@i < M@j
     N <- sum(F)
-    if(all(dms < 2 ^ 31))
+    if(all(dms <= .Machine$integer.max))
         sparseMatrix(i = index.sym(M@i[F] + 1, M@j[F] + 1, nrow(M), keep.diag = keep.diag),
                      j = rep(1, N),
                      x = M@x[F],
@@ -224,7 +228,7 @@ gen.vech <- function(M,
 }
 
 
-#' @name vec
+#' @name vectorization
 #' @title Vectorization
 #' @param M Matrix to vectorize
 #' @param nv length of the vectorization
@@ -283,9 +287,12 @@ diag.to.vech <- function(n,
 #'
 #' Performs the half vectorization of a symmetric matrix.
 #' @details Half vectorization can be done in a pretty straightforward fashion for sparse matrices. The solution here preserves sparsity which makes sure that the program will not run out of memory because of an unwanted conversion to a dense matrix
-#' @references https://en.wikipedia.org/wiki/Vectorization_%28mathematics%29#Half-vectorization
+#' @references https://en.wikipedia.org/wiki/Vectorization_\%28mathematics\%29#Half-vectorization
 #' @export
 setGeneric("vech", function(M, ...) standardGeneric("vech"))
+
+#' @rdname vech
+#' @export
 setMethod("vech", "genMatrix", gen.vech)
 
 #' Assigning data by index value pair
@@ -303,7 +310,7 @@ assign.array.vect <- function(M, I, values, dimn = dim(M))
 ## n = sqrt(2X + 1 / 4) - 1 / 2
 ## TODO add the keep.diag option
 
-#' @describeIn vec Finds the size of the matrix corresponding to the length of its vectorization
+#' @describeIn vectorization Finds the size of the matrix corresponding to the length of its vectorization
 #' @export
 findN <- function(nv,
                   half.vec = TRUE,
@@ -324,7 +331,7 @@ findN <- function(nv,
 
 ## We need this one a lot
 
-#' @describeIn vec Computes the length of the half vectorization. n (n + 1) / 2 if we keep the diagonal and n (n - 1) / 2
+#' @describeIn vectorization Computes the length of the half vectorization. n (n + 1) / 2 if we keep the diagonal and n (n - 1) / 2
 #' @export
 nn12 <- function(n, keep.diag = TRUE)  n * (n - 1 + 2 * keep.diag) / 2
 
@@ -354,7 +361,7 @@ index.sym <- function(i, j, n, keep.diag = TRUE)
 
 #' @describeIn mat.index Computes the row index and column index corresponding to a given vectorization index
 #' @export
-rev.index.sym <- function(I, n, keep.diag = TRUE)
+reverse.index.sym <- function(I, n, keep.diag = TRUE)
 {
     if(length(I) == 0) return(list(i = integer(0), k = integer(0)))
     di <- 1:n
@@ -369,7 +376,7 @@ rev.index.sym <- function(I, n, keep.diag = TRUE)
 }
 
 
-#' @describeIn vec Matrix to go from half vectorization to full vectorization
+#' @describeIn vectorization Matrix to go from half vectorization to full vectorization
 #' @export
 vech.to.vec <- function(n,
                         keep.diag = TRUE)
@@ -403,7 +410,7 @@ vech.to.vec <- function(n,
 }
 
 ## The symmetric
-#' @describeIn vec Gets the indices of the upper diagonal
+#' @describeIn vectorization Gets the indices of the upper diagonal
 #' @export
 get.upper.indices <- function(n,
                               keep.diag = TRUE)
@@ -419,7 +426,7 @@ get.upper.indices <- function(n,
     list(I = I, ID = (J - 1) * n + (I - 1) + 1, J = J)
 }
 
-#' @describeIn vec Matrix to go from full vectorization to half vectorization
+#' @describeIn vectorization Matrix to go from full vectorization to half vectorization
 #' @export
 vec.to.vech <- function(n, keep.diag = TRUE)
 {
@@ -441,7 +448,7 @@ vec.to.vech <- function(n, keep.diag = TRUE)
     fmat(i = ID2, j = IUT$ID, x = 1, dims = dims)    
 }
 
-#' @describeIn vec Takes a half vectorization and builds the corresponding matrix of class \code{Matrix}
+#' @describeIn vectorization Takes a half vectorization and builds the corresponding matrix of class \code{Matrix}
 #' @export
 vech.reverse <- function(V,
                          keep.diag = TRUE,
@@ -484,11 +491,16 @@ vec.reverse.dsy <- function(V)
     forceSymmetric(V)
 }
 
-#' @describeIn vec Full vectorization 
+#' Full vectorization
+#'
+#' Vectorizes a matrix
+#' @references https://en.wikipedia.org/wiki/Vectorization_\%28mathematics\%29
 #' @export
 setGeneric("vec", gen.vec)
 
-#' @describeIn vec Builds the matrix corresponding to the full vectorization 
+#' Full vectorization
+#'
+#' Builds the matrix corresponding to a vectorization
 #' @export
 setGeneric("vec.reverse", gen.vec.reverse)
 
@@ -692,7 +704,6 @@ setMethod("shift", signature = c("matrix"), shift.mat)
 #' @export
 setMethod("shift", signature = c("Matrix"), shift.mat)
 
-## Utility to resize matrix and keep data in place
 util.resize <- function(M,
                         nrows,
                         ncols,
@@ -723,21 +734,34 @@ util.resize <- function(M,
 #' @title Resizing, reserving
 #' @details Some objects are meant to be growing as some algorithms run. These functions provides feature to handle these cases
 NULL
-#' @describeIn resize.reserve Resizes a buffer
+
+#' Resize, reserve, binds
+#'
+#' Resizes a buffer. If reserve was called earlier no copy should be made
+#' @template reserve
 #' @export
 setGeneric("resize", util.resize)
 
-#' @describeIn resize.reserve Reserves additional data, so when more data is inserted no copy is dones
+#' Resize, reserve, binds
+#'
+#' Reserves additional data, so when more data is inserted no copy is dones
+#' @template reserve
 #' @export
 setGeneric("reserve", util.resize)
 
-#' @describeIn resize.reserve Binds two data structures so that the number of rows of the result is the sum of the number of rows of the two arguments. Columns have to match.
+#' Resize, reserve, binds
+#' 
+#' Binds two data structures so that the number of rows of the result is the sum of the number of rows of the two arguments. Columns have to match.
+#' @template reserve
 #' @export
 setGeneric("row.bind", function(M1, M2) rBind(M1, M2))
 
-#' @describeIn resize.reserve Binds two data structures so that the number of columns of the result is the sum of the number of columns of the two arguments. Number of rows has to be te same
+#' Resize, reserve, binds
+#' 
+#' Binds two data structures so that the number of columns of the result is the sum of the number of columns of the two arguments. Number of rows has to be te same
+#' @template reserve
 #' @export
-seteGeneric("col.bind", function(M1, M2) cBind(M1, M2))
+setGeneric("col.bind", function(M1, M2) cBind(M1, M2))
 
 #' @name rows.cols
 #' @title Row numbers and column numbers
@@ -750,7 +774,7 @@ rows <- function(M)
     else integer(0)
 }
 
-#' @describeIn rows.cols returns a vector containing all the clumn nmbers
+#' @describeIn rows.cols returns a vector containing all the column numbers
 #' @export
 cols <- function(M)
 {
@@ -764,17 +788,37 @@ Matrix.ginv <- function(X, tol = sqrt(.Machine$double.eps))
     solve(X + tol * Id)
 }
 
-safeGeneric("ginv", MASS::ginv)
+#' Generalized inverse
+#' 
+#' Computes the generalized inverse for any type of matrix: rectangular and not full rank.
+#' @param X Matrix to invert
+#' @param tol espsilon bump to force full rank
+#' @export
+setGeneric("ginv", MASS::ginv)
+
+#' @rdname ginv
+#' @export
 setMethod("ginv", "Matrix", Matrix.ginv)
 
-safeGeneric("gsolve", function(a, b, ...) ginv(a) %*% b)
+#' Generalized inverse
+#' 
+#' Computes a solution of the a.v = b for any type of matrix: rectangular and not full rank.
+#' @param a Matrix to invert
+#' @param b RHS of the equation a.v = b where v is the unknown
+#' @export
+setGeneric("gsolve", function(a, b, ...) ginv(a) %*% b)
+
+#' @rdname gsolve
+#' @export
 setMethod("gsolve", c(a = "Matrix", b = "ANY"), function(a, b, eps = sqrt(.Machine$double.eps)) solve(a + eps * Diagonal(n = nrow(a)), b))
 
-psolve <- function(M,
+#' @describeIn gen.inv Inverts a matrix by truncating the eigen values that contribute to 95% of the whole volatility.
+#' @export
+psolve <- function(a,
                    b,
                    var.thresh = .95)
 {
-    S <- svd(M)
+    S <- svd(a)
     PVE <- cumsum(S$d) / sum(S$d)
     ico <- which(PVE > var.thresh)[1]
     IP <- 1:ico
@@ -843,12 +887,30 @@ sym.mat.to.data.table <- function(M,
     D
 }
 
-safeGeneric("mat.to.data.table", function(M, ...) standardGeneric("mat.to.data.table"))
-setMethod("mat.to.data.table", "Matrix", Matrix.mat.to.data.table)
-setMethod("mat.to.data.table", "matrix", matrix.mat.to.data.table)
-setMethod("mat.to.data.table", "diagonalMatrix", function(M, one.based = TRUE)  mtdt.add.row.col.names(data.table(i = 1:nrow(M) - !one.based, j = 1:nrow(M) - !one.based, x = diag(M)), M, one.based))
-setMethod("mat.to.data.table", "symmetricMatrix", sym.mat.to.data.table)
+#' Matrix to data table
+#'
+#' Transforms a matrix into its triplet version in a data.table
+#' @param M Matrix to transform to its triplet form
+#' @param one.based Indices start at 1 or 0
+#' @param with.names Should rownames and column names be added to the data.table
+#' @export
+setGeneric("mat.to.data.table", function(M, ...) standardGeneric("mat.to.data.table"))
 
+#' @rdname mat.to.data.table
+#' @export
+setMethod("mat.to.data.table", "Matrix", Matrix.mat.to.data.table)
+
+#' @rdname mat.to.data.table
+#' @export
+setMethod("mat.to.data.table", "matrix", matrix.mat.to.data.table)
+
+#' @rdname mat.to.data.table
+#' @export
+setMethod("mat.to.data.table", "diagonalMatrix", function(M, one.based = TRUE)  mtdt.add.row.col.names(data.table(i = 1:nrow(M) - !one.based, j = 1:nrow(M) - !one.based, x = diag(M)), M, one.based))
+
+#' @rdname mat.to.data.table
+#' @export
+setMethod("mat.to.data.table", "symmetricMatrix", sym.mat.to.data.table)
 
 array.to.data.table <- function(A,
                                 one.based = TRUE)
@@ -870,7 +932,16 @@ array.to.data.table <- function(A,
     LI
 }
 
+#' Array to data.table
+#'
+#' Transforms an array into a set of index / value tuples
+setGeneric("array.to.data.table", array.to.data.table)
+
 ## give the indexes in the order first
+#' Array building
+#'
+#' Builds an array from a list of indices / value tuples
+#' @export
 make.array <- function(...,
                        x,
                        dim,
@@ -893,7 +964,10 @@ make.array <- function(...,
     A
 }
 
-
+#' Forcing symmetry
+#'
+#' Builds a symmetric table from all the values of a regular matrix.
+#' @export
 make.symmetric <- function(M) M + t(M) - Diagonal(x = diag(M))
 ## Partial Kronecker
 
@@ -1022,8 +1096,12 @@ mem.safe.kronecker <- function(S1,
     DD %*% CC %*% DD
 }
 
+#' Non finite elements
+#' @export
+setGeneric("non.finite.elements", function(x) sum(!is.finite(x)))
 
-safeGeneric("non.finite.elements", function(x) sum(!is.finite(x)))
+#' @rdname non.finite.elements
+#' @export
 setMethod("non.finite.elements", c(x = "sparseMatrix"), function(x) non.finite.elements(x@x))
 
 bdiag.with.names <- function(L)
@@ -1215,9 +1293,11 @@ mat.exp <- function(M,
     else if(exp == 1L) return(M)
     n1 <- exp %/% 2
     n2 <- exp - n1
-    mat.exp(M, n1) %*% mat.exp(M, n2)    
+    (M %^% n1) %*% (M %^% n2)
 }
 
+#' Matrix exponent
+#' @export
 setGeneric("%^%", mat.exp)
 
 ## Very sparse big matrix exhibit a weird behaviour when multiplied. STMatrix (for "Stay triplet") class is here to fix that
@@ -1239,7 +1319,7 @@ STM.mult <- function(x, y)
     ## Tries to return a triplet if D is small STMatrix otherwise
     dms <- c(nrow(x), ncol(y))
     dmns <- list(rownames(x), rownames(y))
-    if(all(dms < 2 ^ 31))
+    if(all(dms <= .Machine$integer.max))
         dsparseMatrix(D[, list(i, j, x = x.x * x.y)],
                       giveCsparse = FALSE,
                       dims = dms,
@@ -1282,7 +1362,7 @@ STM.as.Matrix <- function(M)
 
 STM.show <- function(object)
 {
-    if(all(object@dims < 2 ^ 31))        
+    if(all(object@dims <= .Machine$integer.max))        
         show(as.Matrix(object))
     else
         callNextMethod(object)
@@ -1295,48 +1375,124 @@ STM.t <- function(x)
              dmnames = rev(x@dmnames))
 }
 
+#' @export
 setMethod("%*%", c("STMatrix", "genMatrix"), STM.mult)
+
+#' @export
 setMethod("%*%", c("genMatrix", "STMatrix"), STM.mult)
 
+#' @export
 setMethod("show", "STMatrix", STM.show)
+
+#' @export
 setMethod("t", "STMatrix", STM.t)
 
-safeGeneric("as.Matrix", function(M) standardGeneric("as.Matrix"))
+#' Converting to Matrix
+#' @export
+setGeneric("as.Matrix", function(M) standardGeneric("as.Matrix"))
+
+#' @rdname as.Matrix
+#' @export
 setMethod("as.Matrix", "STMatrix", STM.as.Matrix)
 
+#' @export
 setMethod("show", "STMatrix", STM.show)
+
+#' @export
 setMethod("dim", "STMatrix", function(x) x@dims)
 
+#' @export
 setMethod("[", c("STMatrix", "missing", "missing", "missing"), function(x) as.Matrix(x))
+
+#' @export
 setMethod("[", c("STMatrix", "index", "missing", "ANY"), function(x, i, j, drop = FALSE) x[][i, , drop = drop])
+
+#' @export
 setMethod("[", c("STMatrix", "missing", "index", "ANY"), function(x, i, j, drop = FALSE) x[][, j, drop = drop])
+
+#' @export
 setMethod("[", c("STMatrix", "index", "index", "ANY"), function(x, i, j, drop = FALSE) x[][i, j, drop = drop])
+
+#' @export
 setMethod("*", c("STMatrix", "ANY"), function(e1, e2) e1[] * e2)
+
+#' @export
 setMethod("*", c("ANY", "STMatrix"), function(e1, e2) e1 * e2[])
+
+#' @export
 setMethod("/", c("STMatrix", "ANY"), function(e1, e2) e1[] / e2)
+
+#' @export
 setMethod("+", c("STMatrix", "ANY"), function(e1, e2) e1[] + e2)
+
+#' @export
 setMethod("+", c("ANY", "STMatrix"), function(e1, e2) e1 + e2[])
+
+#' @export
 setMethod("-", c("STMatrix", "missing"), function(e1, e2) - e1[])
+
+#' @export
 setMethod("-", c("STMatrix", "ANY"), function(e1, e2) e1[] - e2)
+
+#' @export
 setMethod("-", c("ANY", "STMatrix"), function(e1, e2) e1 - e2[])
+
+#' @export
 setMethod("%*%", c("STMatrix", "ANY"), function(x, y) x[] %*% y)
+
+#' @export
 setMethod("%*%", c("ANY", "STMatrix"), function(x, y) x %*% y[])
+
+#' @export
 setMethod("kronecker", c(X = "STMatrix", Y = "ANY"), function(X, Y) X[] %x% Y)
+
+#' @export
 setMethod("kronecker", c(X = "ANY", Y = "STMatrix"), function(X, Y) X %x% Y[])
+
+#' @export
 setMethod("vech", c(M = "STMatrix"), function(M) vech(M[]))
+
+#' @export
 setMethod("vec", c(M = "STMatrix"), function(M, ...) vec(M[], ...))
 
+#' @export
 setMethod("col.bind", c(M1 = "STMatrix", M2 = "ANY"), function(M1, M2) col.bind(M1[], M2))
+
+#' @export
 setMethod("col.bind", c(M1 = "ANY", M2 = "STMatrix"), function(M1, M2) col.bind(M1, M2[]))
+
+#' @export
 setMethod("row.bind", c(M1 = "STMatrix", M2 = "ANY"), function(M1, M2) row.bind(M1[], M2))
+
+#' @export
 setMethod("row.bind", c(M1 = "ANY", M2 = "STMatrix"), function(M1, M2) row.bind(M1, M2[]))
+
+#' @export
 setMethod("t", c(x = "STMatrix"), function(x) t(x[]))
+
+#' @export
 setMethod("is.na", c(x = "STMatrix"), function(x) is.na(x[]))
+
+#' @export
 setMethod("non.finite.elements", c(x = "STMatrix"), function(x) non.finite.elements(x[]))
-safeGeneric("total.vol", total.vol)
+
+#' Total volatility of a matrix
+#' @export
+setGeneric("total.vol", total.vol)
+
+#' @rdname total.vol
+#' @export
 setMethod("total.vol", c(S = "STMatrix"), function(S) sum(diag(S[])))
+
+#' @export
 setMethod("diag", c(x = "STMatrix", nrow = "ANY", ncol = "ANY"), function(x) diag(x[]))
+
+#' @rdname mat.to.data.table
+#' @export 
 setMethod("mat.to.data.table", "STMatrix", function(M) copy(M@data))
+
+#' @rdname matrix.norm
+#' @export
 setMethod("norm", c("STMatrix", "ANY"), function(x, type, ...) norm(x[], type, ...))
 
 

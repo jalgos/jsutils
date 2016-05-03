@@ -18,3 +18,21 @@ License: Jalgos License
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 5.0.1
+Collate:
+    'applies.R'
+    'array_fun.R'
+    'complexity.R'
+    'filter.non.finite.R'
+    'util.R'
+    'util_matrix.R'
+    'huge_sparse.R'
+    'matrix.vectorization.R'
+    'random.matrices.R'
+    'type.conversion.R'
+    'util.S4.R'
+    'util.data.table.R'
+    'util.sendmail.R'
+    'util_geocoding.R'
+    'util_markdown.R'
+    'util_regex.R'
+    'util_sweave.R'

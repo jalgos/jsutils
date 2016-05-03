@@ -1,148 +1,3 @@
-setClassUnion("genMatrix", c("matrix", "Matrix"))
-
-## obsolete drop = FALSE does the trick
-subvector <- function(V, k = 1:length(V))
-{
-    if(missing(k)) k <- 1:length(V)
-    return(V[k])
-}
-
-## DITTO
-submatrix <- function(M, i = 1:nrow(M), j = 1:ncol(M))
-{
-    if(missing(i)) i <- 1:nrow(M)
-    if(missing(j)) j <- 1:ncol(M)
-    if(is.logical(i)) i <- which(i)
-    if(is.logical(j)) j <- which(j)
-    if(length(i) == 1 || length(j) == 1)
-    {
-        rn <- rownames(M)
-        cn <- colnames(M)
-        return(Matrix(M[i, j], length(i), length(j), dimnames = list(rn[i], cn[j])))
-    }
-    return(M[i, j])
-}
-
-## DITTO
-#For 3 dimensional arrays
-subarray <- function(A,  i = 1:dim(A)[1], j = 1:dim(A)[2], k = 1:dim(A)[3])
-{
-    if(missing(i)) i <- 1:dim(A)[1]
-    if(missing(j)) j <- 1:dim(A)[2]
-    if(missing(k)) k <- 1:dim(A)[3]
-    if(is.logical(i)) i <- which(i)
-    if(is.logical(j)) j <- which(j)
-    if(is.logical(k)) k <- which(k)
-    if(length(i) == 1 || length(j) == 1 || length(k) == 1)
-    {
-        if(!is.null(dimnames(A)))
-        {
-            inames <- dimnames(A)[[1]][i]
-            jnames <- dimnames(A)[[2]][j]
-            knames <- dimnames(A)[[3]][k]
-            ndimn <- list(inames, jnames, knames)
-        }
-        else
-        {
-            ndimn <- NULL
-        }
-        return(array(A[i, j, k], dim = c(length(i), length(j), length(k)), dimnames = ndimn))
-    }
-    return(A[i, j, k])
-}
-
-## Assume three dimensional array of matrices with last index being the time
-
-#' 
-array.prod <- function(A, B)
-{
-    dA <- dim(A)
-    dB <- dim(B)
-    if(dA[2] != dB[1]) stop("dimension mismatch")
-    if(dA[3] != dB[3]) stop("length mismatch")
-    dC <- c(dA[1], dB[2], dB[3])
-    if(!is.null(dimnames(A)) & ! is.null(dimnames(B))) dmnC = list(dimnames(A)[[1]], dimnames(B)[[2]], dimnames(B)[[3]])
-    else dmnC <- NULL
-    C <- array(0, dim = dC, dimnames = dmnC)
-    for(i in 1:dA[1])
-    {
-        for(j in 1:dB[2])
-        {
-            for(k in 1:dB[1])
-            {
-                C[i, j, ] <- C[i, j, ] + A[i, k, ] * B[k, j, ]
-            }
-        }
-    }
-    return(C)
-}
-
-array.transpose <- function(A)
-{
-    dA <- dim(A)
-    dC <- c(dA[2], dA[1], dA[3])
-    if(!is.null(dimnames(A)))
-    {
-        dmnA <- dimnames(A)
-        dmnC <- list(dmnA[[2]], dmnA[[1]], dmnA[[3]])
-    }
-    else dmnC <- NULL
-    C <- array(0, dim = dC, dimnames = dmnC)
-    for(i in 1:dA[1])
-    {
-        for(j in 1:dA[2])
-        {
-            C[j, i, ] <- A[i, j,]
-        }
-    }
-    C
-}
-
-array.rbind <- function(A, B)
-{
-    dA <- dim(A)
-    dB <- dim(B)
-    if(dA[2] != dB[2]) stop("dimension mismatch")
-    if(dA[3] != dB[3]) stop("length mismatch")
-    dC <- c(dA[1] + dB[1], dB[2], dB[3])
-    if(!is.null(dimnames(A)) & !is.null(dimnames(B)))
-    {
-        dmnA <- dimnames(A)
-        dmnB <- dimnames(B)
-        dmnC <- list(c(dmnA[[1]], dmnB[[1]]),  dmnB[[2]], dmnB[[3]])
-    }
-    else dmnC <- NULL
-    C <- array(0, dim = dC, dimnames = dmnC)
-    C[1:dA[1], ,] <- A
-    C[dA[1] + 1:dB[1], ,] <- B
-    C
-}
-
-array.cbind <- function(A, B)
-{
-    dA <- dim(A)
-    dB <- dim(B)
-    if(dA[1] != dB[1]) stop("dimension mismatch")
-    if(dA[3] != dB[3]) stop("length mismatch")
-    dC <- c(dA[1], dA[1] + dB[2], dB[3])
-    if(!is.null(dimnames(A)) & !is.null(dimnames(B)))
-    {
-        dmnA <- dimnames(A)
-        dmnB <- dimnames(B)
-        dmnC <- list(dmnA[[1]], c(dmnA[[2]],  dmnB[[2]]), dmnB[[3]])
-    }
-    else dmnC <- NULL
-    C <- array(0, dim = dC, dimnames = dmnC)
-    C[, 1:dA[2], ] <- A
-    C[, dA[2] + 1:dB[2], ] <- B
-    C
-}
-#Vec operator on an array of matrix
-vec.array <- function(A)
-{
-     matrix(A, dim(A)[1] * dim(A)[2], dim(A)[3])
-}
-
 #' @name matrix.norm
 #' @title Norms of a Matrix
 #' @param M a matrix
@@ -185,426 +40,6 @@ setMethod("norm", c("vector", "ANY"), function(x, type) norm(as.matrix(x), type)
 #' Trace of a matrix
 #' @export
 matrix.trace <- function(M) sum(diag(M))
-
-######## Rewriting some utility functions #####
-##safe for sparse matrices
-gen.vech <- function(M,
-                     keep.diag = TRUE)
-{    
-    if(nrow(M) == 0) return(Matrix(0, 0, 0))
-    size <- nn12(nrow(M), keep.diag = keep.diag)
-    dms <- c(size, 1)
-    if(isDiagonal(M))
-    {
-        if(size <= .Machine$integer.max)
-        {
-            if(!keep.diag)
-                return(Matrix(0, size, 1))
-            return(sparseMatrix(i = index.sym(1:nrow(M), 1:nrow(M), nrow(M)), j = rep(1, nrow(M)), x = diag(M)))
-        }
-        else
-        {
-            if(!keep.diag)
-                return(STMatrix(DM = data.table(i = numeric(0), j = numeric(0), x = numeric(0)),
-                                dims = dms))
-            return(STMatrix(DM = data.table(i = index.sym(1:nrow(M), 1:nrow(M), nrow(M)), j = rep(1, nrow(M)), x = diag(M)),
-                            dims = dms))
-        }
-    }
-    M <- as(M, "TsparseMatrix")
-    if(keep.diag) F <- M@i <= M@j
-    else F <- M@i < M@j
-    N <- sum(F)
-    if(all(dms <= .Machine$integer.max))
-        sparseMatrix(i = index.sym(M@i[F] + 1, M@j[F] + 1, nrow(M), keep.diag = keep.diag),
-                     j = rep(1, N),
-                     x = M@x[F],
-                     dims = dms)
-    else
-        STMatrix(DM = data.table(i = index.sym(M@i[F] + 1, M@j[F] + 1, nrow(M), keep.diag = keep.diag),
-                                 j = rep(1, N),
-                                 x = M@x[F]),
-                 dims = dms)
-}
-
-
-#' @name vectorization
-#' @title Vectorization
-#' @param M Matrix to vectorize
-#' @param nv length of the vectorization
-#' @param V The vectorization
-#' @param half.vec Is it a vectorization or a half vectorization
-#' @param check.integer Should the result be an integer
-#' @param n the number of rows of the symmetric matrix
-#' @param keep.diag Is the diagonal kept in the half vectorization
-#' @param symmetric Is the matrix symmetric
-NULL
-
-#' Vectorization of block diagonal matrix
-#'
-#' Creates the matrix that transforms the concatenation of each blocks half vectorization into the a half vectorization of the entire matrix
-#' @param vdim vector of size of each block
-#' @param logger JLogger to be used to log messages
-#' @seealso diag.to.vech, diag.to.vec, bdiag.to.vec
-#' @export
-bdiag.to.vech <- function(vdim, #vector of matrix dimensions
-                          logger = JLoggerFactory("jalgos filter"))
-{
-    fmat <- sparseMatrix
-    vds <- cumsum(vdim)
-    N <- last(vds)
-    ND <- sum(nn12(vdim))
-    jlog.debug(logger, "Creating a bdiag transition matrix of dimension", nn12(N), ND, "with:", length(vds), "blocks")
-    Ivd <- lapply(vdim, function(n) rep((1 - n):0, each = n))
-    Jvd <- lapply(vdim, function(n) rep((1 - n):0, n))
-    I <- unlist(mapply(Ivd, vds, FUN = "+", SIMPLIFY = FALSE))
-    J <- unlist(mapply(vds, Jvd, FUN = "+", SIMPLIFY = FALSE))
-    F <- I <= J
-    I <- I[F]
-    J <- J[F]
-    Ibd <- 1:ND
-    Jbd <- index.sym(I, J, N)
-    dims <- c(nn12(N), ND)
-    if(any(is.na(as.integer(dims)))) fmat <- HugeMatrix
-    fmat(i = Jbd, j = Ibd, x = 1, dims = dims)
-}
-
-#' Vectorization of a diagonal matrix
-#'
-#' Creates the matrix that transforms the vector of diagonal value into the half vectorization of the whole matrix
-#' @param n Size of the diagonal matrix
-#' @param logger JLogger to be used to log messages
-#' @seealso diag.to.vec, bdiag.to.vec, bdiag.to.vec
-#' @export
-diag.to.vech <- function(n,
-                         logger = JLoggerFactory("jalgos filter"))
-{
-    bdiag.to.vech(rep(1, n),
-                  logger = logger)
-}
-
-#' Half vectorization
-#'
-#' Performs the half vectorization of a symmetric matrix.
-#' @details Half vectorization can be done in a pretty straightforward fashion for sparse matrices. The solution here preserves sparsity which makes sure that the program will not run out of memory because of an unwanted conversion to a dense matrix
-#' @references https://en.wikipedia.org/wiki/Vectorization_\%28mathematics\%29#Half-vectorization
-#' @export
-setGeneric("vech", function(M, ...) standardGeneric("vech"))
-
-#' @rdname vech
-#' @export
-setMethod("vech", "genMatrix", gen.vech)
-
-#' Assigning data by index value pair
-#' @export
-assign.array.vect <- function(M, I, values, dimn = dim(M))
-{
-    dimn <- cumprod(c(1, dimn[ -length(dimn)]))
-    M[as.vector(1 + (I - 1) %*% dimn)] <- values
-    M
-}
-
-## For half vectorization
-## n (n + 1) = 2X
-## (n + 1/2)² - 1 / 4 = 2X
-## n = sqrt(2X + 1 / 4) - 1 / 2
-## TODO add the keep.diag option
-
-#' @describeIn vectorization Finds the size of the matrix corresponding to the length of its vectorization
-#' @export
-findN <- function(nv,
-                  half.vec = TRUE,
-                  check.integer = TRUE)
-{
-    if(half.vec) n <- sqrt(2 * nv + 1/4) - 1/2
-    else n <- sqrt(nv)
-    if(check.integer & abs(round(n) - n) > sqrt(.Machine$double.eps))
-    {
-        stop("The number supplied does not correspond to a vectorization")
-    }
-    n
-}
-
-## Going from a matrix that operates on vec to a matrix that operates on vech
-
-## Function that will transform a vech(n,n) to a vec(n,n)
-
-## We need this one a lot
-
-#' @describeIn vectorization Computes the length of the half vectorization. n (n + 1) / 2 if we keep the diagonal and n (n - 1) / 2
-#' @export
-nn12 <- function(n, keep.diag = TRUE)  n * (n - 1 + 2 * keep.diag) / 2
-
-#' @name mat.index
-#' @title Matrix index to vectorization index
-#' @param i row index
-#' @param j column index
-#' @param n number of rows
-#' @param I Half vectorization index
-#' @param keep.diag is the diagonal kept in the half vectorization
-NULL
-
-#' @describeIn mat.index Computes the vectorization index corresponding to a given row column combination in a matrix
-#' @export
-mat.index <- function(i, j, n) (j - 1) * n + i
-
-#' @describeIn mat.index Computes the half vectorization index corresponding to a given row column combination in a matrix
-#' @export
-index.sym <- function(i, j, n, keep.diag = TRUE)
-{
-    o <- i
-    i <- pmin(i, j)
-    j <- pmax(j, o)
-    adj <- !keep.diag
-    (i - 1) * (n - adj) + (j - 1) - i * (i - 1) / 2  - adj + 1
-}
-
-#' @describeIn mat.index Computes the row index and column index corresponding to a given vectorization index
-#' @export
-reverse.index.sym <- function(I, n, keep.diag = TRUE)
-{
-    if(length(I) == 0) return(list(i = integer(0), k = integer(0)))
-    di <- 1:n
-    adj <- !keep.diag
-    d <- index.sym(di, di + adj, n, keep.diag = keep.diag)
-    D <- data.table(i = di, d = d, I = d)
-    U <- data.table(or = 1:length(I), I)
-    setkey(D, I)
-    setkey(U, I)
-    U <- D[U, roll = Inf]
-    U[order(or), list(i, j = I - d + i + adj)]
-}
-
-
-#' @describeIn vectorization Matrix to go from half vectorization to full vectorization
-#' @export
-vech.to.vec <- function(n,
-                        keep.diag = TRUE)
-{
-    fmat <- sparseMatrix
-    if(n < 0L)
-    {
-        stop("n must be a positive integer")
-    }
-    
-    if(n == 0L)
-    {
-        return(Matrix(0, 0, 0))
-    }
-    
-    I <- rep(1:n, n)
-    J <- rep(1:n, each = n)
-    val <- 1
-    if(!keep.diag)
-    {
-        F <- I != J
-        I <- I[F]
-        J <- J[F]
-        val <- ifelse(I < J, 1, -1)
-    }
-    ID1 <- (J - 1) * n + (I - 1) + 1
-    ID2 <- index.sym(I, J, n, keep.diag = keep.diag)
-    dims <- c(n ^ 2, nn12(n, keep.diag = keep.diag))
-    if(any(is.na(as.integer(dims)))) fmat = HugeMatrix
-    fmat(i = ID1, j = ID2, x = val, dims = dims)
-}
-
-## The symmetric
-#' @describeIn vectorization Gets the indices of the upper diagonal
-#' @export
-get.upper.indices <- function(n,
-                              keep.diag = TRUE)
-{
-    I <- unlist(mapply(function(i, j) rep(i, j), 1:n, n:1))
-    J <- unlist(sapply(1:n, function(i, n) i:n, n = n))
-    if(!keep.diag)
-    {
-        F <- I < J
-        I <- I[F]
-        J <- J[F]
-    }
-    list(I = I, ID = (J - 1) * n + (I - 1) + 1, J = J)
-}
-
-#' @describeIn vectorization Matrix to go from full vectorization to half vectorization
-#' @export
-vec.to.vech <- function(n, keep.diag = TRUE)
-{
-    fmat <- sparseMatrix
-    if ( n < 0L )
-    {
-        stop("n must be a positive integer")
-    }
-    
-    if( n == 0L)
-    {
-        return(Matrix(0, 0, 0))
-    }
-
-    IUT <- get.upper.indices(n, keep.diag = keep.diag)
-    ID2 <-  index.sym(IUT$I, IUT$J, n, keep.diag = keep.diag)
-    dims <- c(nn12(n, keep.diag = keep.diag), n ^ 2)
-    if(any(is.na(as.integer(dims)))) fmat <- HugeMatrix
-    fmat(i = ID2, j = IUT$ID, x = 1, dims = dims)    
-}
-
-#' @describeIn vectorization Takes a half vectorization and builds the corresponding matrix of class \code{Matrix}
-#' @export
-vech.reverse <- function(V,
-                         keep.diag = TRUE,
-                         symmetric = TRUE) ## if not symmetric then antisymmetric
-{
-    if(is.vector(V)) V <- Matrix(V)
-    DV <- mat.to.data.table(V)
-    nd <- findN(nrow(V)) + !keep.diag
-    DV[, c("i", "j") := rev.index.sym(i, nd, keep.diag = keep.diag)]
-    if(symmetric) return(drop0(dsparseMatrix(DV[, list(i = i, j = j, x =  x)], symmetric = TRUE, dims = c(nd, nd))))
-    M <- drop0(dsparseMatrix(DV[, list(i = i, j = j, x = x)], dims = c(nd, nd)))
-    M - t(M)
-}
-
-## Full Vectorization
-gen.vec <- function(M,
-                    ...)
-{
-    if(is(M, "denseMatrix")) M <- as.matrix(M)
-    N <- prod(dim(M))
-    dim(M) <- c(N, 1)#Keep it sparse
-    M    
-}
-
-gen.vec.reverse <- function(V,
-                            ...)
-{
-    if(is.vector(V)) V <- Matrix(V, length(V))
-    n <- findN(nrow(V), FALSE)
-    V <- Matrix(V)
-    dim(V) <- c(n, n)
-    V
-}
-
-vec.reverse.dsy <- function(V)
-{
-    n <- findN(nrow(V), FALSE)
-    V <- as(as.matrix(V), "dgeMatrix")
-    dim(V) <- c(n, n)
-    forceSymmetric(V)
-}
-
-#' Full vectorization
-#'
-#' Vectorizes a matrix
-#' @references https://en.wikipedia.org/wiki/Vectorization_\%28mathematics\%29
-#' @export
-setGeneric("vec", gen.vec)
-
-#' Full vectorization
-#'
-#' Builds the matrix corresponding to a vectorization
-#' @export
-setGeneric("vec.reverse", gen.vec.reverse)
-
-#' Vectorization of block diagonal matrix
-#'
-#' Creates the matrix that transforms the concatenation of each blocks half vectorization into the a vectorization of the entire matrix
-#' @param vdim vector of size of each block
-#' @param logger JLogger to be used to log messages
-#' @seealso diag.to.vech, diag.to.vec, bdiag.to.vech
-#' @export
-bdiag.to.vec <- function(vdim, #vector of matrix dimensions
-                         logger = JLoggerFactory("jalgos filter"),
-                         ...)
-{
-    fmat <- sparseMatrix
-    vds <- cumsum(vdim)
-    N <- last(vds)
-    ND <- sum(vdim ^ 2)
-    jlog.debug(logger, "Creating a bdiag transition matrix of dimension", N ^ 2, ND, "with:", length(vds), "blocks")
-    Ivd <- lapply(vdim, function(n) rep((1 - n):0, each = n))
-    Jvd <- lapply(vdim, function(n) rep((1 - n):0, n))
-    I <- unlist(mapply(Ivd, vds, FUN = "+", SIMPLIFY = FALSE))
-    J <- unlist(mapply(vds, Jvd, FUN = "+", SIMPLIFY = FALSE))
-    I <- I
-    J <- J
-    Ibd <- 1:ND
-    Jbd <- mat.index(I, J, N)
-    dims <- c(N ^ 2, ND)
-    if(any(is.na(as.integer(dims)))) fmat <- HugeMatrix
-    fmat(i = Jbd, j = Ibd, x = 1, dims = dims)
-}
-
-########## Random Cov matrices ##########
-
-#' @name random.mat
-#' @title Generating random matrices
-#' 
-#' @param n Number of rows
-#' @param p Number of columns
-#' @param tot.vol Scaling that control the total volatiliy of the covariance matrix created
-#' @param rgen Distribution to draw from. Defaults to a normal with 0 mean and variance 1
-#' @param ... Parameters to be passed to the random number generator and to lower level functions
-NULL
-
-#' @describeIn random.mat Generates a random matrix of independently drawn realisations of a random variable
-#'
-#' @export
-random.matrix <- function(n,
-                          p = n,
-                          rgen = rnorm,
-                          ...)
-{
-    matrix(rgen(n * p, ...), n, p)
-}
-
-#' @describeIn random.mat Generates a random symmetric matrix of independently drawn realisations of a random variable
-#'
-#' @export
-random.sym.matrix <- function(n,
-                              rgen = rnorm,
-                              ...)
-{
-    X <- rgen(n * (n+1) / 2, ...)
-    forceSymmetric(vech.reverse(X))
-}
-
-#' @describeIn random.mat Generates a random covariance matrix. Uses random.sym.matrix
-#'
-#' @export
-random.cov.matrix <- function(n,
-                              tot.vol = n,
-                              ...)
-{
-    if(n == 1) R <- Matrix(rexp(n))
-    else
-    {        
-        M <- random.sym.matrix(n, ...)
-        R <- M %*% t(M)
-    }
-    R / total.vol(R) * tot.vol
-}
-
-####### Random sparse matrixes #######
-#' @describeIn random.mat Creates a random sparse matrix
-#' @export
-random.sparse.matrix <- function(n,
-                                 p = n,
-                                 N,
-                                 rgen = rnorm)
-{
-    sparseMatrix(i = sample(1:n, N, replace = TRUE),
-                 j = sample(1:p, N, replace = TRUE),
-                 x = rgen(N),
-                 dims = c(n, p))
-}
-#' @describeIn random.mat Creates a random sparse covariance matrix. Sparsity is hard to control exactly. The target is approximate. USes random.sparse.matrix
-#' @export
-random.sparse.cov.matrix <- function(N,
-                                     ...)
-{
-    
-    M <- random.sparse.matrix(N = as.integer(sqrt(N)), ...)
-    M %*% t(M)
-}
 
 ## More utility functions
 #' @name eigen.func
@@ -697,6 +132,7 @@ shift.mat <- function(X, N = 1, ...)
 }
 
 #' Shifting Matrices
+#' @include util.R
 #' @export
 setMethod("shift", signature = c("matrix"), shift.mat)
 
@@ -827,9 +263,16 @@ psolve <- function(a,
     M1 %*% b
 }
 
+#' Matrix to data.table
+#'
+#' Adds two columns i.names and j.names to the triplet represantation of a Matrix
+#' @param D triplet representation
+#' @param M Matrix
+#' @param one.based indices strart at 1 or 0?
+#' @export
 mtdt.add.row.col.names <- function(D,
                                    M,
-                                   one.based)
+                                   one.based = TRUE)
 {
     if(!is.null(rownames(M)))
     {
@@ -849,7 +292,7 @@ Matrix.mat.to.data.table <- function(M,
                                      with.names = FALSE)
 {
     TM <- as(M, "TsparseMatrix")
-    D <- data.table(i = TM@i + one.based, j = TM@j + one.based, x = TM@x)
+    D <- data.table::data.table(i = TM@i + one.based, j = TM@j + one.based, x = TM@x)
     if(with.names)
         mtdt.add.row.col.names(D,
                                M,
@@ -862,7 +305,7 @@ matrix.mat.to.data.table <- function(M,
                                      one.based = TRUE,
                                      with.names = FALSE)
 {
-    D <- data.table(i = as.vector(row(M)) - !one.based, j = as.vector(col(M)) - !one.based, x = as.vector(M))
+    D <- data.table::data.table(i = as.vector(row(M)) - !one.based, j = as.vector(col(M)) - !one.based, x = as.vector(M))
     if(with.names)
         mtdt.add.row.col.names(D,
                                M,
@@ -906,7 +349,7 @@ setMethod("mat.to.data.table", "matrix", matrix.mat.to.data.table)
 
 #' @rdname mat.to.data.table
 #' @export
-setMethod("mat.to.data.table", "diagonalMatrix", function(M, one.based = TRUE)  mtdt.add.row.col.names(data.table(i = 1:nrow(M) - !one.based, j = 1:nrow(M) - !one.based, x = diag(M)), M, one.based))
+setMethod("mat.to.data.table", "diagonalMatrix", function(M, one.based = TRUE)  mtdt.add.row.col.names(data.table::data.table(i = 1:nrow(M) - !one.based, j = 1:nrow(M) - !one.based, x = diag(M)), M, one.based))
 
 #' @rdname mat.to.data.table
 #' @export
@@ -927,7 +370,7 @@ array.to.data.table <- function(A,
                 list((((1:N) - 1) %/% ndo) %% di + one.based))
     }
     names(LI) <- paste0("i", 1:nd)
-    LI <- as.data.table(LI)
+    LI <- data.table::as.data.table(LI)
     LI[, x := as.vector(A)]
     LI
 }
@@ -972,6 +415,9 @@ make.symmetric <- function(M) M + t(M) - Diagonal(x = diag(M))
 ## Partial Kronecker
 
 ## Performs Conj(M1) %x% M2
+
+#' Partial kronecker product
+#' @export
 partial.kronecker <- function(M1,
                               M2,
                               DI,
@@ -979,7 +425,7 @@ partial.kronecker <- function(M1,
                               dims = c(DI[, max(I)], DJ[, max(J)]),
                               half.vec = TRUE,
                               real = TRUE,
-                              logger = JLoggerFactory("Jalgos Algebra"))
+                              logger = jlogger::JLoggerFactory("Jalgos Algebra"))
 {
     DI <- DI[, list(i, j, I)]
     if(nrow(DI[i > j]) == 0)
@@ -1011,11 +457,17 @@ partial.kronecker <- function(M1,
     }
 }
 
-#is.finite fails in case prod(dims) is passed the integer bound
+##is.finite fails in case prod(dims) is passed the integer bound
+
 sum.non.finite <- function(M) nrow(mat.to.data.table(M)[!is.finite(x)])
     
 #### Memory safe kronecker product #######
 
+#' Covariance matrix to correlation matrix
+#'
+#' Computes the correlation matrix associated with a given covariance matrix
+#' @seealso cov2cor
+#' @export
 cor.dec <- function(S,
                     tol = 10 * .Machine$double.eps)
 {
@@ -1036,22 +488,39 @@ add.new.krchunk <- function(D1,
                             keep.diag,
                             logger = NULL)
 {
-    jlog.debug(logger, "Computing cartesian product of tables of sizes:", nrow(D1), nrow(D2), "result's size:", nrow(D1) * nrow(D2))
+    jlogger::jlog.debug(logger, "Computing cartesian product of tables of sizes:", nrow(D1), nrow(D2), "result's size:", nrow(D1) * nrow(D2))
     D <- cartesian.data.table(D1, D2)[, list(i = (i1 - 1) * n + i2, j = (j1 - 1) * m + j2, x = x1 * x2)]
     tot.size <- nrow(D) + nrow(DKR)
     pb <- 1 - target.size / tot.size
     if(pb <= 0) return(rbind(DKR, D))
-    jlog.debug(logger, "Keeping:", 100 * (1 - pb), "% of the result")
+    jlogger::jlog.debug(logger, "Keeping:", 100 * (1 - pb), "% of the result")
     pbx <- quantile(c(D[, abs(x)], DKR[, abs(x)]), probs = pb)
-    jlog.debug(logger, "Cropping values lesser than:", pbx, "in absolute value")
+    jlogger::jlog.debug(logger, "Cropping values lesser than:", pbx, "in absolute value")
     rbind(D[abs(x) >= pbx | (keep.diag & i == j)], DKR[abs(x) >= pbx  | (keep.diag & i == j)])
 }
 
 ## Function to limit memory usage of the kronecker product
-## The approximation error should be small if there are a lot fo values<0.01 in the correlation matrix
+## The approximation error should be small if there are a lot fo values < 0.01 in the correlation matrix
 ## The memory taken by a Matrix (in the triplet form) with N non zero elements is roughly 16 * N / 2 ^ 20 MBs (two integer vectors and a double vector: 4 + 4 + 8)
 ## If you want to limit the memory to 1Gb you need to set the size.limit to 2 ^ 26
 ## Keep in mind however that the chunking process will use twice the size provided. If you want to limit the mmeory usage to 2Gb give 1Gb as parameter
+
+#' Memory Safe Kronecker Product
+#'
+#' Performs a kronecker product of two so the memory used stays under a scpecified bound.
+#' @details The matrices are divided into smaller chunks and the kronecker products of these chunks are computed. Only the most significant correlation are kept to meet the target size.
+#' The approximation error should be small if there are a lot fo values < 0.01 in the correlation matrix. \cr
+#' The memory taken by a Matrix (in the triplet form) with N non zero elements is roughly 16 * N / 2 ^ 20 MBs (two integer vectors and a double vector: 4 + 4 + 8) \cr
+#' If you want to limit the memory to 1Gb you need to set the size.limit to 2 ^ 26. \cr
+#' Keep in mind however that the chunking process will use twice the size provided. If you want to limit the mmeory usage to 2Gb give 1Gb as parameter.
+#' @param S1 First matrix
+#' @param S2 Second matrix
+#' @param krsize.limit The limit in number of non zero value of the result
+#' @param krmem.limit Used to express the limit in GBs
+#' @param keep.diag Should the diagonal terms be kept
+#' @param logger JLogger to log additional messages
+#' @param ... No use now
+#' @export
 mem.safe.kronecker <- function(S1,
                                S2,
                                krsize.limit = krmem.limit * 2 ^ 26,
@@ -1060,11 +529,11 @@ mem.safe.kronecker <- function(S1,
                                ...,
                                logger = NULL)
 {
-    jlog.debug(logger, "Computing a memory safe kronecker product by cropping the least significant values")
+    jlogger::jlog.debug(logger, "Computing a memory safe kronecker product by cropping the least significant values")
     nS1 <- as.numeric(nnzero(S1))
     nS2 <- as.numeric(nnzero(S2))
     expm <- nS1 * nS2
-    jlog.debug(logger, "Number of non zero elements in S1:", nS1, "in S2:", nS2, "in result:", expm, "limit:", krsize.limit, "ratio:", krsize.limit / expm)
+    jlogger::jlog.debug(logger, "Number of non zero elements in S1:", nS1, "in S2:", nS2, "in result:", expm, "limit:", krsize.limit, "ratio:", krsize.limit / expm)
     if(expm < krsize.limit) return(S1 %x% S2)
     CS1 <- cor.dec(S1)
     CS2 <- cor.dec(S2)
@@ -1074,23 +543,23 @@ mem.safe.kronecker <- function(S1,
     chunksize <- krsize.limit %/% (2 * nrow(DS2)) ## Will  fail if it's zero. Hopefully an unrealistic case
     if(chunksize == 0)
     {
-        jlog.error(logger, "Cannot divide S1, S2 too big")
+        jlogger::jlog.error(logger, "Cannot divide S1, S2 too big")
         stop("No viable chunksize")
     }
-    jlog.debug(logger, "Dividing DS1 into chunks of size:", chunksize, "number of chunks:", nrow(DS1) %/% chunksize)
+    jlogger::jlog.debug(logger, "Dividing DS1 into chunks of size:", chunksize, "number of chunks:", nrow(DS1) %/% chunksize)
     n <- 1
     N <- chunksize
-    DKR <- data.table(i = integer(0), j = integer(0), x = numeric(0))
+    DKR <- data.table::data.table(i = integer(0), j = integer(0), x = numeric(0))
     while(n <= nrow(DS1))
     {
         N <- min(nrow(DS1), N)
-        jlog.debug(logger, "Dealing with chunk from:", n, "to", N)
+        jlogger::jlog.debug(logger, "Dealing with chunk from:", n, "to", N)
         DKR <- add.new.krchunk(DS1[n:N], DS2, DKR, krsize.limit, nrow(S1), ncol(S2), keep.diag = keep.diag, logger = logger)
-        jlog.debug(logger, N / nrow(DS1) * 100, "% done")
+        jlogger::jlog.debug(logger, N / nrow(DS1) * 100, "% done")
         n <- n + chunksize
         N <- N + chunksize
     }
-    jlog.debug(logger, "Result has:", nrow(DKR), "nonzero elements over an expected total of:", expm) 
+    jlogger::jlog.debug(logger, "Result has:", nrow(DKR), "nonzero elements over an expected total of:", expm) 
     CC <- dsparseMatrix(DKR[, list(i = i, j = j, x = x)], dims = dim(S1) * dim(S2))
     gc()
     DD %*% CC %*% DD
@@ -1104,6 +573,10 @@ setGeneric("non.finite.elements", function(x) sum(!is.finite(x)))
 #' @export
 setMethod("non.finite.elements", c(x = "sparseMatrix"), function(x) non.finite.elements(x@x))
 
+#' Matrix rows and column names
+#'
+#' Build a block diagonal matrix and computes the row names and column names from the block names
+#' @export
 bdiag.with.names <- function(L)
 {
     M <- bdiag(L)
@@ -1114,103 +587,115 @@ bdiag.with.names <- function(L)
 
 
 ### Adjugate ####
-## From stackoverflow Vincent Zoonekynd: http://stackoverflow.com/questions/16757100/get-adjoint-matrix-in-r
-## Minor and cofactor
-minor <- function(A, i, j) det( A[-i,-j] )
-cofactor <- function(A, i, j) (-1)^(i+j) * minor(A,i,j)
+#' @name adjugate
+#' @title Minor, Cofactor, Adjugates
+#' @description Tools to compute the minor, cofactor or adjugate matrix of a given matrix
+#' @param A Matrix
+#' @param i reference line
+#' @param j reference column
 
-# With a loop
-adjoint1 <- function(A) {
-  n <- nrow(A)
-  B <- matrix(NA, n, n)
-  for( i in 1:n )
-    for( j in 1:n )
-      B[j,i] <- cofactor(A, i, j)
-  B
+#' @details From stackoverflow Vincent Zoonekynd: http://stackoverflow.com/questions/16757100/get-adjoint-matrix-in-r
+#' @references https://en.wikipedia.org/wiki/Adjugate_matrix
+NULL
+#' @describeIn adjugate Minor, determinant where row i and j are taken out
+#' @export
+minor <- function(A, i, j) det(A[-i, -j])
+
+#' @describeIn adjugate Cofactor, minor multiplied by (-1) ^ (i + j)
+#' @export
+cofactor <- function(A, i, j) (-1) ^ (i + j) * minor(A, i, j)
+
+#' @describeIn adjugate Adjugate Matrix. Adjugate(M)[i, j] = Cofactor(M, j, i)
+#'@export
+adjugate1 <- function(A)
+{
+    n <- nrow(A)
+    B <- matrix(NA, n, n)
+    for(i in 1:n)
+        for(j in 1:n)
+            B[j, i] <- cofactor(A, i, j)
+    B
 }
 
-# With `outer`
-adjoint2 <- function(A) {
-  n <- nrow(A)
-  t(outer(1:n, 1:n, Vectorize(
-    function(i,j) cofactor(A,i,j)
-  )))
+#' @describeIn adjugate Adjugate Matrix computed without the use of for loopsbut with outer and Vectorize
+#' @export
+adjugate2 <- function(A)
+{
+    n <- nrow(A)
+    t(outer(1:n, 1:n, Vectorize(
+                          function(i, j) cofactor(A,i,j)
+                      )))
 }
 
 ##### Jacobi inverse
 
+#' Jacobi Inverse
+#'
+#' Simple implementation of the Jacobi Method
+#' @references https://en.wikipedia.org/wiki/Jacobi_method
+#' @param a Matrix
+#' @param b Right hand side of a.x = b
+#' @param p1 Predictioner, an approximation of the inverse of a. The closest it is from the real value the better. If it's too far away, it will not converge
+#' @param p Inverse of the preconditioner.
+#' @param x First guess of the solution
+#' @param tol Convergence tolerance
+#' @param iter.max Number maximum of iterations to achieve convergence
+#' @param logger JLogger to log messages
+#' @export
 jacobi.inv <- function(a,
                        b,
-                       p1 = Diagonal(x = 1 / diag(M)), ## Preconditioner the closer from M the better,
-                       p = Diagonal(x = diag(M)),
+                       p1 = Diagonal(x = 1 / diag(a)), ## Preconditioner the closer from the inverse of a the better,
+                       p = Diagonal(x = diag(a)),
                        x = p1 %*% b, ## First guess
                        tol = sqrt(.Machine$double.eps),
                        iter.max = 1000,
-                       logger = JLoggerFactory("Jalgos Algebra"))
+                       logger = jlogger::JLoggerFactory("Jalgos Algebra"))
 {
     if(nrow(b) != nrow(a))
     {
-        jlog.error(logger, "Dimension of b and a don't match:", dim(a), dim(b))
+        jlogger::jlog.error(logger, "Dimension of b and a don't match:", dim(a), dim(b))
         stop("Dimension mismatch")
     }
     r <- a - p
     inm <- matrix.norm(Diagonal(nrow(M)) -  p1 %*% a)
-    if(inm > 1) jlog.warn(logger, "The jacobi method may not convergence as the preconditioner is too far from the real inverse. Norm(I - PA):", inm)
+    if(inm > 1) jlogger::jlog.warn(logger, "The jacobi method may not convergence as the preconditioner is too far from the real inverse. Norm(I - PA):", inm)
     err <- matrix.norm(a %*% x - b)
     iter <- 1
     while(err > tol)
     {
         if(!is.finite(err))
         {
-            jlog.error(logger, "Error is not finite:", err)
+            jlogger::jlog.error(logger, "Error is not finite:", err)
             stop("non finite error")
         }
         if(iter == iter.max)
         {
-            jlog.error(logger, "Jacobi method did not converge after", iter.max,"iterations, current error:", err, "tolerance:", tol)
+            jlogger::jlog.error(logger, "Jacobi method did not converge after", iter.max,"iterations, current error:", err, "tolerance:", tol)
             stop("maxiter")
         }
         iter <- iter + 1
         x <- p1 %*% (b - r %*% x)
         err <- matrix.norm(a %*% x - b)
-        jlog.debug(logger, "After", iter, "iterations, error is at:", err, "tol:", tol)
+        jlogger::jlog.debug(logger, "After", iter, "iterations, error is at:", err, "tol:", tol)
     }
-    jlog.debug(logger, "Method converged in:", iter, "iterations", err)
+    jlogger::jlog.debug(logger, "Method converged in:", iter, "iterations", err)
     x
 }
-                       
-######## Function used by both ALS and Jalgos filter moved here
 
-#Function to compute the matrix that will transform M(i, j, k, l) into M(i, l, k, j)
-#This is commonly known as the commutation matrix
-JF.PE4 <- function(n,
-                   p = n,
-                   half.vec = FALSE)
-{
-    if(n == 1) return(Diagonal(p))
-    if(p == 1) return(Diagonal(n))
-    findex <- mat.index
-    if(half.vec) findex <- index.sym
-    J <- rep(1:p, n)
-    L <- rep(1:n, each = p)
-    if(half.vec)
-    {
-        F <- J <= L
-        J <- J[F]
-        L <- L[F]
-    }
-    I1 <- findex(J, L, p)
-    I2 <- findex(L, J, n)
-    #Need to add a switch here in case I1 or I2 exceeds 2^32-1
-    sparseMatrix(I1, I2, x = 1)
-}
-
+#' Moments of a multidimensional normal variable
+#'
+#' @param S Covariance matrix
+#' @param half.vec Should the result concern only the free parameters of the distribution.
+#' @param logger JLogger used to log messages
+#' @details This function computes the 4th order moment of a multidimensional normal distribution of covariance matrix S. \cr
+#' Let X be the random variable. This function computes the matrix E(tcrossprod(X %x% X))
+#' @export
 JF.S1 <- function(S,
                   half.vec = TRUE,
                   ...,
-                  logger = JLoggerFactory("jalgos filter"))
+                  logger = jlogger::JLoggerFactory("jalgos filter"))
 {
-    jlog.debug(logger, "Computing S1 for a matrix of dimension:", nrow(S))
+    jlogger::jlog.debug(logger, "Computing S1 for a matrix of dimension:", nrow(S))
     n <- nrow(S)
     I <- Diagonal(n ^ 2)
     P <- JF.PE4(n)
@@ -1230,7 +715,7 @@ half.kronecker <- function(M)
     nm <- nrow(M)
     DM <- mat.to.data.table(M)
     DM <- DM[i <= j, list(I = index.sym(i, j, nm), x = x)]
-    DR <- data.table(i = 1:nm)
+    DR <- data.table::data.table(i = 1:nm)
     DR <- DR[, list(k = (i:nm)), by = i]
     DR[, I := index.sym(i, k, nm)]
     DC <- DR[, list(j = i, l = k, J = index.sym(i, k, nm))]
@@ -1254,21 +739,30 @@ half.kronecker <- function(M)
     
 }
 
-#Total volatility contained in a covariance matrix
+#' Total volatility
+#'
+#' Total volatility contained in a covariance matrix. It's simply its trace
+#' @export
 total.vol <- function(S)
 {
     sum(diag(S))
 }
 
 ########
-
+#' Non zero indices
+#' Gets non zero indices
+#' @export
 non.zero.indices <- function(M)
 {
-    DT <- as.data.table(which(M != 0, arr.ind = TRUE))
+    DT <- data.table::as.data.table(which(M != 0, arr.ind = TRUE))
     setnames(DT, c("i", "j"))
     DT
 }
 
+#' Identity
+#'
+#' Checks whether a matrix is identical to the identity matrix
+#' @export
 is.identity <- function(M)
 {
     nrow(M) == ncol(M) && nnzero(M) == nrow(M) && all(diag(M) == 1)
@@ -1276,6 +770,13 @@ is.identity <- function(M)
 
 ########
 
+#' Generalized Inverse
+#'
+#' Computes the generalized solution to a linear system for rectangular matrices.
+#' @param a Matrix
+#' @param b Right hand side of the equation a.x = b
+#' @param fsolve The function to use to solve the generalized linear system
+#' @export
 gen.inverse <- function(a,
                         b,
                         fsolve = solve)
@@ -1297,215 +798,35 @@ mat.exp <- function(M,
 }
 
 #' Matrix exponent
+#'
+#' Computes the exponentiation of a matrix: M %^% 4 = M %*% M %*% M%*% M %*%
 #' @export
 setGeneric("%^%", mat.exp)
 
-## Very sparse big matrix exhibit a weird behaviour when multiplied. STMatrix (for "Stay triplet") class is here to fix that
-## Only way to handle huge matrix with dimensions exceeding integer limit
-
-
-STMatrix <- setClass("STMatrix",
-                     slots = c(data = "data.table",
-                               dims = "index",
-                               dmnames = "list"))
-
-STM.mult <- function(x, y)
-{
-    Dx <- mat.to.data.table(x)
-    Dy <- mat.to.data.table(y)
-    setnames(Dx, "j", "k")
-    setnames(Dy, "i", "k")
-    D <- merge(Dx, Dy, by = "k")
-    ## Tries to return a triplet if D is small STMatrix otherwise
-    dms <- c(nrow(x), ncol(y))
-    dmns <- list(rownames(x), rownames(y))
-    if(all(dms <= .Machine$integer.max))
-        dsparseMatrix(D[, list(i, j, x = x.x * x.y)],
-                      giveCsparse = FALSE,
-                      dims = dms,
-                      dimnames = dmns) ## Too restricting to return a STMatrix
-    else
-        STMatrix(DM = D[, list(x = x.x * x.y), by = list(i, j)],
-                 dims = dms,
-                 dmnames = dmns)
-}
-
-
-    
-STMatrix <- function(M,
-                     DM = mat.to.data.table(M),
-                     dims,
-                     dmnames)
-{
-    if(!missing(M) && is(M, "STMatrix")) return(M)
-    
-    if(missing(dims) && missing(M)) dims <- DM[, c(max(i), max(j))]
-    else if(missing(dims)) dims <- dim(M)
-    
-    if(missing(dmnames) && missing(M)) dmnames <- list(NULL, NULL)
-    else if(missing(dmnames)) dmnames <- dimnames(M)
-    
-    if(is.null(dmnames)) dmnames <- list(NULL, NULL)
-    new("STMatrix",
-        data = DM,
-        dims = dims,
-        dmnames = dmnames)
-}
-
-STM.as.Matrix <- function(M)
-{
-    dsparseMatrix(M@data[, list(i, j, x)],
-                  giveCsparse = FALSE,
-                  dims = M@dims,
-                  dimnames = M@dmnames)
-}
-
-STM.show <- function(object)
-{
-    if(all(object@dims <= .Machine$integer.max))        
-        show(as.Matrix(object))
-    else
-        callNextMethod(object)
-}
-
-STM.t <- function(x)
-{
-    STMatrix(DM = x@data[i = j, j = i, x = x],
-             dims = rev(x@dims),
-             dmnames = rev(x@dmnames))
-}
-
-#' @export
-setMethod("%*%", c("STMatrix", "genMatrix"), STM.mult)
-
-#' @export
-setMethod("%*%", c("genMatrix", "STMatrix"), STM.mult)
-
-#' @export
-setMethod("show", "STMatrix", STM.show)
-
-#' @export
-setMethod("t", "STMatrix", STM.t)
-
-#' Converting to Matrix
-#' @export
-setGeneric("as.Matrix", function(M) standardGeneric("as.Matrix"))
-
-#' @rdname as.Matrix
-#' @export
-setMethod("as.Matrix", "STMatrix", STM.as.Matrix)
-
-#' @export
-setMethod("show", "STMatrix", STM.show)
-
-#' @export
-setMethod("dim", "STMatrix", function(x) x@dims)
-
-#' @export
-setMethod("[", c("STMatrix", "missing", "missing", "missing"), function(x) as.Matrix(x))
-
-#' @export
-setMethod("[", c("STMatrix", "index", "missing", "ANY"), function(x, i, j, drop = FALSE) x[][i, , drop = drop])
-
-#' @export
-setMethod("[", c("STMatrix", "missing", "index", "ANY"), function(x, i, j, drop = FALSE) x[][, j, drop = drop])
-
-#' @export
-setMethod("[", c("STMatrix", "index", "index", "ANY"), function(x, i, j, drop = FALSE) x[][i, j, drop = drop])
-
-#' @export
-setMethod("*", c("STMatrix", "ANY"), function(e1, e2) e1[] * e2)
-
-#' @export
-setMethod("*", c("ANY", "STMatrix"), function(e1, e2) e1 * e2[])
-
-#' @export
-setMethod("/", c("STMatrix", "ANY"), function(e1, e2) e1[] / e2)
-
-#' @export
-setMethod("+", c("STMatrix", "ANY"), function(e1, e2) e1[] + e2)
-
-#' @export
-setMethod("+", c("ANY", "STMatrix"), function(e1, e2) e1 + e2[])
-
-#' @export
-setMethod("-", c("STMatrix", "missing"), function(e1, e2) - e1[])
-
-#' @export
-setMethod("-", c("STMatrix", "ANY"), function(e1, e2) e1[] - e2)
-
-#' @export
-setMethod("-", c("ANY", "STMatrix"), function(e1, e2) e1 - e2[])
-
-#' @export
-setMethod("%*%", c("STMatrix", "ANY"), function(x, y) x[] %*% y)
-
-#' @export
-setMethod("%*%", c("ANY", "STMatrix"), function(x, y) x %*% y[])
-
-#' @export
-setMethod("kronecker", c(X = "STMatrix", Y = "ANY"), function(X, Y) X[] %x% Y)
-
-#' @export
-setMethod("kronecker", c(X = "ANY", Y = "STMatrix"), function(X, Y) X %x% Y[])
-
-#' @export
-setMethod("vech", c(M = "STMatrix"), function(M) vech(M[]))
-
-#' @export
-setMethod("vec", c(M = "STMatrix"), function(M, ...) vec(M[], ...))
-
-#' @export
-setMethod("col.bind", c(M1 = "STMatrix", M2 = "ANY"), function(M1, M2) col.bind(M1[], M2))
-
-#' @export
-setMethod("col.bind", c(M1 = "ANY", M2 = "STMatrix"), function(M1, M2) col.bind(M1, M2[]))
-
-#' @export
-setMethod("row.bind", c(M1 = "STMatrix", M2 = "ANY"), function(M1, M2) row.bind(M1[], M2))
-
-#' @export
-setMethod("row.bind", c(M1 = "ANY", M2 = "STMatrix"), function(M1, M2) row.bind(M1, M2[]))
-
-#' @export
-setMethod("t", c(x = "STMatrix"), function(x) t(x[]))
-
-#' @export
-setMethod("is.na", c(x = "STMatrix"), function(x) is.na(x[]))
-
-#' @export
-setMethod("non.finite.elements", c(x = "STMatrix"), function(x) non.finite.elements(x[]))
-
-#' Total volatility of a matrix
-#' @export
-setGeneric("total.vol", total.vol)
-
-#' @rdname total.vol
-#' @export
-setMethod("total.vol", c(S = "STMatrix"), function(S) sum(diag(S[])))
-
-#' @export
-setMethod("diag", c(x = "STMatrix", nrow = "ANY", ncol = "ANY"), function(x) diag(x[]))
-
-#' @rdname mat.to.data.table
-#' @export 
-setMethod("mat.to.data.table", "STMatrix", function(M) copy(M@data))
-
-#' @rdname matrix.norm
-#' @export
-setMethod("norm", c("STMatrix", "ANY"), function(x, type, ...) norm(x[], type, ...))
-
-
 ## New version of data.table messes up with sparseMatrices
 
+#' Building Matrices
+#'
+#' Builds a sparseMatrix from a data.table containing a triplet representation of a matrix. The function will only use the i, j, x columns
+#' @param D triplet representation, needs to have i, j, x columns
+#' @param ... Parameters to be forwarded to sparseMatrix
+#' @return a Matrix of class Matrix
+#' @export
 dsparseMatrix <- function(D,
                           ...)
 {
-    sparseMatrix(i = D[, i], j = D[, j], x = D[, x], ...)
+    Matrix::sparseMatrix(i = D[, i], j = D[, j], x = D[, x], ...)
 }
 
 ## Rotation matrix 2d
+#' @name rotation
+#' @title Rotation
+#' @param theta angle of the rotation
+NULL
 
+#' @describeIn rotation Computes a two dimensional rotation matrix
+#' @return A 2 x 2 matrix that when multiplied to a vector produce the rotated vector
+#' @export
 rotation.matrix <- function(theta)
 {
     M <- matrix(0, 2, 2)
@@ -1516,6 +837,8 @@ rotation.matrix <- function(theta)
     M
 }
 
+#' @describeIn rotation Rotates a two dimensional vector of the specified angle
+#' @export
 rotate.vector <- function(X,
                           theta)
 {

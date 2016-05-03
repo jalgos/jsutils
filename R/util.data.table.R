@@ -216,6 +216,7 @@ NULL
 
 #' @describeIn build.expr Builds the expression that is the application of a function to some parameters
 #' @examples fun.expr("atan2", c(x = 3, y = 4))
+#' @export
 fun.expr <- function(funstring, args, ...)
 {
     nms <- names(args)
@@ -229,11 +230,30 @@ fun.expr <- function(funstring, args, ...)
 #' @param var new variable names to be assigned. character vector
 #' @param exprst string for computing the new columns
 #' @examples assign.expr(c("a", "b"), "list(x + y, cos(z))")
+#' @export
 assign.expr <- function(var, exprst)
 {
     var <- paste0("'", var, "'")
     var <- fun.expr("c", var)
     paste(var, exprst, sep = ":=")
+}
+
+#' @describeIn build.expr Builds the expression of a list. To be put in j in "[.data.table"
+#' @examples make.list.expression(c(a = "sin(x)", b = "x + y", c = "u + 4"))
+#' @param exprvec named vector of character expresions.
+#' @param parse Should the result be parsed into an object of type 'expression'
+#' @param expr.names Names of the variables
+#' @export
+make.list.expression <- function(exprvec,
+                                 parse = TRUE,                                 
+                                 expr.names = names(exprvec))
+{
+    if(!length(expr.names)) expr.names <- paste("V", 1:length(exprvec), sep="")
+    varnames <- paste(paste("`", nme, sep=""), "`", sep="")
+    exprs <- paste(varnames, exprvec, sep="=")
+    exprs <- paste0(paste0("list(", paste(exprs, collapse = ",")), ")")
+    if(!parse) return (exprs)
+    return(parse(text = exprs))
 }
 
 #' @title Filtering non-finite values
@@ -284,4 +304,200 @@ change.double.cols <- function(TAB,
     nm1 <- gsub(termination2, ter1, nm)
     nm2 <- gsub(termination2, ter2, nm)
     data.table::setnames(TAB, c(nmw, nm), c(nm1, nm2))
+}
+
+type.funs <- list(numeric = numeric,
+                  integer = integer,
+                  character = character,
+                  logical = logical,
+                  factor = make.empty.factors,
+                  IDate = function(N) data.table::as.IDate(rep(NA, N)))
+
+#' Building a data.table
+#' 
+#' Creates empty columns of a given type
+#' @param type string that defines the type
+#' @param N length of the column
+#' @export
+empty.column <- function(type, N)
+{
+    ft <- type.funs[[type]]
+    ft(N)
+}
+
+load.data.table <- function(io, io.header, col.types, ...)
+{
+    H <- scan(io.header, what = "character", sep = ",")
+    ctypes  <- unlist(col.types[H])
+    as.data.table(read.table(io, colClasses = ctypes, ...))
+}
+
+#' Evaluating valid subsets
+#'
+#' Evaluate several filters related to a 'data.table'
+#' @param Tab a data.table
+#' @param Filts list of expressions or logical vectors.
+#' @export
+evalLand <- function(Tab, Filts)
+{
+    RF <- TRUE
+    if(class(Filts) == "logical") return(Filts)
+    
+    if(class(Filts) == "expression")
+    {
+        for(F in Filts) RF  <- RF & Tab[, eval(F)]
+        RF[!is.finite(RF)] <- FALSE
+        return(RF)
+    }
+    for(i in 1:length(Filts)) RF <- RF & Tab[, eval(Filts[[i]])]
+    RF[!is.finite(RF)] <- FALSE
+    RF
+}
+
+#' Centering columns
+#'
+#' Recenters a set of columns
+#' @export
+recenter <- function(T, name.cols, fun = mean, ...)
+{
+    for(name.col in name.cols)
+    {
+        setnames(T, name.col, "x..c")
+        T[, x..c := x..c - fun(x..c, ...)]
+        setnames(T, "x..c", name.col)
+    }
+}
+
+#' Adding ranking columns
+#'
+#' Adds a rank column for the column specified
+#' @param T a data.table
+#' @param name.cols the columns to be ranked
+#' @param prefix the prefix that will be appended to the ranking columns
+#' @param pct Should the ranking be expressed in percentage
+#' @param by A grouping to do the ranking in
+#' @export
+add.rank.column <- function(T, name.cols, prefix = "rnk", pct = FALSE, by = NULL)
+{
+    for(name.col in name.cols)
+    {
+        N <- dim(T)[1]
+        ex.str <- "%rncol := rank(-%col)"
+        if(pct) ex.str <- paste0(ex.str, "/N")
+        ex.str <- gsub("%col", name.col, ex.str)
+        ex.str <- gsub("%rncol", paste(prefix, name.col, sep="."), ex.str)
+        T[, eval(parse(text = ex.str)), by = by]
+    }
+    T
+}
+
+#' Flipping a data.table
+#'
+#' Transposes a data.table so the columns become the rows and vice versa
+#' @param DT a data.table
+#' @param by Columns to be ommited
+#' @export
+flip <- function(DT, by)
+{
+    #nicely prints low dimension data tables
+    if(missing(by)) return(cbind(data.table(col = names(DT)), t(as.matrix(DT))))
+    keys <- as.character(DT[[by]])
+    DT <- DT[, setdiff(names(DT), by), with = FALSE]
+    FD <- as.data.table(t(as.matrix(DT)))
+    setnames(FD, keys)
+    return(cbind(data.table(col = names(DT)), FD))
+}
+
+#' @name dt.grep
+#' @title Merging using grep
+#' @description These are tools to merge data.tables using grep instead of an exact match
+#' @param D A data.table
+#' @param D1 A data.table
+#' @param D2 A data.table
+#' @param keys Keys to exactly match on
+#' @param vals Values to match. A list with one entry per column
+#' @param akeys Approximate keys. List of columns to match on.
+#' @param fgrep Grep function to use
+#' @param keep.match.col Should the columns used to match be included in the result
+NULL
+
+#' @describeIn dt.grep Returns a subset of D which matches vals for the columns akeys
+#' @export
+dtgrep <- function(D, vals, akeys, fgrep = grep, keep.match.col = FALSE, ...)
+{
+    if(is.character(fgrep)) fgrep <- getFunction(fgrep)
+    if(length(akeys) == 0) return(D)
+    
+    if(!keep.match.col) rcols <- setdiff(names(DT), akeys)
+    
+    if(dim(D)[1] > 0) F <- D[, over(mapply(fgrep, vals, .SD, MoreArgs = list(...), SIMPLIFY = FALSE), intersect), .SDcols = akeys]
+    else F <- integer(0)
+    
+    if(sum(F) > 0) MD <- copy(D[F, .SD, .SDcols = rcols])
+    else MD <- copy(D[0, .SD, .SDcols = rcols][1])
+    
+    if(keep.match.col) setnames(MD, akeys, paste(akeys, "match", sep = "."))
+    return(MD)
+}
+
+
+#' @describeIn dt.grep Merges with grep
+#' @export
+grep.merge <- function(D1, D2, keys = character(0), akeys = character(0), fgrep = grep, ...)
+{
+    ## performs a merge using an approximative grep
+    ## D = merge(D1,D2,keys = keys)
+    if(nrow(D1) == 0)
+    {
+        R <- merge(D1, D2, by = c(keys, akeys))
+        R[,eval(paste(akeys, "match", sep=".")) := R[, akeys, with = FALSE]]
+        return(R)
+    }
+    nk <- length(keys)
+    if(nk > 0) FK <- 1:nk
+    else FK <- integer(0)
+    nak <- length(akeys)
+    FAK <- setdiff(1:(nk + nak), FK)
+    
+    R <- D1[, dtgrep(dtgrep(D2, .BY[FK], keys, which.equals), .BY[FAK], akeys, fgrep, keep.match.col = TRUE, ...), by = c(keys, akeys)]
+    return(R)
+}
+
+#' @describeIn dt.grep Approximate merge
+#' @export
+amerge <- function(D1, D2, keys = character(0), akeys = character(0), fgrep = grep, similarity.fun, ...)
+{
+    if(length(keys) == 0) D <- cartesian.data.table(D1, D2)
+    else D <- merge(D1, D2, by = keys, suffixes = c("1", "2"))
+    akeys1 <- paste0(akeys, "1")
+    akeys2 <- paste0(akeys, "2")
+    D[similarity.fun(as.data.frame(D)[akeys1], as.data.frame(D)[akeys2], ...)]   
+}
+
+#' Random data set
+#'
+#' Generate a random data sets using random.cat.var
+#' @seealso random.cat.var
+#' @param set.size Size of the data set
+#' @param varsdescription A list of categorical variable description to be forwarded to random.cat.var
+#' @export
+random.data.set <- function(set.size, varsdescription)
+{
+    D <- NULL
+    as.data.table(lapply(varsdescription, random.cat.var, set.size))
+}
+
+#' Removing duplicate records
+#'
+#' Returns a data.table where there is only one record by group. By default the first record is chosen
+#' @param D data.table
+#' @param key set of columns that defines a unique record
+#' @seealso data.table::unique
+#' @export
+remove.duplicates.dt <- function(D, key)
+{
+    D[,`.nrecord` := 1:.N, by = c(key)]
+    D <- D[`.nrecord` == 1]
+    D[,`.nrecord`:= NULL]
+    D
 }

@@ -4,11 +4,14 @@
 \alias{assign.expr}
 \alias{build.expr}
 \alias{fun.expr}
+\alias{make.list.expression}
 \title{Building expressions}
 \usage{
 fun.expr(funstring, args, ...)
 
 assign.expr(var, exprst)
+
+make.list.expression(exprvec, parse = TRUE, expr.names = names(exprvec))
 }
 \arguments{
 \item{funstring}{Function to apply to args as a string}
@@ -20,6 +23,12 @@ assign.expr(var, exprst)
 \item{var}{new variable names to be assigned. character vector}
 
 \item{exprst}{string for computing the new columns}
+
+\item{exprvec}{named vector of character expresions.}
+
+\item{parse}{Should the result be parsed into an object of type 'expression'}
+
+\item{expr.names}{Names of the variables}
 }
 \description{
 One way to parameterize complex expression in the 'j' argument of "[" for data.tables is to use expressions.
@@ -32,9 +41,12 @@ One way to parameterize complex expression in the 'j' argument of "[" for data.t
 \item \code{fun.expr}: Builds the expression that is the application of a function to some parameters
 
 \item \code{assign.expr}: Builds an assignation expression (:=)
+
+\item \code{make.list.expression}: Builds the expression of a list. To be put in j in "[.data.table"
 }}
 \examples{
 fun.expr("atan2", c(x = 3, y = 4))
 assign.expr(c("a", "b"), "list(x + y, cos(z))")
+make.list.expression(c(a = "sin(x)", b = "x + y", c = "u + 4"))
 }
 

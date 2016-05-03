@@ -116,3 +116,12 @@ match.grep <- function(L,
     }
     stop("no match found")
 }
+
+#' Alternation regex 
+#'
+#' Builds an alternation regex pattern from a vector of regex patterns. (pat1|pat2|pat3...)
+#' @export
+alternation <- function(v)
+{
+    paste(c("(", paste(v, collapse = "|"), ")"), collapse="")
+}

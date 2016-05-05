@@ -501,3 +501,15 @@ remove.duplicates.dt <- function(D, key)
     D[,`.nrecord`:= NULL]
     D
 }
+
+#' Identify record
+#'
+#' Creates a column that uniquely identifies a set of records
+#' @param cols Column names
+#' @param vals Values
+#' @export
+make.id <- function(cols,
+                    vals)
+{
+    over(mapply(cols, vals, FUN = paste0, SIMPLIFY = FALSE), paste0, "")
+}

@@ -191,10 +191,10 @@ divide.args <- function(args = commandArgs())
 #' @param fn Template filename
 #' @aliases replace.variables
 #' @param subs named list that associates template variable and their values
-#' @examples transform.filenam("$wd/$dperl/my.script.$scnum.pl", c("$wd" = ".", "$dperl" = "perl", "$scnum" = "10"))
+#' @examples transform.filename("$wd/$dperl/my.script.$scnum.pl", c("$wd" = ".", "$dperl" = "perl", "$scnum" = "10"))
 #' @details The names in subs are regex patterns. Any matching regex patterns will be replaced by the value. To avoid replacing parts of words it is advised to start the template variable by a character that is not found in the string to replace. '$%' can be used for example. \cr
 #' replace.variables is an alias.
-#' @export
+#' @export transform.filename
 transform.filename <- function(fn, subs = base.sub.list)
 {
     if(is.null(subs)) return(fn)

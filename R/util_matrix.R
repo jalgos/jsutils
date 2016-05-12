@@ -248,8 +248,9 @@ setGeneric("gsolve", function(a, b, ...) ginv(a) %*% b)
 #' @export
 setMethod("gsolve", c(a = "Matrix", b = "ANY"), function(a, b, eps = sqrt(.Machine$double.eps)) solve(a + eps * Diagonal(n = nrow(a)), b))
 
+#' Partial Inversion Using Singular Values
+#'
 #' Inverts a matrix by truncating the eigen values that contribute to 95% of the whole volatility.
-#' 
 #' @param a Matrix to invert
 #' @param b RHS of the equation a.v = b where v is the unknown
 #' @param var.thresh quantity of volatility to be taken into account for inverstion

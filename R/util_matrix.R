@@ -845,3 +845,53 @@ rotate.vector <- function(X,
     RM <- rotation.matrix(theta)
     RM %*% X
 }
+
+
+#' Testing Matrix Positivity
+#'
+#' Tests whether a matrix is positive and optionally definite.
+#' @param S Symmetric Matrix
+#' @param tol Tolerance to decide whether an eigen value is null. Everything in the range [-tol, tol] is considered to be a null eigen value. Everything in ]-Inf, -tol[ is negative and everything in ]tol, Inf[ is positive.
+#' @param definite Should we check the matrix be definite positive
+#' @export
+is.positive <- function(S,
+                        tol = .Machine$double.eps,
+                        definite = FALSE)
+{
+    E <- eigen(S)
+    if(!definite) all(E$values >= -tol)
+    else all(E@values > tol)
+}
+
+#' Comparing Matrices
+#'
+#' Compares two matrices by computing their norms and computing there scalar products normalized bby M1's norm.
+#' @param M1 A matrix
+#' @param M2 A matrix
+#' @return A list with tree elements:
+#' \itemize{
+#' \item{n1} L2 Norm of M1
+#' \item{n2} L2 Norm of M2
+#' \item{n12} Scalar product of M1 and M2 normalized by M1's norm
+#' }
+#' @export
+compare.matrices <- function(M1, M2)
+{
+    n1 <- matrix.norm(M1)
+    n2 <- matrix.norm(M2)
+    n12 <- matrix.scal(M1, M2) / n1 ^ 2
+    list(n1 = n1, n2 = n2, n12 = n12)
+}
+
+#' Orthonormalizing a Matrix
+#'
+#' Returns the closest orthonormal matrix using the function \code{qr}
+#' @param B base to orthonormalize
+#' @seealso \link{qr}, \link{qr.Q}
+#' @export
+orthonorm <- function(B)
+{
+    QB <- qr.Q(qr(B))
+    D <- Diagonal(x = sign(diag(crossprod(QB, B))))
+    QB %*% D
+}

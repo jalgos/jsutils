@@ -27,6 +27,7 @@ Collate:
     'util_matrix.R'
     'huge_sparse.R'
     'matrix.vectorization.R'
+    'pkgname.R'
     'random.matrices.R'
     'type.conversion.R'
     'util.S4.R'

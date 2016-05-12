@@ -640,11 +640,36 @@ deep.list <- function(L = list(),
 #' Rep for list
 #'
 #' Repeats any object N times into a list
-#' @export
-repeat.list <- function(x,
-                        N)
+#' @usage rep.list(x, N)
+#' @export rep.list
+rep.list <- function(x,
+                     N)
 {
     R <- list()
     R[1:N] <- list(x)
     R
+}
+
+#' Names a list
+#'
+#' @param L Either a list or a vector that will be put in a singleton
+#' @param name Name to be used
+#' @usage put.names(L, name = "x", ...)
+#' @export put.names
+put.names <- function(L,
+                      name = "x",
+                      ...)
+{
+    if(!is.list(L)) L <- list(L)
+    names(L) <- name
+    L
+}
+
+#' Removing Last Element
+#'
+#' Removes the last element of a list or vector
+#' @export
+remove.last <- function(X)
+{
+    X[-length(X)]
 }

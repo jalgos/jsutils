@@ -185,6 +185,23 @@ setGeneric("resize", util.resize)
 #' @export
 setGeneric("reserve", util.resize)
 
+#' Inserting Data Into a Buffer
+#'
+#' @param EG The buffer
+#' @param new.data data to be pushed to the buffer. When some columns in new.data are missing in the buffer, they will be added to the new buffer producing warnings.
+#' @param i Row indices into which making the insertion
+#' @param j Column indices into which making the insertion
+#' @export
+setGeneric("insert", function(EG, new.data, i, j, ...) standardGeneric("insert"))
+
+#' Replacing data in the buffer
+#'
+#' Replaces parts or totality of the buffer.
+#' @param EG The buffer
+#' @param new.data Data to use as replacement
+#' @export
+setGeneric("update.buffer", function(EG, new.data, ...) standardGeneric("update.buffer"))
+
 #' Resize, reserve, binds
 #' 
 #' Binds two data structures so that the number of rows of the result is the sum of the number of rows of the two arguments. Columns have to match.

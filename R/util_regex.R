@@ -107,6 +107,7 @@ grep.whole <- function(pattern, ..., grep.fun = grep)
 #' @param L Named list. The names are regexes that attempt to match \code{name}.
 #' @param name string to be matched
 #' @return The first occurence of L for which its name matches the parameter \code{name}
+#'@export
 match.grep <- function(L,
                        name)
 {

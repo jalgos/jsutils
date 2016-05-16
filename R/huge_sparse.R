@@ -8,8 +8,8 @@
 #' @exportClass HugeMatrix
 setClass("HugeMatrix",
          slots = c(data = "data.table",
-                    dims = "index",
-                    dimnames = "list"))
+                   dims = "index",
+                   dimnames = "list"))
 #' HugeMatrix
 #'
 #' @param M Matrix to convert
@@ -29,6 +29,8 @@ HugeMatrix <- function(M,
     
     if(missing(dimnames) && missing(M)) dimnames <- list(NULL, NULL)
     else if(missing(dimnames)) dimnames <- base::dimnames(M)
+    
+    if(is.null(dimnames)) dimnames <- list(NULL, NULL)
     
     new("HugeMatrix",
         data = data.table::as.data.table(DM),
@@ -78,9 +80,9 @@ HM.mat.mult <- function(x,
 {
     Dx <- mat.to.data.table(x)
     Dy <- mat.to.data.table(y)
-    data.table::setnames(Dx, "j", "k")
-    data.table::setnames(Dy, "i", "k")
-    D <- data.table::merge(Dx, Dy, by = "k")
+    setnames(Dx, "j", "k")
+    setnames(Dy, "i", "k")
+    D <- merge(Dx, Dy, by = "k")
     ## Tries to return a triplet if D is small HugeMatrix otherwise
     dms <- c(nrow(x), ncol(y))
     dmns <- list(rownames(x), rownames(y))
@@ -123,9 +125,9 @@ HM.show <- function(object)
 
 HM.t <- function(x)
 {
-    HugeMatrix(DM = x@data[i = j, j = i, x = x],
-             dims = rev(x@dims),
-             dimnames = rev(x@dimnames))
+    HugeMatrix(DM = x@data[, list(i = j, j = i, x = x)],
+               dims = rev(x@dims),
+               dimnames = rev(x@dimnames))
 }
 
 HM.col.bind <- function(M1,
@@ -210,6 +212,9 @@ setMethod("%*%", c("HugeMatrix", "HugeMatrix"), HM.mat.mult)
 
 #' @export
 setMethod("%*%", c("ANY", "HugeMatrix"), HM.mat.mult)
+
+#' @export
+setMethod("%*%", c("HugeMatrix", "ANY"), HM.mat.mult)
 
 #' @export
 setMethod("kronecker", c(X = "HugeMatrix", Y = "ANY"), HM.kronecker)

@@ -1,3 +1,17 @@
+## If t is not a generic a lot of functions fail
+#' @export
+setGeneric("t", t)
+
+## If t is not a generic a lot of functions fail
+#' @export
+setGeneric("tcrossprod", tcrossprod)
+
+#' @export
+setGeneric("solve", solve)
+
+#' @export
+setGeneric("isSymmetric", isSymmetric)
+
 #' @name matrix.norm
 #' @title Norms of a Matrix
 #' @param M a matrix
@@ -49,6 +63,7 @@ matrix.trace <- function(M) sum(diag(M))
 #' @param D eigen values
 #' @param ... Parameters to pass on to func
 NULL
+
 #' @describeIn eigen.func Applies a function to the eigen decomposition of a matrix in this fashion: let M = Pdiag(V)P^-1 then the result is Q = Pdiag(f(V))P^-1 where f is a function that is applied to the vector of eigen values.
 #' @export
 funcM <- function(M,
@@ -481,6 +496,12 @@ partial.kronecker <- function(M1,
 
 ##is.finite fails in case prod(dims) is passed the integer bound
 
+#' Non Finite Coefficients
+#'
+#' Returns the number of non finite entries in a matrix
+#' @param M the matrix
+#' @usage sum.non.finite(M)
+#' @export sum.non.finite
 sum.non.finite <- function(M) nrow(mat.to.data.table(M)[!is.finite(x)])
     
 #### Memory safe kronecker product #######

@@ -65,7 +65,7 @@ cart.apply <- function(L1,
                        unlist = FALSE)
 {
     CAR <- fapply(L1, function(i1, L2, ...) fapply2(L2, function(x, y, funa,...) funa(x, y, ...), i1, ...), L2, funapp, ...)
-    if(unlist) base::unlist(CAR)
+    if(unlist) base::unlist(CAR, recursive = FALSE)
     else CAR
 }
 

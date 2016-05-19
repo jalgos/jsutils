@@ -1,3 +1,17 @@
+## If t is not a generic a lot of functions fail
+#' @export
+setGeneric("t", t)
+
+## If t is not a generic a lot of functions fail
+#' @export
+setGeneric("tcrossprod", tcrossprod)
+
+#' @export
+setGeneric("solve", solve)
+
+#' @export
+setGeneric("isSymmetric", isSymmetric)
+
 #' @name matrix.norm
 #' @title Norms of a Matrix
 #' @param M a matrix
@@ -49,6 +63,7 @@ matrix.trace <- function(M) sum(diag(M))
 #' @param D eigen values
 #' @param ... Parameters to pass on to func
 NULL
+
 #' @describeIn eigen.func Applies a function to the eigen decomposition of a matrix in this fashion: let M = Pdiag(V)P^-1 then the result is Q = Pdiag(f(V))P^-1 where f is a function that is applied to the vector of eigen values.
 #' @export
 funcM <- function(M,
@@ -184,6 +199,23 @@ setGeneric("resize", util.resize)
 #' @template reserve
 #' @export
 setGeneric("reserve", util.resize)
+
+#' Inserting Data Into a Buffer
+#'
+#' @param EG The buffer
+#' @param new.data data to be pushed to the buffer. When some columns in new.data are missing in the buffer, they will be added to the new buffer producing warnings.
+#' @param i Row indices into which making the insertion
+#' @param j Column indices into which making the insertion
+#' @export
+setGeneric("insert", function(EG, new.data, i, j, ...) standardGeneric("insert"))
+
+#' Replacing data in the buffer
+#'
+#' Replaces parts or totality of the buffer.
+#' @param EG The buffer
+#' @param new.data Data to use as replacement
+#' @export
+setGeneric("update.buffer", function(EG, new.data, ...) standardGeneric("update.buffer"))
 
 #' Resize, reserve, binds
 #' 
@@ -477,6 +509,12 @@ partial.kronecker <- function(M1,
 
 ##is.finite fails in case prod(dims) is passed the integer bound
 
+#' Non Finite Coefficients
+#'
+#' Returns the number of non finite entries in a matrix
+#' @param M the matrix
+#' @usage sum.non.finite(M)
+#' @export sum.non.finite
 sum.non.finite <- function(M) nrow(mat.to.data.table(M)[!is.finite(x)])
     
 #### Memory safe kronecker product #######

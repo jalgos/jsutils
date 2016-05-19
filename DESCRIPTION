@@ -7,7 +7,7 @@ Authors@R: c(person("Sébastien", "Lamy de la Chapelle", email = "sebastien@jalg
 Description: A bundle of functions to perform tasks commonly faced in the Jalgos
     projects
 Depends:
-    R (>= 3.2.3)
+    R (>= 3.2.0)
 Imports:
     Matrix,
     data.table,

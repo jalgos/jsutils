@@ -12,10 +12,11 @@
 plus.join <- function(D1,
                       D2,
                       col.plus = setdiff(intersect(names(D1), names(D2)), by),
+                      by,
                       all = TRUE,
                       ...)
 {
-    DM <- data.table::merge(D1, D2, all = all, ...)
+    DM <- merge(D1, D2, all = all, by = by, ...)
     lsa <- sapply(col.plus, function(x) fun.expr("jsutils::safe.sum", c(paste0(x, ".x"), paste0(x, ".y"))))
     ple <- assign.expr(col.plus, fun.expr("list", lsa))    
     DM[, eval(parse(text = ple))]
@@ -28,8 +29,8 @@ plus.join.test <- function()
 {
     dt1 <- data.table(u = sample(letters, 15), x = 1:15, b = rexp(15))
     dt2 <- data.table(u = sample(letters, 15), x = 1:15, b = rexp(15))
-    data.table::setkey(dt1, u)
-    data.table::setkey(dt2, u)
+    setkey(dt1, u)
+    setkey(dt2, u)
     list(dt1 = dt1, dt2 = dt2, res = plus.join(dt1, dt2))
 }
 
@@ -139,8 +140,8 @@ cartesian.data.table <- function(D1,
     add.token.key(D1)
     add.token.key(D2)
     
-    data.table::setkey(D1, key)
-    data.table::setkey(D2, key)
+    setkey(D1, key)
+    setkey(D2, key)
     D <- D1[D2, allow.cartesian = TRUE]
     D[, key := NULL]
     D
@@ -165,7 +166,7 @@ cartesian.list <- function(L, ...)
 #' @export
 create.cartesian.dt <- function(...)
 {
-    data.table::as.data.table(expand.grid(...))
+    as.data.table(expand.grid(...))
 }
 
 #' Cartesian Apply
@@ -176,7 +177,7 @@ create.cartesian.dt <- function(...)
 #' @export
 dt.cart.apply <- function(funapp, Largs, ...)
 {
-    DT <- data.table::as.data.table(expand.grid(Largs))
+    DT <- as.data.table(expand.grid(Largs))
     cc <- col.classes(DT)
     ncvt <- names(DT)[cc == "factor"]
     if(length(ncvt) > 0)
@@ -303,7 +304,7 @@ change.double.cols <- function(TAB,
     nmw <- gsub(termination2, termination1, nm)
     nm1 <- gsub(termination2, ter1, nm)
     nm2 <- gsub(termination2, ter2, nm)
-    data.table::setnames(TAB, c(nmw, nm), c(nm1, nm2))
+    setnames(TAB, c(nmw, nm), c(nm1, nm2))
 }
 
 type.funs <- list(numeric = numeric,
@@ -311,7 +312,7 @@ type.funs <- list(numeric = numeric,
                   character = character,
                   logical = logical,
                   factor = make.empty.factors,
-                  IDate = function(N) data.table::as.IDate(rep(NA, N)))
+                  IDate = function(N) as.IDate(rep(NA, N)))
 
 #' Building a data.table
 #' 

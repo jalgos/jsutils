@@ -279,7 +279,7 @@ vech.reverse <- function(V,
     if(is.vector(V)) V <- Matrix(V)
     DV <- mat.to.data.table(V)
     nd <- findN(nrow(V)) + !keep.diag
-    DV[, c("i", "j") := rev.index.sym(i, nd, keep.diag = keep.diag)]
+    DV[, c("i", "j") := reverse.index.sym(i, nd, keep.diag = keep.diag)]
     if(symmetric) return(drop0(dsparseMatrix(DV[, list(i = i, j = j, x =  x)], symmetric = TRUE, dims = c(nd, nd))))
     M <- drop0(dsparseMatrix(DV[, list(i = i, j = j, x = x)], dims = c(nd, nd)))
     M - t(M)

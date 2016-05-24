@@ -417,6 +417,30 @@ array.to.data.table <- function(A,
 #' Transforms an array into a set of index / value tuples
 setGeneric("array.to.data.table", array.to.data.table)
 
+#' Array Index
+#'
+#' Computes the index in the vectorization of a multidimensional array corresponding to the individual coordinates
+#' @param ... integer vectors describing the coordinates
+#' @param LI a list of the individual coordinates
+#' @param dim Dimension of the array
+#' @export
+array.index <- function(...,
+                        LI = list(...),
+                        dim)
+{    
+    nd <- length(dim)
+    inds <- rep(0L, length(x))
+    for(i in 1:nd)
+    {
+        di <- dim[i]
+        do <- dim[-(i:nd)]
+        ndo <- prod(do)
+        cind <- LI[[i]]
+        inds <- inds + (cind - one.based) * ndo 
+    }
+    inds + 1L
+}
+
 ## give the indexes in the order first
 #' Array building
 #'
@@ -428,19 +452,8 @@ make.array <- function(...,
                        one.based = TRUE)
 {
     A <- array(0, dim = dim)
-    nd <- length(dim)
-    LI <- list(...)
-    inds <- rep(0L, length(x))
-    for(i in 1:nd)
-    {
-        di <- dim(A)[i]
-        do <- dim(A)[-(i:nd)]
-        ndo <- prod(do)
-        cind <- LI[[i]]
-        inds <- inds + (cind - one.based) * ndo 
-    }
-    inds <- inds + 1L
-    A[inds] <- x
+    inds <- array.index(..., dim = dim)
+    A[inds] <- xs
     A
 }
 

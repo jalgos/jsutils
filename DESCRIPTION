@@ -32,6 +32,7 @@ Collate:
     'type.conversion.R'
     'util.S4.R'
     'util.data.table.R'
+    'util.packages.R'
     'util.sendmail.R'
     'util_geocoding.R'
     'util_markdown.R'

@@ -930,7 +930,8 @@ is.positive <- function(S,
 #' \item{n2} L2 Norm of M2
 #' \item{n12} Scalar product of M1 and M2 normalized by M1's norm
 #' }
-#' @export
+#' @usage compare.matrices(M1, M2)
+#' @export compare.matrices
 compare.matrices <- function(M1, M2)
 {
     n1 <- matrix.norm(M1)

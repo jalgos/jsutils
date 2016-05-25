@@ -56,32 +56,48 @@ cols.from.var <- function(DT,
     over(L, cbind)
 }
 
-#' Converting column types
-#'
-#' Converts a set of columns.
+#' @title Converting column types
+#' @name convert.columns
+NULL
+
+#' @describeIn convert.columns Converts a set of columns.
 #' @param D Table to convert
 #' @param lconv Mapping between column names and new types
 #' @export
-convert.columns <- function(D, lconv)
+convert.columns <- function(D, lconv, ...)
 {
+    old.class <- class(D)
+    as.data.table(D)
     N <- length(lconv)
     nmconv <- intersect(names(lconv), names(D))
     if(N < 1) return(D)
     for(nm in nmconv)
     {
         t <- lconv[[nm]]
-        convert.cols(D, nm, t)
+        convert.cols(D, nm, t, ...)
     }
+    setattr(D, "class", old.class)
     D
 }
 
-convert.cols <- function(D, col, type___)
+#' @describeIn convert.columns Converts one column to desired type. Using convert.columns is prefered that directly using this function
+#' @param col Column to convert
+#' @param type___ Type to convert to
+#' @param conv.map Map that gives the converting function for each type
+#' @export
+convert.cols <- function(D,
+                         col,
+                         type___,
+                         conv.map = util.type.conv.map,
+                         ...)
 {
     cl <- class(D[[col]])
     if(type___ %in% cl) return()
-    FUN <- util.type.conv.map[[type___]]
-    if(!is.null(FUN)) suppressWarnings(D[, eval(col) := FUN(D[[col]])])
-    else D[, eval(col) := suppressWarnings(as(D[[col]], type___))]
+    FUN <- conv.map[[type___]]
+    if(is.null(FUN))
+        FUN <- function(x) as(x, type___)
+    jconv <- parse(text = sprintf("%s := FUN(%s)", col, col))
+    suppressWarnings(D[, eval(jconv)])  
 }
 
 #' Column classes

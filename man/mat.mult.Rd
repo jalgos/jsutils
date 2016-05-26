@@ -7,9 +7,9 @@
 mat.mult(x, y, ...)
 }
 \arguments{
-\item{x}{RHS Matrix}
+\item{x}{LHS Matrix}
 
-\item{y}{LHS Matrix}
+\item{y}{RHS Matrix}
 
 \item{...}{Additional settings}
 }

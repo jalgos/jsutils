@@ -76,32 +76,36 @@ HM.mat.sum <- function(e1,
 }
 
 HM.mat.mult <- function(x,
-                        y)
+                        y,
+                        nmx = c(j = "k"),
+                        nmy = c(i = "k"))
 {
-    Dx <- mat.to.data.table(x)
-    Dy <- mat.to.data.table(y)
-    setnames(Dx, "j", "k")
-    setnames(Dy, "i", "k")
-    D <- merge(Dx, Dy, by = "k")
+    Dx <- mat.to.data.table(x, shallow = TRUE)
+    Dy <- mat.to.data.table(y, shallow = TRUE)
+    setnames(Dx, names(nmx), nmx)
+    setnames(Dy, names(nmy), nmy)
+    D <- merge(Dx, Dy, by = "k", allow.cartesian = TRUE, sort = FALSE)[, j = list(x = sum(x.x * x.y)), jreduce = list(x = sum(x)), by = list(i, j)] ## Has to be done this way for now until aggregating by i columns is implemented
     ## Tries to return a triplet if D is small HugeMatrix otherwise
+    setnames(Dx, nmx, names(nmx))
+    setnames(Dy, nmy, names(nmy))
     dms <- c(nrow(x), ncol(y))
     dmns <- list(rownames(x), rownames(y))
     if(all(dms <= .Machine$integer.max))
-        dsparseMatrix(D[, list(i, j, x = x.x * x.y)],
+        dsparseMatrix(D,
                       giveCsparse = FALSE,
                       dims = dms,
                       dimnames = dmns) ## Too restricting to return a HugeMatrix
     else
-        HugeMatrix(DM = D[, list(x = x.x * x.y), by = list(i, j)],
-                 dims = dms,
-                 dimnames = dmns)
+        HugeMatrix(DM = D,
+                   dims = dms,
+                   dimnames = dmns)
 }
 
 HM.kronecker <- function(X,
                          Y)
 {
-    Dx <- mat.to.data.table(x)
-    Dy <- mat.to.data.table(y)
+    Dx <- mat.to.data.table(x, shallow = TRUE)
+    Dy <- mat.to.data.table(y, shallow = TRUE)
     D <- cartesian.data.table(Dx, Dy)
     new("HugeMatrix", data = D[, list(i = (i1 - 1) * nrow(X) + i2, j = (j1 - 1) * ncol(X) + j2, x = x1 * x2)],
         dim = dim(X) * dim(Y), dimnames = list(NULL, NULL))
@@ -128,6 +132,25 @@ HM.t <- function(x)
     HugeMatrix(DM = x@data[, list(i = j, j = i, x = x)],
                dims = rev(x@dims),
                dimnames = rev(x@dimnames))
+}
+
+
+
+HM.autocrossprod <- function(x,
+                             by = "j")
+{
+    if(by == "j") ij <- "i"
+    else ij <- "j"
+    
+    ij <- paste(ij, c("x", "y"), sep = ".")
+    Dx <- mat.to.data.table(x, shallow = TRUE)
+    
+    D <- merge(Dx, Dx, by = by, allow.cartesian = TRUE, sort = FALSE)[, j = list(x = sum(x.x * x.y)), jreduce = list(x = sum(x)), by = c(ij)]
+    
+    
+    HugeMatrix(D,
+               dims = c(nrow(x), nrow(x)),
+               dimnames = c(rownames(x), rownames(x)))
 }
 
 HM.col.bind <- function(M1,
@@ -207,14 +230,38 @@ setMethod("-", c("ANY", "HugeMatrix"), function(e1, e2) e1 - e2[])
 #' @export
 setMethod("-", c("HugeMatrix", "ANY"), function(e1, e2) e1[] - e2)
 
+#' Generic Matrix Multiplication
+#'
+#' Generic function that will implement matrix multiplication as well as \code{crossprod} and and \code{tcrossprod}
+#' @param x RHS Matrix
+#' @param y LHS Matrix
+#' @param ... Additional settings
 #' @export
-setMethod("%*%", c("HugeMatrix", "HugeMatrix"), HM.mat.mult)
+setGeneric("mat.mult", function(x, y, ...) standardGeneric("mat.mult"))
 
 #' @export
-setMethod("%*%", c("ANY", "HugeMatrix"), HM.mat.mult)
+setMethod("mat.mult", c("HugeMatrix", "HugeMatrix"), HM.mat.mult)
+
+
+#' Auto crossprod
+#'
+#' Generic function that will implement \code{crossprod} and \code{tcrossprod} in the case x = y
+#' @param x Matrix
+#' @param ... Additional settings
+#' @export
+setGeneric("autocrossprod", function(x, ...) standardGeneric("autocrossprod"))
 
 #' @export
-setMethod("%*%", c("HugeMatrix", "ANY"), HM.mat.mult)
+setMethod("autocrossprod", c("HugeMatrix"), HM.autocrossprod)
+
+#' @export
+setMethod("%*%", c("HugeMatrix", "HugeMatrix"), function(x, y) mat.mult(x,y))
+
+#' @export
+setMethod("%*%", c("ANY", "HugeMatrix"), function(x, y) mat.mult(x,y))
+
+#' @export
+setMethod("%*%", c("HugeMatrix", "ANY"), function(x, y) mat.mult(x,y))
 
 #' @export
 setMethod("kronecker", c(X = "HugeMatrix", Y = "ANY"), HM.kronecker)
@@ -243,10 +290,16 @@ setMethod("total.vol", c(S = "HugeMatrix"), function(S) sum(diag(S[])))
 setMethod("diag", c(x = "HugeMatrix", nrow = "ANY", ncol = "ANY"), function(x) diag(x[]))
 
 #' @export 
-setMethod("mat.to.data.table", "HugeMatrix", function(M) data.table::copy(M@data))
+setMethod("mat.to.data.table", "HugeMatrix", function(M, shallow = FALSE) if(shallow) M@data else data.table::copy(M@data))
 
 #' @export
 setMethod("norm", c("HugeMatrix", "ANY"), function(x, type, ...) norm(x[], type, ...))
+
+#' @export
+setMethod("tcrossprod", c("HugeMatrix", "HugeMatrix"), function(x, y = NULL) if(is.null(y)) autocrossprod(x, by = "i") else mat.mult(x, y, nmy = c(j = "k", i = "j")))
+
+#' @export
+setMethod("crossprod", c("HugeMatrix", "HugeMatrix"), function(x, y = NULL) if(is.null(y)) autocrossprod(x) else mat.mult(x, y, nmx = c(i = "k", j = "i")))
 
 gen.kronecker <- function(X, Y)
 {

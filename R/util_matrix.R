@@ -799,10 +799,7 @@ half.kronecker <- function(M)
 #'
 #' Total volatility contained in a covariance matrix. It's simply its trace
 #' @export
-total.vol <- function(S)
-{
-    sum(diag(S))
-}
+setGeneric("total.vol", function(S) sum(diag(S)))
 
 ########
 #' Non zero indices

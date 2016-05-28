@@ -1,5 +1,8 @@
 ## Common functions on data.table. Some are actually natively available in the package. We encourage the user to check
 
+#'@importClassesFrom data.table data.table
+NULL
+
 #' Plus Join
 #'
 #' Plus join is a type of join where the columns of the same name are added together. Missing values in one of the two tables are considered to be 0 by default

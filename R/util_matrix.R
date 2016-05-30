@@ -326,7 +326,8 @@ mtdt.add.row.col.names <- function(D,
 
 Matrix.mat.to.data.table <- function(M,
                                      one.based = TRUE,
-                                     with.names = FALSE)
+                                     with.names = FALSE,
+                                     ...)
 {
     TM <- as(M, "TsparseMatrix")
     D <- data.table::data.table(i = TM@i + one.based, j = TM@j + one.based, x = TM@x)
@@ -340,7 +341,8 @@ Matrix.mat.to.data.table <- function(M,
 
 matrix.mat.to.data.table <- function(M,
                                      one.based = TRUE,
-                                     with.names = FALSE)
+                                     with.names = FALSE,
+                                     ...)
 {
     D <- data.table::data.table(i = as.vector(row(M)) - !one.based, j = as.vector(col(M)) - !one.based, x = as.vector(M))
     D <- D[x != 0] ## It should make later computations faster    
@@ -387,7 +389,7 @@ setMethod("mat.to.data.table", "matrix", matrix.mat.to.data.table)
 
 #' @rdname mat.to.data.table
 #' @export
-setMethod("mat.to.data.table", "diagonalMatrix", function(M, one.based = TRUE)  mtdt.add.row.col.names(data.table::data.table(i = 1:nrow(M) - !one.based, j = 1:nrow(M) - !one.based, x = diag(M)), M, one.based))
+setMethod("mat.to.data.table", "diagonalMatrix", function(M, one.based = TRUE, ...)  mtdt.add.row.col.names(data.table::data.table(i = 1:nrow(M) - !one.based, j = 1:nrow(M) - !one.based, x = diag(M)), M, one.based))
 
 #' @rdname mat.to.data.table
 #' @export

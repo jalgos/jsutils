@@ -12,12 +12,12 @@
 mat.to.data.table(M, ...)
 
 \S4method{mat.to.data.table}{Matrix}(M, one.based = TRUE,
-  with.names = FALSE)
+  with.names = FALSE, ...)
 
 \S4method{mat.to.data.table}{matrix}(M, one.based = TRUE,
-  with.names = FALSE)
+  with.names = FALSE, ...)
 
-\S4method{mat.to.data.table}{diagonalMatrix}(M, one.based = TRUE)
+\S4method{mat.to.data.table}{diagonalMatrix}(M, one.based = TRUE, ...)
 
 \S4method{mat.to.data.table}{symmetricMatrix}(M, one.based = TRUE, ...)
 }

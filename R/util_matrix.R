@@ -427,9 +427,10 @@ setGeneric("array.to.data.table", array.to.data.table)
 array.index <- function(...,
                         LI = list(...),
                         dim)
-{    
+{
     nd <- length(dim)
-    inds <- rep(0L, length(x))
+    if(nd == 0) return(integer(0L))
+    inds <- rep(0L, length(LI[[1]]))
     for(i in 1:nd)
     {
         di <- dim[i]

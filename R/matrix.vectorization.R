@@ -103,6 +103,14 @@ diag.to.vech <- function(n,
 #' @export
 setGeneric("vech", function(M, ...) standardGeneric("vech"))
 
+#' @title Abstract Matrix
+#' @description A generic class for matrices. Useful to create object that have slots that are matrices
+#' @name genMatrix
+#' @import Matrix
+#' @importClassesFrom Matrix Matrix
+#' @exportClass genMatrix
+setClassUnion("genMatrix", c("matrix", "Matrix"))
+
 #' @rdname vech
 #' @export
 setMethod("vech", "genMatrix", gen.vech)

@@ -44,7 +44,8 @@ setClassJ <- function(class,
 #' The solution is to give the class of the object to be updated as a parameter of new. To be DRY we provide this function.
 #' @param obj Object to update
 #' @param ... new fields of the object. Named arguments update slots and unnamed arguments update parent object.
-#' @export
+#' @usage update.obj(obj, ...)
+#' @export update.obj
 update.obj <- function(obj,
                        ...)
 {

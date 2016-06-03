@@ -1,9 +1,7 @@
 Package: jsutils
 Title: Jalgos util functions
 Version: 0.0.0.9000
-Authors@R: c(person("Sébastien", "Lamy de la Chapelle", email = "sebastien@jalgos.com", role = c("aut", "cre")),
-	   person("Julien", "Murésianu", email = "julien@jalgos.com", role = c("aut")),
-	   person("Michael", "Pursey", email = "michael@jalgos.com", role = c("ctb")))
+Authors@R: c(person("Sébastien", "Lamy de la Chapelle", email = "sebastien@jalgos.com", role = c("aut", "cre")), person("Julien", "Murésianu", email = "julien@jalgos.com", role = c("aut")), person("Michael", "Pursey", email = "michael@jalgos.com", role = c("ctb")))
 Description: A bundle of functions to perform tasks commonly faced in the Jalgos
     projects
 Depends:

@@ -222,14 +222,20 @@ setGeneric("update.buffer", function(EG, new.data, ...) standardGeneric("update.
 #' Binds two data structures so that the number of rows of the result is the sum of the number of rows of the two arguments. Columns have to match.
 #' @template reserve
 #' @export
-setGeneric("row.bind", function(M1, M2) rBind(M1, M2))
+setGeneric("row.bind", function(M1, M2) standardGeneric("row.bind"))
+
+#' @export
+setMethod("row.bind", c("ANY", "ANY"), function(M1, M2) rBind(M1, M2))
 
 #' Resize, reserve, binds
 #' 
 #' Binds two data structures so that the number of columns of the result is the sum of the number of columns of the two arguments. Number of rows has to be te same
 #' @template reserve
 #' @export
-setGeneric("col.bind", function(M1, M2) cBind(M1, M2))
+setGeneric("col.bind", function(M1, M2) standardGeneric("col.bind"))
+
+#' @export
+setMethod("col.bind", c("ANY", "ANY"), function(M1, M2) cBind(M1, M2))
 
 #' @name rows.cols
 #' @title Row numbers and column numbers

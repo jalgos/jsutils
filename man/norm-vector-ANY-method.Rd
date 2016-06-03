@@ -5,7 +5,7 @@
 \alias{norm,vector,ANY-method}
 \title{Norm}
 \usage{
-\S4method{norm}{vector,ANY}(x, type)
+\S4method{norm}{vector,ANY}(x, type, ...)
 }
 \description{
 Generic for vectors

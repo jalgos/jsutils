@@ -673,3 +673,21 @@ remove.last <- function(X)
 {
     X[-length(X)]
 }
+
+#' Try Catch With Switch To Enable / Disable
+#'
+#' One may want to disable Try / Catch to see what causes an error. This function is a simple wrapper around \code{tryCatch} to do so.
+#' @param expr Expression to execute
+#' @param ... Arguments to be forwarded to tryCatch
+#' @param dev.mode If set to true won't try to catch any error
+#' @export
+try.catch <- function(expr,
+                      ...,
+                      dev.mode = FALSE)
+{
+    if(dev.mode)
+        expr
+    else
+        tryCatch(expr,
+                 ...)
+}

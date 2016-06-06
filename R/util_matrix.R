@@ -966,7 +966,7 @@ orthonorm <- function(B)
 setGeneric("trim.cov.matrix", function(S, ...) standardGeneric("trim.cov.matrix"))
 
 gen.trim.cov.matrix <- function(S,
-                                sqDl = sqrt(posD(diag(M))),
+                                sqDl = sqrt(posD(diag(S))),
                                 sqDr = sqDl,
                                 ...,
                                 mtype = "",                               
@@ -981,7 +981,7 @@ gen.trim.cov.matrix <- function(S,
     D1l <- Matrix::Diagonal(x = ifelse(abs(sqDl) > tol.inv, 1 / sqDl, 0))
     C <- D1l %*% S %*% D1r
     jlog.debug(logger, "Current mb size:", format(object.size(S), "Mb"), "for", mtype)
-    S <- Dl %*% drop0(S, tol) %*% Dr ## Reusing M saves memory for huge matrices
+    S <- Dl %*% drop0(S, tol) %*% Dr ## Reusing S saves memory for huge matrices
     jlog.debug(logger, "After trimming mb size:", format(object.size(S), "Mb"), "for", mtype)
     S
 }

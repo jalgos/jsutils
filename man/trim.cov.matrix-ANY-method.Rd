@@ -5,7 +5,7 @@
 \alias{trim.cov.matrix,ANY-method}
 \title{Removing Least Significant Covariance Coefficients}
 \usage{
-\S4method{trim.cov.matrix}{ANY}(S, sqDl = sqrt(posD(diag(M))), sqDr = sqDl,
+\S4method{trim.cov.matrix}{ANY}(S, sqDl = sqrt(posD(diag(S))), sqDr = sqDl,
   ..., mtype = "", tol = 0, tol.inv = 10 * .Machine$double.eps,
   logger = NULL)
 }

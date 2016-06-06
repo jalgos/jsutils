@@ -959,3 +959,34 @@ orthonorm <- function(B)
     D <- Diagonal(x = sign(diag(crossprod(QB, B))))
     QB %*% D
 }
+
+
+#' @template trim.matrix.gen
+#' @export
+setGeneric("trim.cov.matrix", function(S, ...) standardGeneric("trim.cov.matrix"))
+
+trim.cov.matrix <- function(S,
+                            sqDl = sqrt(posD(diag(M))),
+                            sqDr = sqDl,
+                            ...,
+                            mtype = "",                               
+                            tol = 0,
+                            tol.inv = 10 * .Machine$double.eps,
+                            logger = NULL)
+{
+    jlog.debug(logger, "Dropping near 0 correlations from matrix:", mtype, "tolerance equals:", tol)
+    Dr <- Matrix::Diagonal(x = sqDr)
+    D1r <- Matrix::Diagonal(x = ifelse(abs(sqDr) > tol.inv, 1 / sqDr, 0))
+    Dl <- Matrix::Diagonal(x = sqDl)
+    D1l <- Matrix::Diagonal(x = ifelse(abs(sqDl) > tol.inv, 1 / sqDl, 0))
+    C <- D1l %*% S %*% D1r
+    jlog.debug(logger, "Current mb size:", format(object.size(S), "Mb"), "for", mtype)
+    S <- Dl %*% drop0(S, tol) %*% Dr ## Reusing M saves memory for huge matrices
+    jlog.debug(logger, "After trimming mb size:", format(object.size(S), "Mb"), "for", mtype)
+    S
+}
+
+#' @template trim.matrix.gen
+#' @template trim.matrix
+#' @export
+setMethod("trim.cov.matrix", "ANY", trim.cov.matrix)

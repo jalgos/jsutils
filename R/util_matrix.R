@@ -965,6 +965,11 @@ orthonorm <- function(B)
 #' @export
 setGeneric("trim.cov.matrix", function(S, ...) standardGeneric("trim.cov.matrix"))
 
+## drop0 Needs to be defined as a generic in here for trim.cov.matrix to work
+#' @export
+setGeneric("drop0", Matrix::drop0)
+
+
 gen.trim.cov.matrix <- function(S,
                                 sqDl = sqrt(posD(diag(S))),
                                 sqDr = sqDl,
@@ -981,7 +986,7 @@ gen.trim.cov.matrix <- function(S,
     D1l <- Matrix::Diagonal(x = ifelse(abs(sqDl) > tol.inv, 1 / sqDl, 0))
     C <- D1l %*% S %*% D1r
     jlog.debug(logger, "Current mb size:", format(object.size(S), "Mb"), "for", mtype)
-    S <- Dl %*% drop0(S, tol) %*% Dr ## Reusing S saves memory for huge matrices
+    S <- Dl %*% drop0(C, tol) %*% Dr ## Reusing S saves memory for huge matrices
     jlog.debug(logger, "After trimming mb size:", format(object.size(S), "Mb"), "for", mtype)
     S
 }

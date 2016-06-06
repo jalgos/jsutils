@@ -965,14 +965,14 @@ orthonorm <- function(B)
 #' @export
 setGeneric("trim.cov.matrix", function(S, ...) standardGeneric("trim.cov.matrix"))
 
-trim.cov.matrix <- function(S,
-                            sqDl = sqrt(posD(diag(M))),
-                            sqDr = sqDl,
-                            ...,
-                            mtype = "",                               
-                            tol = 0,
-                            tol.inv = 10 * .Machine$double.eps,
-                            logger = NULL)
+gen.trim.cov.matrix <- function(S,
+                                sqDl = sqrt(posD(diag(M))),
+                                sqDr = sqDl,
+                                ...,
+                                mtype = "",                               
+                                tol = 0,
+                                tol.inv = 10 * .Machine$double.eps,
+                                logger = NULL)
 {
     jlog.debug(logger, "Dropping near 0 correlations from matrix:", mtype, "tolerance equals:", tol)
     Dr <- Matrix::Diagonal(x = sqDr)
@@ -989,4 +989,4 @@ trim.cov.matrix <- function(S,
 #' @template trim.matrix.gen
 #' @template trim.matrix
 #' @export
-setMethod("trim.cov.matrix", "ANY", trim.cov.matrix)
+setMethod("trim.cov.matrix", "ANY", gen.trim.cov.matrix)

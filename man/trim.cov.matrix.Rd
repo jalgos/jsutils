@@ -4,9 +4,7 @@
 \alias{trim.cov.matrix}
 \title{Removing Least Significant Covariance Coefficients}
 \usage{
-trim.cov.matrix(S, sqDl = sqrt(posD(diag(M))), sqDr = sqDl, ...,
-  mtype = "", tol = 0, tol.inv = 10 * .Machine$double.eps,
-  logger = NULL)
+trim.cov.matrix(S, ...)
 }
 \arguments{
 \item{S}{The covariance matrix}

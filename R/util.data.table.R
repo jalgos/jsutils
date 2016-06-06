@@ -533,3 +533,7 @@ make.id <- function(cols,
 {
     over(mapply(cols, vals, FUN = paste0, SIMPLIFY = FALSE), paste0, "")
 }
+
+#' @export
+setGeneric("merge", merge)
+

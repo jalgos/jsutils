@@ -7,6 +7,7 @@
 \alias{mat.to.data.table,diagonalMatrix-method}
 \alias{mat.to.data.table,matrix-method}
 \alias{mat.to.data.table,symmetricMatrix-method}
+\alias{mat.to.data.table,vector-method}
 \title{Matrix to data table}
 \usage{
 mat.to.data.table(M, ...)
@@ -20,6 +21,9 @@ mat.to.data.table(M, ...)
 \S4method{mat.to.data.table}{diagonalMatrix}(M, one.based = TRUE, ...)
 
 \S4method{mat.to.data.table}{symmetricMatrix}(M, one.based = TRUE, ...)
+
+\S4method{mat.to.data.table}{vector}(M, one.based = TRUE,
+  with.names = FALSE, ...)
 }
 \arguments{
 \item{M}{Matrix to transform to its triplet form}

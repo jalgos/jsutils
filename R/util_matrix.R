@@ -376,6 +376,18 @@ sym.mat.to.data.table <- function(M,
     D
 }
 
+
+vec.mat.to.data.table <- function(M,
+                                  one.based = TRUE,
+                                  with.names = FALSE,
+                                  ...)
+{
+    D <- data.table(i = 1:length(M), x = M, j = 1)
+    if(with.names)
+        D[, i.names := names(M)]
+    D
+}
+
 #' Matrix to data table
 #'
 #' Transforms a matrix into its triplet version in a data.table
@@ -400,6 +412,10 @@ setMethod("mat.to.data.table", "diagonalMatrix", function(M, one.based = TRUE, .
 #' @rdname mat.to.data.table
 #' @export
 setMethod("mat.to.data.table", "symmetricMatrix", sym.mat.to.data.table)
+
+#' @rdname mat.to.data.table
+#' @export
+setMethod("mat.to.data.table", "vector", vec.mat.to.data.table)
 
 array.to.data.table <- function(A,
                                 one.based = TRUE)

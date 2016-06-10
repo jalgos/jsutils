@@ -28,6 +28,7 @@ Collate:
     'util.R'
     'util.S4.R'
     'util.data.table.R'
+    'util.eval.R'
     'util.packages.R'
     'util.sendmail.R'
     'util_geocoding.R'

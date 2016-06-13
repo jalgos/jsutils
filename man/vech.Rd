@@ -3,12 +3,12 @@
 \docType{methods}
 \name{vech}
 \alias{vech}
-\alias{vech,genMatrix-method}
+\alias{vech,ANY-method}
 \title{Half vectorization}
 \usage{
 vech(M, ...)
 
-\S4method{vech}{genMatrix}(M, keep.diag = TRUE)
+\S4method{vech}{ANY}(M, keep.diag = TRUE)
 }
 \description{
 Performs the half vectorization of a symmetric matrix.

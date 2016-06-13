@@ -1,42 +1,28 @@
 ######## Rewriting some utility functions #####
-##safe for sparse matrices
+## safe for sparse matrices
 gen.vech <- function(M,
                      keep.diag = TRUE)
 {    
     if(nrow(M) == 0) return(Matrix(0, 0, 0))
     size <- nn12(nrow(M), keep.diag = keep.diag)
     dms <- c(size, 1)
-    if(isDiagonal(M))
-    {
-        if(size <= .Machine$integer.max)
-        {
-            if(!keep.diag)
-                return(Matrix(0, size, 1))
-            return(sparseMatrix(i = index.sym(1:nrow(M), 1:nrow(M), nrow(M)), j = rep(1, nrow(M)), x = diag(M)))
-        }
-        else
-        {
-            if(!keep.diag)
-                return(STMatrix(DM = data.table(i = numeric(0), j = numeric(0), x = numeric(0)),
-                                dims = dms))
-            return(STMatrix(DM = data.table(i = index.sym(1:nrow(M), 1:nrow(M), nrow(M)), j = rep(1, nrow(M)), x = diag(M)),
-                            dims = dms))
-        }
-    }
-    M <- as(M, "TsparseMatrix")
-    if(keep.diag) F <- M@i <= M@j
-    else F <- M@i < M@j
+    
+    DM <- mat.to.data.table(M)
+    if(keep.diag) F <- DM[, i <= j]
+    else F <- DM[, i < j]
     N <- sum(F)
     if(all(dms <= .Machine$integer.max))
-        sparseMatrix(i = index.sym(M@i[F] + 1, M@j[F] + 1, nrow(M), keep.diag = keep.diag),
+        sparseMatrix(i = DM[F, index.sym(i + 1, j + 1, nrow(M), keep.diag = keep.diag)],
                      j = rep(1, N),
-                     x = M@x[F],
+                     x = DM[F, x],
                      dims = dms)
+    else if(require(hugesparse))
+        HugeMatrix(data = data.table(i = DM[F, index.sym(i + 1, j + 1, nrow(M), keep.diag = keep.diag)],
+                                     j = rep(1, N),
+                                     x = DM[F, x]),
+                   dims = dms)
     else
-        STMatrix(DM = data.table(i = index.sym(M@i[F] + 1, M@j[F] + 1, nrow(M), keep.diag = keep.diag),
-                                 j = rep(1, N),
-                                 x = M@x[F]),
-                 dims = dms)
+        stop('Half vectorization failed: size exceeds integer limit')
 }
 
 
@@ -113,7 +99,7 @@ setClassUnion("genMatrix", c("matrix", "Matrix"))
 
 #' @rdname vech
 #' @export
-setMethod("vech", "genMatrix", gen.vech)
+setMethod("vech", "ANY", gen.vech)
 
 #' Assigning data by index value pair
 #' @export

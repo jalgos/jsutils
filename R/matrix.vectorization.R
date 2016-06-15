@@ -12,7 +12,7 @@ gen.vech <- function(M,
     else F <- DM[, i < j]
     N <- sum(F)
     if(all(dms <= .Machine$integer.max))
-        sparseMatrix(i = DM[F, index.sym(i + 1, j + 1, nrow(M), keep.diag = keep.diag)],
+        sparseMatrix(i = DM[F, index.sym(i, j, nrow(M), keep.diag = keep.diag)],
                      j = rep(1, N),
                      x = DM[F, x],
                      dims = dms)

@@ -9,58 +9,46 @@ using namespace Rcpp;
 List triplet_prod(const IntegerVector& i1, const IntegerVector& j1, const NumericVector& x1, const IntegerVector& i2, const IntegerVector& j2, const NumericVector& x2);
 RcppExport SEXP jsutils_triplet_prod(SEXP i1SEXP, SEXP j1SEXP, SEXP x1SEXP, SEXP i2SEXP, SEXP j2SEXP, SEXP x2SEXP) {
 BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< const IntegerVector& >::type i1(i1SEXP );
-        Rcpp::traits::input_parameter< const IntegerVector& >::type j1(j1SEXP );
-        Rcpp::traits::input_parameter< const NumericVector& >::type x1(x1SEXP );
-        Rcpp::traits::input_parameter< const IntegerVector& >::type i2(i2SEXP );
-        Rcpp::traits::input_parameter< const IntegerVector& >::type j2(j2SEXP );
-        Rcpp::traits::input_parameter< const NumericVector& >::type x2(x2SEXP );
-        List __result = triplet_prod(i1, j1, x1, i2, j2, x2);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const IntegerVector& >::type i1(i1SEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type j1(j1SEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type x1(x1SEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type i2(i2SEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type j2(j2SEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type x2(x2SEXP);
+    __result = Rcpp::wrap(triplet_prod(i1, j1, x1, i2, j2, x2));
+    return __result;
 END_RCPP
 }
 // triplet_prod_un
 List triplet_prod_un(const IntegerVector& i1, const IntegerVector& j1, const NumericVector& x1, const IntegerVector& i2, const IntegerVector& j2, const NumericVector& x2);
 RcppExport SEXP jsutils_triplet_prod_un(SEXP i1SEXP, SEXP j1SEXP, SEXP x1SEXP, SEXP i2SEXP, SEXP j2SEXP, SEXP x2SEXP) {
 BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< const IntegerVector& >::type i1(i1SEXP );
-        Rcpp::traits::input_parameter< const IntegerVector& >::type j1(j1SEXP );
-        Rcpp::traits::input_parameter< const NumericVector& >::type x1(x1SEXP );
-        Rcpp::traits::input_parameter< const IntegerVector& >::type i2(i2SEXP );
-        Rcpp::traits::input_parameter< const IntegerVector& >::type j2(j2SEXP );
-        Rcpp::traits::input_parameter< const NumericVector& >::type x2(x2SEXP );
-        List __result = triplet_prod_un(i1, j1, x1, i2, j2, x2);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const IntegerVector& >::type i1(i1SEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type j1(j1SEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type x1(x1SEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type i2(i2SEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type j2(j2SEXP);
+    Rcpp::traits::input_parameter< const NumericVector& >::type x2(x2SEXP);
+    __result = Rcpp::wrap(triplet_prod_un(i1, j1, x1, i2, j2, x2));
+    return __result;
 END_RCPP
 }
 // partial_kronecker
-List partial_kronecker(const List& trl, const List& trr, const List& projl, const List& projr, const IntegerVector& dim2);
+List partial_kronecker(const List& trl, const List& trr, const SEXP& projl, const SEXP& projr, const IntegerVector& dim2);
 RcppExport SEXP jsutils_partial_kronecker(SEXP trlSEXP, SEXP trrSEXP, SEXP projlSEXP, SEXP projrSEXP, SEXP dim2SEXP) {
 BEGIN_RCPP
-    SEXP __sexp_result;
-    {
-        Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< const List& >::type trl(trlSEXP );
-        Rcpp::traits::input_parameter< const List& >::type trr(trrSEXP );
-        Rcpp::traits::input_parameter< const List& >::type projl(projlSEXP );
-        Rcpp::traits::input_parameter< const List& >::type projr(projrSEXP );
-        Rcpp::traits::input_parameter< const IntegerVector& >::type dim2(dim2SEXP );
-        List __result = partial_kronecker(trl, trr, projl, projr, dim2);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
-    }
-    UNPROTECT(1);
-    return __sexp_result;
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const List& >::type trl(trlSEXP);
+    Rcpp::traits::input_parameter< const List& >::type trr(trrSEXP);
+    Rcpp::traits::input_parameter< const SEXP& >::type projl(projlSEXP);
+    Rcpp::traits::input_parameter< const SEXP& >::type projr(projrSEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type dim2(dim2SEXP);
+    __result = Rcpp::wrap(partial_kronecker(trl, trr, projl, projr, dim2));
+    return __result;
 END_RCPP
 }

@@ -4,11 +4,25 @@
 \alias{partial.kronecker}
 \title{Partial kronecker product}
 \usage{
-partial.kronecker(M1, M2, DI, DJ = DI[, list(k = i, l = j, J = I)],
-  dims = c(DI[, max(I)], DJ[, max(J)]), half.vec = TRUE, real = TRUE,
-  logger = jlogger::JLoggerFactory("Jalgos Algebra"))
+partial.kronecker(M1, M2, Pl, Pr)
+
+partial.kronecker(M1, M2, Pl, Pr)
+}
+\arguments{
+\item{M1}{a generic matrix that can be converted to a triplet using \code{mat.to.data.table}}
+
+\item{M2}{DITTO}
+
+\item{Pl}{The list of row indices in the result that we are interested in keeping}
+
+\item{Pr}{The list of column indices in the result that we are interested in keeping}
 }
 \description{
 Partial kronecker product
+
+Computes a kronecker product for a limited subset of the rows and columns.
+}
+\details{
+Kronecker products produce are very costly in terms of memory usage.
 }
 

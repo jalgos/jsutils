@@ -6,11 +6,12 @@
 
 using namespace Rcpp;
 // rc_sparse_rep for row or column sparse representation
-typedef std::map <int, std::map<int, double> >  rc_sparse_rep;
 typedef std::map <int, double>  vec_rep;
-typedef std::unordered_map <int, std::unordered_map<int, double> > un_rc_sparse_rep;
+typedef std::map <int, vec_rep>  rc_sparse_rep;
 typedef std::unordered_map <int, double>  un_vec_rep;
-typedef std::unordered_map <int, std::unordered_map<int, un_vec_rep> > proj_rep;
+typedef std::unordered_map <int, un_vec_rep> un_rc_sparse_rep;
+typedef std::unordered_set <int> vec_proj;
+typedef std::unordered_map <int, vec_proj> proj_rep;
 // First index is the row
 template<typename T> T create_rc_sparse_rep(const IntegerVector& i, 
 					    const IntegerVector& j, 
@@ -150,24 +151,18 @@ List triplet_prod_un(const IntegerVector& i1,
   return rc_sparse_rep_to_list<un_rc_sparse_rep, un_vec_rep>(prod);
 }
 
-proj_rep create_proj_rep(const List& proj,
-			 int nside2,
-			 const std::string& ivar = "i",
-			 const std::string& jvar = "j",
-			 const std::string& xvar = "x")
+proj_rep create_proj_rep(const IntegerVector& proj,
+			 int nside2)
 {
   proj_rep mproj;
-  auto mj = as<IntegerVector>(proj[jvar]);
-  auto mi = as<IntegerVector>(proj[ivar]);
-  auto mx = as<NumericVector>(proj[xvar]);
-  int nels = mx.size();
+  int nels = proj.size();
   
   for(int ct = 0; ct < nels; ct++)
     {
       // R Indexing
-      int lindex = (mj[ct] - 1) / nside2 + 1;
-      int rindex = (mj[ct] - 1) % nside2 + 1;
-      mproj[lindex][rindex][mi[ct]] = mx[ct];
+      int lindex = (proj[ct] - 1) / nside2 + 1;
+      int rindex = (proj[ct] - 1) % nside2 + 1;
+      mproj[lindex].insert(rindex);
     }
   return mproj;
 }
@@ -175,38 +170,48 @@ proj_rep create_proj_rep(const List& proj,
 //[[Rcpp::export]]
 List partial_kronecker(const List& trl,
 		       const List& trr,
-		       const List& projl,
-		       const List& projr,
+		       const SEXP& projl,
+		       const SEXP& projr,
 		       const IntegerVector& dim2)
 {
   
-  auto mprojl = create_proj_rep(projl, dim2[0]);
-  auto mprojr = create_proj_rep(projl, dim2[1], "j", "i");
+  proj_rep mprojl;
+  proj_rep mprojr;
+  if(projl != R_MissingArg) mprojl = create_proj_rep(projl, dim2[1]);
+  if(projr != R_MissingArg) mprojr = create_proj_rep(projl, dim2[0]);
   auto mtrl = create_rc_sparse_rep<un_rc_sparse_rep>(trl);
-  auto mtrr = create_rc_sparse_rep<un_rc_sparse_rep>(trl);
+  auto mtrr = create_rc_sparse_rep<un_rc_sparse_rep>(trr);
   un_rc_sparse_rep prod;
   for(auto it_rowl = mtrl.begin(); it_rowl != mtrl.end(); it_rowl++)
-    {
-      auto it_cprojl = mprojl.find(it_rowl->first);
-      if(it_cprojl == mprojl.end())
-	continue;
+    { 
+      proj_rep::iterator it_cprojl;
+      if(projl != R_MissingArg)
+	{
+	  it_cprojl = mprojl.find(it_rowl->first);
+	  if(it_cprojl == mprojl.end())
+	    continue;
+	}
 
       for(auto it_rowr = mtrr.begin(); it_rowr != mtrr.end(); it_rowr++)
 	{
-	  auto it_ccprojl = it_cprojl->second.find(it_rowr->first);
-	  if(it_ccprojl == it_cprojl->second.end())
+	  if(projl != R_MissingArg && it_cprojl->second.find(it_rowr->first) == it_cprojl->second.end())
 	    continue;
 	  // We've established that row i1 of LHS and i2 of LHS contribute to the final result
 	  for(auto it_ell = it_rowl->second.begin(); it_ell != it_rowl->second.end(); it_ell++)
 	    {
-	      auto it_rprojr = mprojr.find(it_ell->first);
-	      if(it_rprojr == mprojr.end())
-		continue;
+	      proj_rep::iterator it_rprojr;
+	      if(projr != R_MissingArg)
+		{
+		  it_rprojr = mprojr.find(it_ell->first);
+		  if(it_rprojr == mprojr.end())
+		    continue;
+		}
 	      for(auto it_elr = it_rowr->second.begin(); it_elr != it_rowr->second.end(); it_elr++)
 		{
-		  auto it_rrprojr = it_rprojr->second.find(it_elr->first);
-		  if(it_rrprojr == it_rprojr->second.end())
+		  
+		  if(projr != R_MissingArg && it_rprojr->second.find(it_elr->first) !=  it_rprojr->second.end())
 		    continue;
+		  
 		  int ikron = (it_rowl->first - 1) * dim2[0] + it_rowr->first;
 		  int jkron = (it_ell->first - 1) * dim2[1] + it_elr->first;
 		  //Rcout << "Multiplication: " << it_rowl->first << " " << it_rowr->first << " " << it_ell->first << " " << it_elr->first <<  " kron indices: " << ikron << " " << jkron << " Values: " << it_elr->second << " * " << it_ell->second << std::endl;

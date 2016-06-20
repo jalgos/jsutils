@@ -1,8 +1,10 @@
+library(Matrix)
 context("Matrix operations")
 
-N <- 800
-n <- 200
-p <- 100
+N <- 200
+n <- 20
+p <- 10
+q <- 30
 
 npl <- 50L
 npr <- 20L
@@ -10,20 +12,44 @@ nrpl <- 100L
 ncpr <- 30L
 
 M1 <- random.sparse.matrix(n, p, N)
-M2 <- random.sparse.matrix(n, p, N)
+M2 <- random.sparse.matrix(p, q, N)
 
-Pl <- Matrix::sparseMatrix(i = sample(1:nrpl, npl), j = sample(1:(n ^ 2), npl), x = rnorm(npl), dims = c(nrpl, n ^ 2))
-Pr <- Matrix::sparseMatrix(j = sample(1:ncpr, npr), i = sample(1:(p ^ 2), npr), x = rnorm(npr), dims = c(p ^ 2, ncpr))
+Pl <- Matrix::sparseMatrix(i = sample(1:nrpl, npl), j = sample(1:(n * p), npl), x = rnorm(npl), dims = c(nrpl, n * p))
+Pr <- Matrix::sparseMatrix(j = sample(1:ncpr, npr), i = sample(1:(p * q), npr), x = rnorm(npr), dims = c(p * q, ncpr))
 
-Pl <- Matrix::Diagonal(n ^ 2)
-Pr <- Matrix::Diagonal(p ^ 2)
+triplet.prod <- function(M1,
+                         M2,
+                         trfun)
+{
+    DM1 <- mat.to.data.table(M1)
+    DM2 <- mat.to.data.table(M2)
+    
+    dsparseMatrix(trfun(DM1[, i],
+                        DM1[, j],
+                        DM1[, x],
+                        DM2[, i],
+                        DM2[, j],
+                        DM2[, x]),
+                  dims = c(nrow(M1), ncol(M2)))    
+}
+
+test_that("triplet Red / Black works",
+{
+    expect_equal(M1 %*% M2,
+                 triplet.prod(M1, M2, triplet.prod.rb),
+                 check.attributes = FALSE)
+})
+
+test_that("triplet hashmap works",
+{
+    expect_equal(M1 %*% M2,
+                 triplet.prod(M1, M2, triplet.prod.hash),
+                 check.attributes = FALSE)
+})
+
 test_that("Partial kronecker works",
 {
     expect_equal(Pl %*% (M1 %x% M2) %*% Pr,
-                 partial_kronecker(mat.to.data.table(M1),
-                                   mat.to.data.table(M2),
-                                   mat.to.data.table(Pl),
-                                   mat.to.data.table(Pr),
-                                   dim(M2)),
+                 Pl %*% partial.kronecker(M1, M2, mat.to.data.table(Pl)[, j], mat.to.data.table(Pr)[, i]) %*% Pr,
                  check.attributes = FALSE)
 })

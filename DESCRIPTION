@@ -11,12 +11,14 @@ Imports:
     data.table,
     stringr,
     xtable,
-    MASS
+    MASS,
+    Rcpp
 License: Jalgos License
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 5.0.1
 Collate:
+    'RcppExports.R'
     'applies.R'
     'array_fun.R'
     'complexity.R'
@@ -36,3 +38,6 @@ Collate:
     'util_matrix.R'
     'util_regex.R'
     'util_sweave.R'
+LinkingTo: Rcpp
+Suggests:
+    testthat

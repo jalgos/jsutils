@@ -985,7 +985,6 @@ setGeneric("trim.cov.matrix", function(S, ...) standardGeneric("trim.cov.matrix"
 #' @export
 setGeneric("drop0", Matrix::drop0)
 
-
 gen.trim.cov.matrix <- function(S,
                                 sqDl = sqrt(posD(diag(S))),
                                 sqDr = sqDl,

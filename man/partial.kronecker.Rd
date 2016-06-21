@@ -4,18 +4,18 @@
 \alias{partial.kronecker}
 \title{Partial kronecker product}
 \usage{
-partial.kronecker(M1, M2, Pl, Pr)
+partial.kronecker(M1, M2, Pl = NULL, Pr = NULL)
 
-partial.kronecker(M1, M2, Pl, Pr)
+partial.kronecker(M1, M2, Pl = NULL, Pr = NULL)
 }
 \arguments{
 \item{M1}{a generic matrix that can be converted to a triplet using \code{mat.to.data.table}}
 
 \item{M2}{DITTO}
 
-\item{Pl}{The list of row indices in the result that we are interested in keeping}
+\item{Pl}{The list of row indices in the result that we are interested in keeping. If NULL assumes no projection.}
 
-\item{Pr}{The list of column indices in the result that we are interested in keeping}
+\item{Pr}{The list of column indices in the result that we are interested in keeping. If NULL assumes no projection.}
 }
 \description{
 Partial kronecker product

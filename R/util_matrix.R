@@ -394,8 +394,12 @@ vec.mat.to.data.table <- function(M,
 #' @param M Matrix to transform to its triplet form
 #' @param one.based Indices start at 1 or 0
 #' @param with.names Should rownames and column names be added to the data.table
+#' @aliases mat.to.triplet
 #' @export
 setGeneric("mat.to.data.table", function(M, ...) standardGeneric("mat.to.data.table"))
+
+#' @export mat.to.triplet
+mat.to.triplet <- mat.to.data.table
 
 #' @rdname mat.to.data.table
 #' @export
@@ -1021,12 +1025,16 @@ setMethod("trim.cov.matrix", "ANY", gen.trim.cov.matrix)
 #' @details Kronecker products produce are very costly in terms of memory usage.
 #' @param M1 a generic matrix that can be converted to a triplet using \code{mat.to.data.table}
 #' @param M2 DITTO
-#' @param Pl The list of row indices in the result that we are interested in keeping
-#' @param Pr The list of column indices in the result that we are interested in keeping
+#' @param Pl The list of row indices in the result that we are interested in keeping. If NULL assumes no projection.
+#' @param Pr The list of column indices in the result that we are interested in keeping. If NULL assumes no projection.
 #' @include RcppExports.R
 #' @export
-partial.kronecker <- function(M1, M2, Pl, Pr)
+partial.kronecker <- function(M1,
+                              M2,
+                              Pl = NULL,
+                              Pr = NULL)
 {
+    
     D <- partial_kronecker(mat.to.data.table(M1),
                            mat.to.data.table(M2),
                            Pl,

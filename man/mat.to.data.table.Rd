@@ -8,6 +8,7 @@
 \alias{mat.to.data.table,matrix-method}
 \alias{mat.to.data.table,symmetricMatrix-method}
 \alias{mat.to.data.table,vector-method}
+\alias{mat.to.triplet}
 \title{Matrix to data table}
 \usage{
 mat.to.data.table(M, ...)

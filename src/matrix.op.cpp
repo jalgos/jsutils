@@ -165,6 +165,7 @@ proj_rep create_proj_rep(const IntegerVector& proj,
       mproj[lindex].insert(rindex);
     }
   return mproj;
+  
 }
 
 //[[Rcpp::export]]
@@ -177,15 +178,15 @@ List partial_kronecker(const List& trl,
   
   proj_rep mprojl;
   proj_rep mprojr;
-  if(projl != R_MissingArg) mprojl = create_proj_rep(projl, dim2[1]);
-  if(projr != R_MissingArg) mprojr = create_proj_rep(projl, dim2[0]);
+  if(projl != R_NilValue) mprojl = create_proj_rep(projl, dim2[0]);
+  if(projr != R_NilValue) mprojr = create_proj_rep(projr, dim2[1]);
   auto mtrl = create_rc_sparse_rep<un_rc_sparse_rep>(trl);
   auto mtrr = create_rc_sparse_rep<un_rc_sparse_rep>(trr);
   un_rc_sparse_rep prod;
   for(auto it_rowl = mtrl.begin(); it_rowl != mtrl.end(); it_rowl++)
     { 
       proj_rep::iterator it_cprojl;
-      if(projl != R_MissingArg)
+      if(projl != R_NilValue)
 	{
 	  it_cprojl = mprojl.find(it_rowl->first);
 	  if(it_cprojl == mprojl.end())
@@ -194,13 +195,13 @@ List partial_kronecker(const List& trl,
 
       for(auto it_rowr = mtrr.begin(); it_rowr != mtrr.end(); it_rowr++)
 	{
-	  if(projl != R_MissingArg && it_cprojl->second.find(it_rowr->first) == it_cprojl->second.end())
+	  if(projl != R_NilValue && it_cprojl->second.find(it_rowr->first) == it_cprojl->second.end())
 	    continue;
 	  // We've established that row i1 of LHS and i2 of LHS contribute to the final result
 	  for(auto it_ell = it_rowl->second.begin(); it_ell != it_rowl->second.end(); it_ell++)
 	    {
 	      proj_rep::iterator it_rprojr;
-	      if(projr != R_MissingArg)
+	      if(projr != R_NilValue)
 		{
 		  it_rprojr = mprojr.find(it_ell->first);
 		  if(it_rprojr == mprojr.end())
@@ -209,12 +210,11 @@ List partial_kronecker(const List& trl,
 	      for(auto it_elr = it_rowr->second.begin(); it_elr != it_rowr->second.end(); it_elr++)
 		{
 		  
-		  if(projr != R_MissingArg && it_rprojr->second.find(it_elr->first) !=  it_rprojr->second.end())
+		  if(projr != R_NilValue && it_rprojr->second.find(it_elr->first) ==  it_rprojr->second.end())
 		    continue;
 		  
 		  int ikron = (it_rowl->first - 1) * dim2[0] + it_rowr->first;
 		  int jkron = (it_ell->first - 1) * dim2[1] + it_elr->first;
-		  //Rcout << "Multiplication: " << it_rowl->first << " " << it_rowr->first << " " << it_ell->first << " " << it_elr->first <<  " kron indices: " << ikron << " " << jkron << " Values: " << it_elr->second << " * " << it_ell->second << std::endl;
 		  prod[ikron][jkron] = it_elr->second * it_ell->second;
 		}
 	    }

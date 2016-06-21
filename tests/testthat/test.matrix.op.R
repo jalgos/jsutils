@@ -35,21 +35,44 @@ triplet.prod <- function(M1,
 
 test_that("triplet Red / Black works",
 {
-    expect_equal(M1 %*% M2,
-                 triplet.prod(M1, M2, triplet.prod.rb),
-                 check.attributes = FALSE)
+    expect_equal_matrices(M1 %*% M2,
+                          triplet.prod(M1, M2, triplet.prod.rb))
 })
 
 test_that("triplet hashmap works",
 {
-    expect_equal(M1 %*% M2,
-                 triplet.prod(M1, M2, triplet.prod.hash),
-                 check.attributes = FALSE)
+    expect_equal_matrices(M1 %*% M2,
+                          triplet.prod(M1, M2, triplet.prod.hash))
 })
 
 test_that("Partial kronecker works",
 {
-    expect_equal(Pl %*% (M1 %x% M2) %*% Pr,
-                 Pl %*% partial.kronecker(M1, M2, mat.to.data.table(Pl)[, j], mat.to.data.table(Pr)[, i]) %*% Pr,
-                 check.attributes = FALSE)
+    expect_equal_matrices(Pl %*% (M1 %x% M2) %*% Pr,
+                          Pl %*% partial.kronecker(M1,
+                                                   M2,
+                                                   mat.to.data.table(Pl)[, j],
+                                                   mat.to.data.table(Pr)[, i]) %*% Pr)
+})
+
+test_that("Partial kronecker with only right projection",
+{
+    expect_equal_matrices((M1 %x% M2) %*% Pr,
+                          partial.kronecker(M1,
+                                            M2,
+                                            Pr = mat.to.data.table(Pr)[, i]) %*% Pr)
+})
+
+test_that("Partial kronecker with only left projection",
+{
+    expect_equal_matrices(Pl %*% (M1 %x% M2),
+                          Pl %*% partial.kronecker(M1,
+                                                   M2,
+                                                   Pl = mat.to.data.table(Pl)[, j]))
+})
+
+test_that("Partial kronecker with no projection",
+{
+    expect_equal_matrices(M1 %x% M2,
+                          partial.kronecker(M1,
+                                            M2))
 })

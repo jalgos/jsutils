@@ -33,6 +33,7 @@ Collate:
     'util.eval.R'
     'util.packages.R'
     'util.sendmail.R'
+    'util.tests.R'
     'util_geocoding.R'
     'util_markdown.R'
     'util_matrix.R'

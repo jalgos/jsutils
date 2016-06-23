@@ -14,13 +14,13 @@ jalgos.settings <- function()
     Sys.setenv(R_HISTSIZE = "300000") ## TODO look into 'track' package
 
     DAYSECONDS <<- 24 * 60 * 60
-    
+
     ##creates a dummy datatable to run tests on
     if(!"dummyDT" %in% ls(envir = .GlobalEnv)) dummyDT <<- data.table::data.table(a = c("HAHA", "HIHI", "HOHO", "HUHU"), b = rnorm(4), y = 1:4, dt = rep(Sys.Date(), 4))
 }
 
 #' Installing packages
-#' 
+#'
 #' Loads a package or install it if it's not installed yet
 #' @param library.name character string, name of the package to be installed
 #' @param install.fun installation function to be used
@@ -72,7 +72,7 @@ NULL
 #' @export
 positive.val <- function(X)
 {
-    X[X < 0] <- 0 
+    X[X < 0] <- 0
     X
 }
 
@@ -125,12 +125,12 @@ save.rhistory <- function(info = "", folder = "Rhistory")
     if(!folder %in% V) system(paste("mkdir", folder))
     date <- gsub("-", "", Sys.Date())
     subfolder <- paste(folder, date, sep = "/")
-    V <- scan(pipe(paste("ls", folder)), what = "character")	
+    V <- scan(pipe(paste("ls", folder)), what = "character")
     if(!date %in% V) system(paste("mkdir", subfolder))
     filename <- paste(c(info, "Rhistory", gsub(" |-|:", "", Sys.time())), collapse=".")
     filename <- paste(c(subfolder, filename), collapse = "/")
     savehistory(file = filename)
-    print(c("saved rhistory: ", filename))    
+    print(c("saved rhistory: ", filename))
 }
 
 #' @describeIn rhistory Saves the RHistory before exiting
@@ -154,7 +154,7 @@ divide.intervals <- function(D, n)
     il <- il / sum(il)
     nil <- n * il
     pil <- nil %% 1;
-    demi <- which(pil == .5)	
+    demi <- which(pil == .5)
     add <- .1
     for(i in demi)
     {
@@ -199,7 +199,7 @@ transform.filename <- function(fn, subs = base.sub.list)
 {
     if(is.null(subs)) return(fn)
     subs[sapply(subs, is.null)] <- ""
-    
+
     NM <- sort(names(subs), decreasing = TRUE)
     for(nm in NM)
     {
@@ -225,7 +225,7 @@ make.empty.factors <- function(N)
 ## Not sure it still works
 permut <- function(V)
 {
-    n <- length(V)    
+    n <- length(V)
     if(n == 1)
     {
         return(list(V))
@@ -234,7 +234,7 @@ permut <- function(V)
     for(v in V)
     {
         Lv <- arrange(V[V != v])
-        L <- c(L,lapply(Lv, c, v))        
+        L <- c(L,lapply(Lv, c, v))
     }
     return(L)
 }
@@ -358,7 +358,7 @@ random.cat.var <- function(var, set.size)
 {
     var.name <- var$name
     items <- var$items
-    
+
     if(is.null(items))
     {
         nvals <- var$nvars
@@ -367,7 +367,7 @@ random.cat.var <- function(var, set.size)
     replace <- TRUE
 
     if(!is.null(var$replace)) replace <- var$replace
-    
+
     V <- list(sample(items, set.size, replace = replace))
     names(V) <- var.name
     V
@@ -402,7 +402,7 @@ min.adist <- function(X,
     minf <- ifelse(is.null(max.dist$min), 0, max.dist$min)
     maxf <- ifelse(is.null(max.dist$max), 0, max.dist$max)
     difff <- ifelse(is.null(max.dist$diff), 0, max.dist$diff)
-    
+
     maxd <- minf * min.dist + difff * diff.dist + maxf * max.dist
     D <- as.vector(adist(X, Y, ...))
     nkeep <- min(length(D), nkeep)
@@ -483,7 +483,7 @@ y.to.continue <- function(yes.value = '^yes$', ...)
 #' @export
 get.uuid <- function()
 {
-    system("uuid", intern = TRUE)
+  uuid::UUIDgenerate()
 }
 
 #' Date Formatting
@@ -579,7 +579,7 @@ mb.object.size <- function(x)
 }
 
 #' Matrix::identity
-#' 
+#'
 #' Identity for object of class Matrix
 #' @export
 Matrix.identity <- function(n)
@@ -617,7 +617,7 @@ safe.system <- function(command,
 #'
 #' Request or assigns values deep in the list at any arbitrary depth.
 #' @param L the list
-#' @param keys Vector of the keys. A path in the tree formed in the 
+#' @param keys Vector of the keys. A path in the tree formed in the
 #' @param value Optional value to be assigned
 #' @examples L = deep.list(list(), c("A", "B", "C"), 1)
 #' @examples deep.list(L, c("A", "B", "C"))
@@ -636,7 +636,7 @@ deep.list <- function(L = list(),
     L[[keys[1]]] <- as.list(deep.list(L[[keys[1]]], keys[-1], value))
     L
 }
- 
+
 #' Rep for list
 #'
 #' Repeats any object N times into a list

@@ -12,6 +12,7 @@ Imports:
     stringr,
     xtable,
     MASS,
+    uuid,
     Rcpp
 License: Jalgos License
 Encoding: UTF-8

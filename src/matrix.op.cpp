@@ -101,6 +101,7 @@ List triplet_prod(const IntegerVector& i1,
   rc_sparse_rep::iterator rit = rtriplet.begin();
   while(lit != ltriplet.end() && rit != rtriplet.end())
     {
+      Rcpp::checkUserInterrupt();
       if(lit->first < rit->first)
 	{
 	  lit++;
@@ -139,6 +140,7 @@ List triplet_prod_un(const IntegerVector& i1,
   int rn = i1.size();
   for(int ct = 0; ct < rn; ct ++)
     {
+      Rcpp::checkUserInterrupt();
       un_rc_sparse_rep::iterator rrow = rtriplet.find(j1[ct]);
       if(rrow == rtriplet.end())
 	continue;
@@ -185,6 +187,7 @@ List partial_kronecker(const List& trl,
   un_rc_sparse_rep prod;
   for(auto it_rowl = mtrl.begin(); it_rowl != mtrl.end(); it_rowl++)
     { 
+      Rcpp::checkUserInterrupt();
       proj_rep::iterator it_cprojl;
       if(projl != R_NilValue)
 	{

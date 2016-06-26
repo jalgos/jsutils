@@ -1028,20 +1028,20 @@ NULL
 #' @details Kronecker products produce are very costly in terms of memory usage.
 #' @param M1 a generic matrix that can be converted to a triplet using \code{mat.to.data.table}
 #' @param M2 DITTO
-#' @param Pl The list of row indices in the result that we are interested in keeping. If NULL assumes no projection.
-#' @param Pr The list of column indices in the result that we are interested in keeping. If NULL assumes no projection.
+#' @param Il The list of row indices in the result that we are interested in keeping. If NULL assumes no projection.
+#' @param Ir The list of column indices in the result that we are interested in keeping. If NULL assumes no projection.
 #' @include RcppExports.R
 #' @export
 partial.kronecker <- function(M1,
                               M2,
-                              Pl = NULL,
-                              Pr = NULL)
+                              Il = NULL,
+                              Ir = NULL)
 {
     
     D <- partial_kronecker(mat.to.data.table(M1),
                            mat.to.data.table(M2),
-                           Pl,
-                           Pr,
+                           Il,
+                           Ir,
                            dim(M2))
     Matrix::sparseMatrix(i = D$i, j = D$j, x = D$x, dims = dim(M1) * dim(M2))
 }
@@ -1049,8 +1049,8 @@ partial.kronecker <- function(M1,
 #' @describeIn partial.kronecker Efficiently projects the result of a kronecker into two (or one) smaller spaces
 #' @param M1 a generic matrix that can be converted to a triplet using \code{mat.to.data.table}
 #' @param M2 DITTO
-#' @param Pl A matrix that will project the rows of M1 %x% M2 into a space of smaller dimension. If not provided will assume identity
-#' @param Pr A matrix that will project the columns of M1 %x% M2 into a space of smaller dimension. If not provided will assume identity
+#' @param Pl A matrix that will project the rows of M1 \%x\% M2 into a space of smaller dimension. If not provided will assume identity
+#' @param Pr A matrix that will project the columns of M1 \%x\% M2 into a space of smaller dimension. If not provided will assume identity
 #' @export
 kronecker.proj <- function(M1,
                            M2,
@@ -1069,7 +1069,7 @@ kronecker.proj <- function(M1,
     else if(missing(Pl))
         partial.kronecker(M1,
                           M2,
-                          Pr = mat.to.data.table(Pr)[, i]) %*% Pr
+                          Ir = mat.to.data.table(Pr)[, i]) %*% Pr
     
     else
         Pl %*% partial.kronecker(M1,

@@ -5,7 +5,7 @@
 \alias{partial.kronecker}
 \title{Partial Kronecker Product}
 \usage{
-partial.kronecker(M1, M2, Pl = NULL, Pr = NULL)
+partial.kronecker(M1, M2, Il = NULL, Ir = NULL)
 
 kronecker.proj(M1, M2, Pl, Pr)
 }
@@ -14,17 +14,17 @@ kronecker.proj(M1, M2, Pl, Pr)
 
 \item{M2}{DITTO}
 
-\item{Pl}{The list of row indices in the result that we are interested in keeping. If NULL assumes no projection.}
+\item{Il}{The list of row indices in the result that we are interested in keeping. If NULL assumes no projection.}
 
-\item{Pr}{The list of column indices in the result that we are interested in keeping. If NULL assumes no projection.}
+\item{Ir}{The list of column indices in the result that we are interested in keeping. If NULL assumes no projection.}
+
+\item{Pl}{A matrix that will project the rows of M1 \%x\% M2 into a space of smaller dimension. If not provided will assume identity}
+
+\item{Pr}{A matrix that will project the columns of M1 \%x\% M2 into a space of smaller dimension. If not provided will assume identity}
 
 \item{M1}{a generic matrix that can be converted to a triplet using \code{mat.to.data.table}}
 
 \item{M2}{DITTO}
-
-\item{Pl}{A matrix that will project the rows of M1 %x% M2 into a space of smaller dimension. If not provided will assume identity}
-
-\item{Pr}{A matrix that will project the columns of M1 %x% M2 into a space of smaller dimension. If not provided will assume identity}
 }
 \details{
 Kronecker products produce are very costly in terms of memory usage.

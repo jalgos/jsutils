@@ -496,8 +496,6 @@ make.symmetric <- function(M) M + t(M) - Diagonal(x = diag(M))
 
 ## Performs Conj(M1) %x% M2
 
-#' Partial kronecker product
-#' @export
 partial.kronecker <- function(M1,
                               M2,
                               DI,
@@ -527,8 +525,10 @@ partial.kronecker <- function(M1,
     if(half.vec) KR <- KR[i <= j]
     KR <-  merge(KR, DJ, by = "k", all.x = TRUE, allow.cartesian = TRUE)
     KR <- merge(KR, DM2, by = c("j", "l"), allow.cartesian = TRUE)
-    if("x1" %in% names(KR)) dsparseMatrix(KR[, list(x = sum(x1 * x2)), by = list(I, J)][, list(i = I, j = J, x = x)], dims = dims)
-    else if(real) dsparseMatrix(KR[, list(x = sum(rx1 * rx2 + ix1 * ix2)), by = list(I, J)][, list(i = I, j = J, x = x)], dims = dims)
+    if("x1" %in% names(KR))
+        dsparseMatrix(KR[, list(x = sum(x1 * x2)), by = list(I, J)][, list(i = I, j = J, x = x)], dims = dims)
+    else if(real)
+        dsparseMatrix(KR[, list(x = sum(rx1 * rx2 + ix1 * ix2)), by = list(I, J)][, list(i = I, j = J, x = x)], dims = dims)
     else
     {
         RM <- dsparseMatrix(KR[, list(x = sum(rx1 * rx2 - ix1 * ix2)), by = list(I, J)][, list(i = I, j = J, x = x)], dims = dims)
@@ -1019,9 +1019,12 @@ setMethod("trim.cov.matrix", "ANY", gen.trim.cov.matrix)
 
 ## Matrix operations reimplemented in cpp
 
-#' Partial Kronecker Product
-#'
-#' Computes a kronecker product for a limited subset of the rows and columns.
+#' @title Partial Kronecker Product
+#' @name partial.kronecker
+NULL
+
+
+#' @describeIn partial.kronecker Computes a kronecker product for a limited subset of the rows and columns.
 #' @details Kronecker products produce are very costly in terms of memory usage.
 #' @param M1 a generic matrix that can be converted to a triplet using \code{mat.to.data.table}
 #' @param M2 DITTO
@@ -1041,6 +1044,39 @@ partial.kronecker <- function(M1,
                            Pr,
                            dim(M2))
     Matrix::sparseMatrix(i = D$i, j = D$j, x = D$x, dims = dim(M1) * dim(M2))
+}
+
+#' @describeIn partial.kronecker Efficiently projects the result of a kronecker into two (or one) smaller spaces
+#' @param M1 a generic matrix that can be converted to a triplet using \code{mat.to.data.table}
+#' @param M2 DITTO
+#' @param Pl A matrix that will project the rows of M1 %x% M2 into a space of smaller dimension. If not provided will assume identity
+#' @param Pr A matrix that will project the columns of M1 %x% M2 into a space of smaller dimension. If not provided will assume identity
+#' @export
+kronecker.proj <- function(M1,
+                           M2,
+                           Pl,
+                           Pr)
+{
+    if(missing(Pl) && missing(Pr))
+    {
+        stop("no projector provided")
+    }
+    
+    if(missing(Pr))
+        Pl %*% partial.kronecker(M1,
+                                 M2,
+                                 mat.to.data.table(Pl)[, j])
+    else if(missing(Pl))
+        partial.kronecker(M1,
+                          M2,
+                          Pr = mat.to.data.table(Pr)[, i]) %*% Pr
+    
+    else
+        Pl %*% partial.kronecker(M1,
+                                 M2,
+                                 mat.to.data.table(Pl)[, j],
+                                 mat.to.data.table(Pr)[, i]) %*% Pr
+    
 }
 
 #' @name triplet.product

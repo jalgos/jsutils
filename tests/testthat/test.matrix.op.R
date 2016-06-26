@@ -48,26 +48,21 @@ test_that("triplet hashmap works",
 test_that("Partial kronecker works",
 {
     expect_equal_matrices(Pl %*% (M1 %x% M2) %*% Pr,
-                          Pl %*% partial.kronecker(M1,
-                                                   M2,
-                                                   mat.to.data.table(Pl)[, j],
-                                                   mat.to.data.table(Pr)[, i]) %*% Pr)
+                          kronecker.proj(M1, M2, Pl, Pr))
 })
 
 test_that("Partial kronecker with only right projection",
 {
     expect_equal_matrices((M1 %x% M2) %*% Pr,
-                          partial.kronecker(M1,
-                                            M2,
-                                            Pr = mat.to.data.table(Pr)[, i]) %*% Pr)
+                          kronecker.proj(M1, M2, Pr = Pr))
 })
 
 test_that("Partial kronecker with only left projection",
 {
     expect_equal_matrices(Pl %*% (M1 %x% M2),
-                          Pl %*% partial.kronecker(M1,
-                                                   M2,
-                                                   Pl = mat.to.data.table(Pl)[, j]))
+                          kronecker.proj(M1,
+                                         M2,
+                                         Pl = Pl))
 })
 
 test_that("Partial kronecker with no projection",

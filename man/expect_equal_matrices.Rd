@@ -4,7 +4,8 @@
 \alias{expect_equal_matrices}
 \title{Matrix Equality Expectation}
 \usage{
-expect_equal_matrices(M1, M2, compare.dimnames = TRUE)
+expect_equal_matrices(M1, M2, compare.dimnames = TRUE,
+  tol = .Machine$double.eps)
 }
 \arguments{
 \item{compare.dimnames}{Should dimnames be compared as well}

@@ -1,4 +1,3 @@
-// Must set environment var: Sys.setenv("PKG_CXXFLAGS"="-std=c++11")
 //[[Rcpp::plugins(cpp11)]]
 #include <Rcpp.h>
 #include <map>

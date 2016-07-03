@@ -650,6 +650,22 @@ rep.list <- function(x,
     R
 }
 
+#' Indices of a Vector
+#'
+#' Returns the indices of a vector. Either 1:N if N > 0 or integer(0).
+#' @param X vector
+#' @param N length of the vector
+#' @export
+indexation <- function(X,
+                       N = length(X))
+{
+    if(N > 0)
+        1:N
+    else
+        integer(0)
+}
+
+
 #' Names a list
 #'
 #' @param L Either a list or a vector that will be put in a singleton

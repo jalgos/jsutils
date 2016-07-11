@@ -6,11 +6,12 @@
 #' @export
 install.git <- function(url,
                         name,
+                        install.fun = function(ploc, ...) install.packages(ploc, repos = NULL, ...),
                         ...)
 {
     package.loc <- sprintf("/tmp/RPackages/%s", name)
     system(sprintf("git clone %s %s",  url, package.loc))
-    tryCatch(devtools::install(package.loc, ...),
+    tryCatch(install.fun(package.loc, ...),
              error = function(cond) {
         system(sprintf("rm -Rf %s", package.loc))            
         stop(sprintf("An error occured while installing package %s, message: %s. Cleaning up before leaving.", name, cond$message))

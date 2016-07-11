@@ -4,7 +4,8 @@
 \alias{install.git}
 \title{Install Git}
 \usage{
-install.git(url, name, ...)
+install.git(url, name, install.fun = function(ploc, ...)
+  install.packages(ploc, repos = NULL, ...), ...)
 }
 \arguments{
 \item{url}{Remote url of the package}

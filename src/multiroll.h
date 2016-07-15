@@ -12,7 +12,7 @@ using namespace Rcpp;
 template <typename T>
 class Matcher
 {
-    typedef typename std::vector<std::pair< T, Matcher > > MatchMap;
+    typedef typename std::vector< std::pair< T, Matcher > > MatchMap;
     typedef typename MatchMap::const_iterator MatchIter;
     MatchMap m_matcher;
     MatchIter m_iter;

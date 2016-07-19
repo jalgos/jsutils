@@ -4,12 +4,14 @@
 #' @param url Remote url of the package
 #' @param name Name of the package
 #' @export
-install.git <- function(url,
-                        name,
+install.git <- function(name,
+                        group,
+                        url = sprintf('git@www.datasaiyan.com:%s/%s.git', group, name),
                         install.fun = function(ploc, ...) install.packages(ploc, repos = NULL, ...),
                         ...)
 {
-    package.loc <- sprintf("/tmp/RPackages/%s", name)
+    puid <- uuid::UUIDgenerate()
+    package.loc <- sprintf("/tmp/RPackage.%s", puid)
     system(sprintf("git clone %s %s",  url, package.loc))
     tryCatch(install.fun(package.loc, ...),
              error = function(cond) {

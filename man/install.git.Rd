@@ -4,13 +4,14 @@
 \alias{install.git}
 \title{Install Git}
 \usage{
-install.git(url, name, install.fun = function(ploc, ...)
-  install.packages(ploc, repos = NULL, ...), ...)
+install.git(name, group, url = sprintf("git@www.datasaiyan.com:\%s/\%s.git",
+  group, name), install.fun = function(ploc, ...) install.packages(ploc, repos
+  = NULL, ...), ...)
 }
 \arguments{
-\item{url}{Remote url of the package}
-
 \item{name}{Name of the package}
+
+\item{url}{Remote url of the package}
 }
 \description{
 Installing package with git without using git2r package.

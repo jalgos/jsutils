@@ -6,7 +6,7 @@
 \usage{
 install.git(name, group, url = sprintf("git@www.datasaiyan.com:\%s/\%s.git",
   group, name), install.fun = function(ploc, ...) install.packages(ploc, repos
-  = NULL, ...), ...)
+  = NULL, ...), branch, ...)
 }
 \arguments{
 \item{name}{Name of the package}
@@ -16,6 +16,8 @@ install.git(name, group, url = sprintf("git@www.datasaiyan.com:\%s/\%s.git",
 \item{url}{Remote url of the package}
 
 \item{install.fun}{Function to use to install the packages}
+
+\item{branch}{specify a branch to checkout}
 }
 \description{
 Installing Jalgos packages with git without using git2r package.

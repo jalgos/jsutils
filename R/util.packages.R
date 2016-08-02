@@ -5,16 +5,30 @@
 #' @param group Gitlab group to which the package belongs
 #' @param url Remote url of the package
 #' @param install.fun Function to use to install the packages
+#' @param branch specify a branch to checkout
 #' @export
 install.git <- function(name,
                         group,
                         url = sprintf('git@www.datasaiyan.com:%s/%s.git', group, name),
                         install.fun = function(ploc, ...) install.packages(ploc, repos = NULL, ...),
+                        branch,
                         ...)
 {
     puid <- uuid::UUIDgenerate()
     package.loc <- sprintf("/tmp/RPackage.%s", puid)
-    system(sprintf("git clone %s %s",  url, package.loc))
+    subl <- list('%url' = url,
+                 '%loc' = package.loc)
+    if(missing(branch))
+    {
+        command <- "git clone %url %loc"
+    }
+    else
+    {
+        command <- "git clone -b %branch %url %loc"
+        subl <- c(subl, list('%branch' = branch))
+    }
+    command <- replace.variables(command, subl)
+    system(command)
     tryCatch(install.fun(package.loc, ...),
              error = function(cond) {
         system(sprintf("rm -Rf %s", package.loc))            

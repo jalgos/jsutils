@@ -7,7 +7,7 @@ gen.vech <- function(M,
     size <- nn12(nrow(M), keep.diag = keep.diag)
     dms <- c(size, 1)
     
-    DM <- mat.to.data.table(M)
+    DM <- mat.to.triplet(M)
     if(keep.diag) F <- DM[, i <= j]
     else F <- DM[, i < j]
     N <- sum(F)

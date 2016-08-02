@@ -1,8 +1,10 @@
 #' Install Git
 #'
-#' Installing package with git without using git2r package.
-#' @param url Remote url of the package
+#' Installing Jalgos packages with git without using git2r package.
 #' @param name Name of the package
+#' @param group Gitlab group to which the package belongs
+#' @param url Remote url of the package
+#' @param install.fun Function to use to install the packages
 #' @export
 install.git <- function(name,
                         group,

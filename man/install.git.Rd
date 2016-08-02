@@ -11,9 +11,13 @@ install.git(name, group, url = sprintf("git@www.datasaiyan.com:\%s/\%s.git",
 \arguments{
 \item{name}{Name of the package}
 
+\item{group}{Gitlab group to which the package belongs}
+
 \item{url}{Remote url of the package}
+
+\item{install.fun}{Function to use to install the packages}
 }
 \description{
-Installing package with git without using git2r package.
+Installing Jalgos packages with git without using git2r package.
 }
 

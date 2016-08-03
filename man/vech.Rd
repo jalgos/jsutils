@@ -8,7 +8,7 @@
 \usage{
 vech(M, ...)
 
-\S4method{vech}{ANY}(M, keep.diag = TRUE)
+\S4method{vech}{ANY}(M, keep.diag = TRUE, mat.constr = safe.mat.constr)
 }
 \description{
 Performs the half vectorization of a symmetric matrix.

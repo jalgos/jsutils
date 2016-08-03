@@ -1,30 +1,100 @@
 ######## Rewriting some utility functions #####
 ## safe for sparse matrices
-gen.vech <- function(M,
-                     keep.diag = TRUE)
-{    
-    if(nrow(M) == 0) return(Matrix(0, 0, 0))
-    size <- nn12(nrow(M), keep.diag = keep.diag)
-    dms <- c(size, 1)
-    
-    DM <- mat.to.triplet(M)
+
+#' Triplet to half vectorization
+#'
+#' Transforms a triplet representation of a matrix into its half vectorization
+#' @param DM Triplet representation i, j, x in a data.table
+#' @param nr Number of rows of the matrix
+#' @param M the matrix of which DM is the triplet representation
+#' @param keep.diag should the diagonal be kept in the half vectorization
+#' @export
+vech.triplet <- function(DM = mat.to.triplet(DM),                         
+                         nr = nrow(M),
+                         M,
+                         keep.diag = TRUE)
+{
     if(keep.diag) F <- DM[, i <= j]
     else F <- DM[, i < j]
     N <- sum(F)
-    if(all(dms <= .Machine$integer.max))
-        sparseMatrix(i = DM[F, index.sym(i, j, nrow(M), keep.diag = keep.diag)],
-                     j = rep(1, N),
-                     x = DM[F, x],
-                     dims = dms)
+    DM[F, list(i = index.sym(i, j, nr, keep.diag = keep.diag),
+               j = 1,
+               x)]
+}
+
+safe.mat.constr <- function(data,
+                            dims,
+                            ...)
+{
+    if(all(dims <= .Machine$integer.max))
+        data[, sparseMatrix(i = i,
+                            j = j,
+                            x = x,
+                            dims = dims,
+                          ...)]
     else if(require(hugesparse))
-        HugeMatrix(data = data.table(i = DM[F, index.sym(i + 1, j + 1, nrow(M), keep.diag = keep.diag)],
-                                     j = rep(1, N),
-                                     x = DM[F, x]),
-                   dims = dms)
+        HugeMatrix(data = data,
+                   dims = dims,
+                   ...)
     else
         stop('Half vectorization failed: size exceeds integer limit')
 }
 
+gen.vech <- function(M,
+                     keep.diag = TRUE,
+                     mat.constr = safe.mat.constr)
+{
+    if(nrow(M) == 0)
+        return(mat.constr(data = data.table(i = integer(0),
+                                            j = integer(0),
+                                            x = integer(0)),
+                          dims = c(0, 0)))
+    size <- nn12(nrow(M), keep.diag = keep.diag)
+    dms <- c(size, 1)
+    
+    DM <- mat.to.triplet(M)
+    DM <- vech.triplet(DM, nr = nrow(M), keep.diag = keep.diag)
+
+    mat.constr(data = DM,
+               dims = dms)
+}
+
+#' Half vectorization triplet to matrix triplet
+#'
+#' @param DV triplet representation of the half vectorization
+#' @param nr number of elements in the half vectorization
+#' @param V Half vectorization
+#' @export
+vech.reverse.triplet <- function(DV = mat.to.triplet(V),
+                                 nr = findN(nrow(V)) + !keep.diag, ## seems bogus
+                                 V,
+                                 keep.diag = TRUE)
+{
+    DV[, c("i", "j") := reverse.index.sym(i, nr, keep.diag = keep.diag)]
+}
+
+gen.vech.reverse <- function(V,
+                             keep.diag = TRUE,
+                             symmetric = TRUE,
+                             mat.constr = safe.mat.constr) ## if not symmetric then antisymmetric
+{
+    if(is.vector(V)) V <- Matrix(V)
+    nr <- findN(nrow(V)) + !keep.diag
+    DV <- vech.reverse.triplet(mat.to.data.table(V),
+                               nr = nr,
+                               keep.diag = keep.diag)
+                               
+    if(symmetric)
+        drop0(mat.constr(data = DV,
+                         symmetric = TRUE,
+                         dims = c(nr, nr)))
+    else
+    {
+        M <- drop0(mat.constr(data = DV,
+                              dims = c(nr, nr)))
+        M - t(M)
+    }
+}
 
 #' @name vectorization
 #' @title Vectorization
@@ -89,6 +159,16 @@ diag.to.vech <- function(n,
 #' @export
 setGeneric("vech", function(M, ...) standardGeneric("vech"))
 
+#' Reverse half vectorization
+#'
+#' Take an half vectorization and returns the corresponding matrix.
+#' @param V Half vectorization of the matrix
+#' @param keep.diag Was the diagonal kept when performing the half vectorization
+#' @param symmetric Is the matrix symmetric. If not then the matrix is assumed antisymmetric
+#' @export
+setGeneric("vech.reverse", function(V, ...) standardGeneric("vech.reverse"))
+
+
 #' @title Abstract Matrix
 #' @description A generic class for matrices. Useful to create object that have slots that are matrices
 #' @name genMatrix
@@ -100,6 +180,11 @@ setClassUnion("genMatrix", c("matrix", "Matrix"))
 #' @rdname vech
 #' @export
 setMethod("vech", "ANY", gen.vech)
+
+#' @rdname vech.reverse
+#' @export
+setMethod("vech.reverse", "ANY", gen.vech.reverse)
+
 
 #' Assigning data by index value pair
 #' @export
@@ -264,21 +349,6 @@ vec.to.vech <- function(n, keep.diag = TRUE)
     fmat(i = ID2, j = IUT$ID, x = 1, dims = dims)    
 }
 
-#' @describeIn vectorization Takes a half vectorization and builds the corresponding matrix of class \code{Matrix}
-#' @export
-vech.reverse <- function(V,
-                         keep.diag = TRUE,
-                         symmetric = TRUE) ## if not symmetric then antisymmetric
-{
-    if(is.vector(V)) V <- Matrix(V)
-    DV <- mat.to.data.table(V)
-    nd <- findN(nrow(V)) + !keep.diag
-    DV[, c("i", "j") := reverse.index.sym(i, nd, keep.diag = keep.diag)]
-    if(symmetric) return(drop0(dsparseMatrix(DV[, list(i = i, j = j, x =  x)], symmetric = TRUE, dims = c(nd, nd))))
-    M <- drop0(dsparseMatrix(DV[, list(i = i, j = j, x = x)], dims = c(nd, nd)))
-    M - t(M)
-}
-
 ## Full Vectorization
 gen.vec <- function(M,
                     ...)
@@ -372,6 +442,6 @@ JF.PE4 <- function(n,
     }
     I1 <- findex(J, L, p)
     I2 <- findex(L, J, n)
-    #Need to add a switch here in case I1 or I2 exceeds 2^32-1
+                                        #Need to add a switch here in case I1 or I2 exceeds 2^32-1
     sparseMatrix(I1, I2, x = 1)
 }

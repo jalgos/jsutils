@@ -1115,3 +1115,18 @@ triplet.prod.hash <- function(i1,
 {
     triplet_prod_un(i1, j1, x1, i2, j2, x2)
 }
+
+
+###
+
+#' Get The Dimension Of an Algebraic Vector
+#'
+#' Returns the dimension of an algebraic vector. Will work with objects of type 'vector' and one row matrices
+#' @param x vector
+#' @export
+vecdim <- function(x)
+{
+    if(is.vector(x)) length(x)
+    else if(ncol(x) == 1) nrow(x)
+    else stop('matrix is not a vector')
+}

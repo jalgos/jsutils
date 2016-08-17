@@ -15,13 +15,19 @@ expect_equal_matrices <- function(M1,
                                   agg = TRUE)
 {
     testthat::expect_equal(dim(M1), dim(M2))
-    if(compare.dimnames) testthat::expect_equal(dimnames(M1), dimnames(M2))
+    if(compare.dimnames)
+        testthat::expect_equal(dimnames(M1), dimnames(M2))
     
     if(agg)
-        testthat::expect_equal(mat.to.triplet(M1)[, list(x = sum(x)), by = list(i, j)][order(i, j, x)][is.na(x) | abs(x) >= tol],
-                               mat.to.triplet(M2)[, list(x = sum(x)), by = list(i, j)][order(i, j, x)][is.na(x) | abs(x) >= tol])
+    {
+        MT1 <- mat.to.triplet(M1)[, list(x = sum(x)), by = list(i, j)][order(i, j, x)][is.na(x) | abs(x) >= tol]
+        MT2 <- mat.to.triplet(M2)[, list(x = sum(x)), by = list(i, j)][order(i, j, x)][is.na(x) | abs(x) >= tol]
+    }
     else
-        testthat::expect_equal(mat.to.triplet(M1)[order(i, j, x)][is.na(x) | abs(x) >= tol],
-                               mat.to.triplet(M2)[order(i, j, x)][is.na(x) | abs(x) >= tol])
+    {
+        MT1 <- mat.to.triplet(M1)[order(i, j, x)][is.na(x) | abs(x) >= tol]
+        MT2 <- mat.to.triplet(M2)[order(i, j, x)][is.na(x) | abs(x) >= tol]
+    }
 
+    testthat::expect_equal(as.data.frame(MT1), as.data.frame(MT2))
 }

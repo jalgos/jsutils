@@ -45,9 +45,9 @@ gen.vech <- function(M,
                      mat.constr = safe.mat.constr)
 {
     if(nrow(M) == 0)
-        return(mat.constr(data = data.table(i = integer(0),
-                                            j = integer(0),
-                                            x = integer(0)),
+        return(mat.constr(data = data.table::data.table(i = integer(0),
+                                                        j = integer(0),
+                                                        x = integer(0)),
                           dims = c(0, 0)))
     size <- nn12(nrow(M), keep.diag = keep.diag)
     dms <- c(size, 1)
@@ -260,10 +260,10 @@ reverse.index.sym <- function(I, n, keep.diag = TRUE)
     di <- 1:n
     adj <- !keep.diag
     d <- index.sym(di, di + adj, n, keep.diag = keep.diag)
-    D <- data.table(i = di, d = d, I = d)
-    U <- data.table(or = 1:length(I), I)
-    setkey(D, I)
-    setkey(U, I)
+    D <- data.table::data.table(i = di, d = d, I = d)
+    U <- data.table::data.table(or = 1:length(I), I)
+    data.table::setkey(D, I)
+    data.table::setkey(U, I)
     U <- D[U, roll = Inf]
     U[order(or), list(i, j = I - d + i + adj)]
 }

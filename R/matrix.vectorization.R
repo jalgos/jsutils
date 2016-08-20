@@ -424,9 +424,9 @@ bdiag.to.vec <- function(vdim, #vector of matrix dimensions
 #' This is commonly known as the commutation matrix
 #' https://en.wikipedia.org/wiki/Commutation_matrix
 #' @export
-JF.PE4 <- function(n,
-                   p = n,
-                   half.vec = FALSE)
+commutation.matrix <- function(n,
+                               p = n,
+                               half.vec = FALSE)
 {
     if(n == 1) return(Diagonal(p))
     if(p == 1) return(Diagonal(n))

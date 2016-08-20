@@ -784,7 +784,7 @@ JF.S1 <- function(S,
     jlogger::jlog.debug(logger, "Computing S1 for a matrix of dimension:", nrow(S))
     n <- nrow(S)
     I <- Diagonal(n ^ 2)
-    P <- JF.PE4(n)
+    P <- commutation.matrix(n)
     S1 <- (I + P) %*% (S %x% S)
     if(half.vec)
     {

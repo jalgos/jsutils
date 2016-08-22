@@ -8,5 +8,5 @@ print.call.stack <- function(...,
 {
     dump.frames()
     if(is.null(logger)) print(last.dump)
-    else jlogger::jlog.print(logger, last.dump)
+    else jlogger::jlprint.error(logger, last.dump)
 }

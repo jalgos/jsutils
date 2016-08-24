@@ -20,13 +20,13 @@ expect_equal_matrices <- function(M1,
     
     if(agg)
     {
-        MT1 <- mat.to.triplet(M1)[, list(x = sum(x)), by = list(i, j)][order(i, j, x)][is.na(x) | abs(x) >= tol]
-        MT2 <- mat.to.triplet(M2)[, list(x = sum(x)), by = list(i, j)][order(i, j, x)][is.na(x) | abs(x) >= tol]
+        MT1 <- mat.to.triplet(M1)[, .(x = sum(x)), by = list(i, j)][order(i, j, x)][is.na(x) | abs(x) >= tol]
+        MT2 <- mat.to.triplet(M2)[, .(x = sum(x)), by = list(i, j)][order(i, j, x)][is.na(x) | abs(x) >= tol]
     }
     else
     {
-        MT1 <- mat.to.triplet(M1)[order(i, j, x)][is.na(x) | abs(x) >= tol]
-        MT2 <- mat.to.triplet(M2)[order(i, j, x)][is.na(x) | abs(x) >= tol]
+        MT1 <- mat.to.triplet(M1)[order(i, j, x)][is.na(x) | abs(x) >= tol][, .(i, j, x)]
+        MT2 <- mat.to.triplet(M2)[order(i, j, x)][is.na(x) | abs(x) >= tol][, .(i, j, x)]
     }
 
     testthat::expect_equal(as.data.frame(MT1), as.data.frame(MT2))

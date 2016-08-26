@@ -30,7 +30,7 @@ triplet.prod <- function(M1,
                         DM2[, i],
                         DM2[, j],
                         DM2[, x]),
-                  dims = c(nrow(M1), ncol(M2)))    
+                  dims = c(nrow(M1), ncol(M2)))
 }
 
 test_that("triplet Red / Black works",

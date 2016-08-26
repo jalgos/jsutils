@@ -7,12 +7,14 @@
 #' @param compare.dimnames Should dimnames be compared as well
 #' @param tol Tolerance for equality
 #' @param agg Should triplet representation that have several entries for the same coordinates be aggregated
+#' @param ... Not used
 #' @export
 expect_equal_matrices <- function(M1,
                                   M2,
                                   compare.dimnames = TRUE,
                                   tol = .Machine$double.eps,
-                                  agg = TRUE)
+                                  agg = TRUE,
+                                  ...)
 {
     testthat::expect_equal(dim(M1), dim(M2))
     if(compare.dimnames)

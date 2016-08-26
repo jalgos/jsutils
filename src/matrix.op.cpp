@@ -12,9 +12,9 @@ typedef std::unordered_map <int, un_vec_rep> un_rc_sparse_rep;
 typedef std::unordered_set <int> vec_proj;
 typedef std::unordered_map <int, vec_proj> proj_rep;
 // First index is the row
-template<typename T> T create_rc_sparse_rep(const IntegerVector& i, 
-					    const IntegerVector& j, 
-					    const NumericVector& x)
+template <typename T> T create_rc_sparse_rep(const IntegerVector& i, 
+					     const IntegerVector& j, 
+					     const NumericVector& x)
 {
     T lmap;
     int nels = i.size();
@@ -25,17 +25,17 @@ template<typename T> T create_rc_sparse_rep(const IntegerVector& i,
     return lmap;
 }
 
-template<typename T> T create_rc_sparse_rep(const List& tr,
-					    const std::string& ivar = "i",
-					    const std::string& jvar = "j",
-					    const std::string& xvar = "x")
+template <typename T> T create_rc_sparse_rep(const List& tr,
+					     const std::string& ivar = "i",
+					     const std::string& jvar = "j",
+					     const std::string& xvar = "x")
 {
     return create_rc_sparse_rep<T>(as<IntegerVector>(tr[ivar]),
 				   as<IntegerVector>(tr[jvar]),			  
 				   as<NumericVector>(tr[xvar]));
 }
 
-template<typename T, typename Y> List rc_sparse_rep_to_list(const T& rcs)
+template <typename T, typename Y> List rc_sparse_rep_to_list(const T& rcs)
 {
     int tot_size(0);
     for(typename T::const_iterator it_rcs = rcs.begin(); it_rcs != rcs.end(); it_rcs++)
@@ -63,9 +63,9 @@ template<typename T, typename Y> List rc_sparse_rep_to_list(const T& rcs)
 			Rcpp::Named("x") = xres);
 }
 
-template<typename T> typename std::map<int, T>::iterator find_or_insert(std::map<int, T>& data,
-									typename std::map<int, T>::iterator it_from, // C++ antics
-									int key_insert)
+template <typename T> typename std::map<int, T>::iterator find_or_insert(std::map<int, T>& data,
+									 typename std::map<int, T>::iterator it_from, // C++ antics
+									 int key_insert)
 {
     while(it_from == data.end() || it_from->first != key_insert)
     {
@@ -160,7 +160,7 @@ proj_rep create_proj_rep(const IntegerVector& proj,
   
     for(int ct = 0; ct < nels; ct++)
     {
-	// R Indexing
+	// R Indexing	
 	int lindex = (proj[ct] - 1) / nside2 + 1;
 	int rindex = (proj[ct] - 1) % nside2 + 1;
 	mproj[lindex].insert(rindex);

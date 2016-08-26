@@ -510,8 +510,8 @@ partial.kronecker <- function(M1,
     {
         DI <- rbind(DI, DI[i < j, list(i = j, j = i, I)])
     }
-    DM1 <- mat.to.data.table(M1)
-    DM2 <- mat.to.data.table(M2)
+    DM1 <- mat.to.triplet(M1)
+    DM2 <- mat.to.triplet(M2)
     setnames(DM1, c("i", "k", "x1"))
     setnames(DM2, c("j", "l", "x2"))
     if(DM1[, is.complex(x1)] || DM2[, is.complex(x2)])
@@ -545,7 +545,7 @@ partial.kronecker <- function(M1,
 #' @param M the matrix
 #' @usage sum.non.finite(M)
 #' @export sum.non.finite
-sum.non.finite <- function(M) nrow(mat.to.data.table(M)[!is.finite(x)])
+sum.non.finite <- function(M) nrow(mat.to.triplet(M)[!is.finite(x)])
     
 #### Memory safe kronecker product #######
 
@@ -623,8 +623,8 @@ mem.safe.kronecker <- function(S1,
     if(expm < krsize.limit) return(S1 %x% S2)
     CS1 <- cor.dec(S1)
     CS2 <- cor.dec(S2)
-    DS1 <- mat.to.data.table(CS1$C)
-    DS2 <- mat.to.data.table(CS2$C)
+    DS1 <- mat.to.triplet(CS1$C)
+    DS2 <- mat.to.triplet(CS2$C)
     DD <- CS1$D %x% CS2$D    
     chunksize <- krsize.limit %/% (2 * nrow(DS2)) ## Will  fail if it's zero. Hopefully an unrealistic case
     if(chunksize == 0)
@@ -799,7 +799,7 @@ JF.S1 <- function(S,
 half.kronecker <- function(M)
 {
     nm <- nrow(M)
-    DM <- mat.to.data.table(M)
+    DM <- mat.to.triplet(M)
     DM <- DM[i <= j, list(I = index.sym(i, j, nm), x = x)]
     DR <- data.table::data.table(i = 1:nm)
     DR <- DR[, list(k = (i:nm)), by = i]
@@ -1019,35 +1019,61 @@ setMethod("trim.cov.matrix", "ANY", gen.trim.cov.matrix)
 
 ## Matrix operations reimplemented in cpp
 
-#' @title Partial Kronecker Product
-#' @name partial.kronecker
-NULL
-
-
-#' @describeIn partial.kronecker Computes a kronecker product for a limited subset of the rows and columns.
+#' Partial Kronecker Product
+#'
+#' Computes a kronecker product for a limited subset of the rows and columns. This version returns the triplet representation as a \code{data.frame}
 #' @details Kronecker products produce are very costly in terms of memory usage.
-#' @param M1 a generic matrix that can be converted to a triplet using \code{mat.to.data.table}
-#' @param M2 DITTO
-#' @param Il The list of row indices in the result that we are interested in keeping. If NULL assumes no projection.
-#' @param Ir The list of column indices in the result that we are interested in keeping. If NULL assumes no projection.
+#' @param DM1 a triplet representation of a matrix
+#' @param DM2 DITTO
+#' @param Il The list of row indices in the result that we are interested in keeping. If NULL assumes no projection. Il must be replicated locally to each process.
+#' @param Ir The list of column indices in the result that we are interested in keeping. If NULL assumes no projection. Ir must be replicated locally to each process.
+#' @param dm2 Dimension of the RHS matrix
 #' @include RcppExports.R
 #' @export
+df.partial.kronecker <- function(DM1,
+                                 DM2,
+                                 Il = NULL,
+                                 Ir = NULL,
+                                 dm2)
+{
+    partial_kronecker(DM1,
+                      DM2,
+                      Il,
+                      Ir,
+                      dm2)
+}
+                                 
+
 partial.kronecker <- function(M1,
                               M2,
                               Il = NULL,
                               Ir = NULL)
 {
     
-    D <- partial_kronecker(mat.to.data.table(M1),
-                           mat.to.data.table(M2),
-                           Il,
-                           Ir,
-                           dim(M2))
+    D <- df.partial.kronecker(mat.to.triplet(M1),
+                              mat.to.triplet(M2),
+                              Il,
+                              Ir,
+                              dim(M2))
     Matrix::sparseMatrix(i = D$i, j = D$j, x = D$x, dims = dim(M1) * dim(M2))
 }
 
-#' @describeIn partial.kronecker Efficiently projects the result of a kronecker into two (or one) smaller spaces
-#' @param M1 a generic matrix that can be converted to a triplet using \code{mat.to.data.table}
+#' Partial Kronecker Product
+#'
+#' Computes a kronecker product for a limited subset of the rows and columns.
+#' @details Kronecker products produce are very costly in terms of memory usage.
+#' @param M1 a generic matrix that can be converted to a triplet using \code{mat.to.triplet}
+#' @param M2 DITTO
+#' @param Il The list of row indices in the result that we are interested in keeping. If NULL assumes no projection.
+#' @param Ir The list of column indices in the result that we are interested in keeping. If NULL assumes no projection.
+#' @include RcppExports.R
+#' @export
+setGeneric('partial.kronecker', partial.kronecker)
+
+#' Kronecker projection
+#' 
+#' Efficiently projects the result of a kronecker into two (or one) smaller spaces
+#' @param M1 a generic matrix that can be converted to a triplet using \code{mat.to.triplet}
 #' @param M2 DITTO
 #' @param Pl A matrix that will project the rows of M1 \%x\% M2 into a space of smaller dimension. If not provided will assume identity
 #' @param Pr A matrix that will project the columns of M1 \%x\% M2 into a space of smaller dimension. If not provided will assume identity
@@ -1065,17 +1091,17 @@ kronecker.proj <- function(M1,
     if(missing(Pr))
         Pl %*% partial.kronecker(M1,
                                  M2,
-                                 mat.to.data.table(Pl)[, j])
+                                 mat.to.triplet(Pl)[, j])
     else if(missing(Pl))
         partial.kronecker(M1,
                           M2,
-                          Ir = mat.to.data.table(Pr)[, i]) %*% Pr
+                          Ir = mat.to.triplet(Pr)[, i]) %*% Pr
     
     else
         Pl %*% partial.kronecker(M1,
                                  M2,
-                                 mat.to.data.table(Pl)[, j],
-                                 mat.to.data.table(Pr)[, i]) %*% Pr
+                                 mat.to.triplet(Pl)[, j],
+                                 mat.to.triplet(Pr)[, i]) %*% Pr
     
 }
 

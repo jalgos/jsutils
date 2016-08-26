@@ -5,7 +5,7 @@
 \title{Matrix Equality Expectation}
 \usage{
 expect_equal_matrices(M1, M2, compare.dimnames = TRUE,
-  tol = .Machine$double.eps, agg = TRUE)
+  tol = .Machine$double.eps, agg = TRUE, ...)
 }
 \arguments{
 \item{M1}{Matrix of any form that can be converted to a triplet with function \code{mat.to.triplet}}
@@ -17,6 +17,8 @@ expect_equal_matrices(M1, M2, compare.dimnames = TRUE,
 \item{tol}{Tolerance for equality}
 
 \item{agg}{Should triplet representation that have several entries for the same coordinates be aggregated}
+
+\item{...}{Not used}
 }
 \description{
 Tests whether two matrix represent the same data by converting them to a triplet representation.

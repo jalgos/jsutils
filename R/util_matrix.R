@@ -651,6 +651,23 @@ mem.safe.kronecker <- function(S1,
     DD %*% CC %*% DD
 }
 
+#' Alternative To NULL Dimensions
+#'
+#' Returns a vector of empty strings instead of NULL
+#' @param x The object on which name.fun and length.fun are to be applied
+#' @param name.fun function returning the desired name of x
+#' @param length.fun function returning the length of the desired dimension
+#' @export
+not.null.names <- function(x,
+                           name.fun = names,
+                           length.fun = length,
+                           default = "")
+{
+    nm <- name.fun(x)
+    if(is.null(nm)) rep(default, length.fun(x))
+    else nm
+}
+
 #' Non finite elements
 #' @export
 setGeneric("non.finite.elements", function(x) sum(!is.finite(x)))
@@ -666,8 +683,8 @@ setMethod("non.finite.elements", c(x = "sparseMatrix"), function(x) non.finite.e
 bdiag.with.names <- function(L)
 {
     M <- bdiag(L)
-    dimnames(M) <- list(unlist(lapply(L, rownames)),
-                        unlist(lapply(L, colnames)))
+    dimnames(M) <- list(unlist(lapply(L, not.null.names, name.fun = rownames, length.fun = nrow)),
+                        unlist(lapply(L, not.null.names, name.fun = colnames, length.fun = ncol)))
     M
 }
 

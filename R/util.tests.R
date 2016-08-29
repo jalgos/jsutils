@@ -16,6 +16,12 @@ expect_equal_matrices <- function(M1,
                                   agg = TRUE,
                                   ...)
 {
+    if(!is(M1, "genMatrix"))
+        M1 <- as.matrix(M1)
+    
+    if(!is(M2, "genMatrix"))
+        M2 <- as.matrix(M2)
+    
     testthat::expect_equal(dim(M1), dim(M2))
     if(compare.dimnames)
         testthat::expect_equal(dimnames(M1), dimnames(M2))

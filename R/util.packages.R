@@ -32,7 +32,7 @@ install.git <- function(name,
     tryCatch(install.fun(package.loc, ...),
              error = function(cond) {
         system(sprintf("rm -Rf %s", package.loc))            
-        stop(sprintf("An error occured while installing package %s, message: %s. Cleaning up before leaving.", name, cond$message))
+        stop(sprintf("An error occured while installing package %s at url: %s, message: %s. Cleaning up before leaving.", name, url, cond$message))
     })
     system(sprintf("rm -Rf %s", package.loc))
 }

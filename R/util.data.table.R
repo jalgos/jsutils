@@ -108,9 +108,10 @@ convert.cols <- function(D,
 #' Shortcut to get the class of each columns of the table
 #' @param D table
 #' @export
-col.classes <- function(D)
+col.classes <- function(D,
+                        cols = names(D))
 {
-    D[, sapply(.SD, function(x) class(x)[1])]
+    D[, sapply(.SD, function(x) class(x)[1]), .SDcols = cols]
 }
 
 add.token.key <- function(D)
@@ -487,3 +488,11 @@ make.id <- function(cols,
 #' @export
 setGeneric("merge", merge)
 
+## Util for ddata.table
+
+#' In place assignation
+#'
+#' Modifies a list in place
+#' @param ls List to modify
+#' @param newls Elements to assign to the list
+#' @export inplace

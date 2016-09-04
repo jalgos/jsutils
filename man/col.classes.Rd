@@ -4,7 +4,7 @@
 \alias{col.classes}
 \title{Column classes}
 \usage{
-col.classes(D)
+col.classes(D, cols = names(D))
 }
 \arguments{
 \item{D}{table}

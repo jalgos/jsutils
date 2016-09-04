@@ -98,6 +98,22 @@ fusion.factors <- function(F1,
     return(factor(c(as.character(F1), as.character(F2)), levels = lev))
 }
 
+
+#' Aligning factor levels
+#'
+#' Transform a list of factors into a list of factors with compatible levels
+#' @param ... Any number of factor vectors
+#' @param facts a list of factor vectors
+#' @export
+align.factors <- function(...,
+                          facts = list(...))
+{
+    glevels <- unique(sapply(list(...), levels))
+    lapply(facts,
+           function(fact) factor(as.character(fact), levels = glevels))
+}
+                          
+
 #' Test equality between factors
 #'
 #' Tests equality for factor vectors with possibly different levels. This is simply done by converting the factors to character.

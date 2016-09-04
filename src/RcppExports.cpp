@@ -5,6 +5,18 @@
 
 using namespace Rcpp;
 
+// inplace
+SEXP inplace(List ls, List newls);
+RcppExport SEXP jsutils_inplace(SEXP lsSEXP, SEXP newlsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< List >::type ls(lsSEXP);
+    Rcpp::traits::input_parameter< List >::type newls(newlsSEXP);
+    __result = Rcpp::wrap(inplace(ls, newls));
+    return __result;
+END_RCPP
+}
 // triplet_prod
 List triplet_prod(const IntegerVector& i1, const IntegerVector& j1, const NumericVector& x1, const IntegerVector& i2, const IntegerVector& j2, const NumericVector& x2);
 RcppExport SEXP jsutils_triplet_prod(SEXP i1SEXP, SEXP j1SEXP, SEXP x1SEXP, SEXP i2SEXP, SEXP j2SEXP, SEXP x2SEXP) {

@@ -111,7 +111,7 @@ convert.cols <- function(D,
 col.classes <- function(D,
                         cols = names(D))
 {
-    D[, sapply(.SD, function(x) class(x)[1]), .SDcols = cols]
+    sapply(cols, function(col) class(D[[col]]))
 }
 
 add.token.key <- function(D)

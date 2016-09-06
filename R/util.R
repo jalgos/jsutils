@@ -108,7 +108,7 @@ fusion.factors <- function(F1,
 align.factors <- function(...,
                           facts = list(...))
 {
-    glevels <- unique(sapply(list(...), levels))
+    glevels <- unique(unlist(lapply(list(...), levels)))
     lapply(facts,
            function(fact) factor(as.character(fact), levels = glevels))
 }

@@ -5,6 +5,17 @@
 
 using namespace Rcpp;
 
+// hash_string_vector
+IntegerVector hash_string_vector(const StringVector& sv);
+RcppExport SEXP jsutils_hash_string_vector(SEXP svSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const StringVector& >::type sv(svSEXP);
+    __result = Rcpp::wrap(hash_string_vector(sv));
+    return __result;
+END_RCPP
+}
 // inplace
 SEXP inplace(List ls, List newls);
 RcppExport SEXP jsutils_inplace(SEXP lsSEXP, SEXP newlsSEXP) {

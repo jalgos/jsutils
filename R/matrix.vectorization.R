@@ -18,7 +18,7 @@ vech.triplet <- function(DM = mat.to.triplet(DM),
     else F <- DM[, i < j]
     N <- sum(F)
     DM[F, list(i = index.sym(i, j, nr, keep.diag = keep.diag),
-               j = 1,
+               j = rep(1, .N),
                x)]
 }
 

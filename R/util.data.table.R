@@ -209,6 +209,7 @@ dt.cart.apply <- function(funapp, Largs, ...)
     if(is.character(funapp)) funapp <- get(funapp)
     DT[, do.call(funapp, c(.BY, list(...))), by = c(names(DT))]
 }
+
 #' Get column names using regex
 #'
 #' Will get the column names of a table that match a given regex

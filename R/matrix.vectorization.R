@@ -249,7 +249,7 @@ index.sym <- function(i, j, n, keep.diag = TRUE)
     i <- pmin(i, j)
     j <- pmax(j, o)
     adj <- !keep.diag
-    (i - 1) * (n - adj) + (j - 1) - i * (i - 1) / 2  - adj + 1
+    as.integer((i - 1) * (n - adj) + (j - 1) - i * (i - 1) / 2  - adj + 1)
 }
 
 #' @describeIn mat.index Computes the row index and column index corresponding to a given vectorization index

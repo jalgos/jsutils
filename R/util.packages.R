@@ -63,15 +63,12 @@ NULL
 #' @param force force install
 #' @export
 require.or.install <- function(name,
-                               group,
-                               url = replace.variable(url.pattern, subs = vars),
-                               url.pattern = "git@www.datasaiyan.com:$group/$name.git",
                                install.fun = install.git,
                                vars = c("$group" = group, "$name" = name),
                                ...,
                                force = FALSE)
 {
-    if(force || !require(name, character = TRUE)) install.fun(url, name = name, ..., repos = NULL)
+    if(force || !require(name, character = TRUE)) install.fun(name = name, ..., repos = NULL)
     else return()
     
     require(name, character = TRUE)

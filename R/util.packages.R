@@ -68,7 +68,7 @@ require.or.install <- function(name,
                                ...,
                                force = FALSE)
 {
-    if(force || !require(name, character = TRUE)) install.fun(name = name, ..., repos = NULL)
+    if(force || !require(name, character = TRUE)) install.fun(name = name, ...)
     else return()
     
     require(name, character = TRUE)

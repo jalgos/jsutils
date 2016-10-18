@@ -30,6 +30,7 @@ Collate:
     'type.conversion.R'
     'util.R'
     'util.S4.R'
+    'util.beautfication.R'
     'util.control.flow.R'
     'util.data.table.R'
     'util.eval.R'

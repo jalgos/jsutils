@@ -5,21 +5,13 @@
 \alias{require.or.install.dev}
 \title{Install Missing Package}
 \usage{
-require.or.install(name, group, url = replace.variable(url.pattern, subs =
-  vars), url.pattern = "git@www.datasaiyan.com:$group/$name.git",
-  install.fun = install.git, vars = c(`$group` = group, `$name` = name),
-  ..., force = FALSE)
+require.or.install(name, install.fun = install.git, vars = c(`$group` =
+  group, `$name` = name), ..., force = FALSE)
 
 require.or.install.dev(name, url.pattern = file.package.pattern, ...)
 }
 \arguments{
 \item{name}{Name of the package}
-
-\item{group}{Group to which the package belongs}
-
-\item{url}{Url of the package}
-
-\item{url.pattern}{Url pattern}
 
 \item{install.fun}{Package installation function to use}
 
@@ -28,6 +20,12 @@ require.or.install.dev(name, url.pattern = file.package.pattern, ...)
 \item{...}{to be forwarded to install.fun}
 
 \item{force}{force install}
+
+\item{url.pattern}{Url pattern}
+
+\item{group}{Group to which the package belongs}
+
+\item{url}{Url of the package}
 }
 \section{Functions}{
 \itemize{

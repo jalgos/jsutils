@@ -444,6 +444,9 @@ array.to.data.table <- function(A,
 #' Array to data.table
 #'
 #' Transforms an array into a set of index / value tuples
+#' @param A Array to transform to a data.table
+#' @param one.based Should the indices start at one
+#' @export
 setGeneric("array.to.data.table", array.to.data.table)
 
 #' Array Index

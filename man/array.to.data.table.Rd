@@ -6,6 +6,11 @@
 \usage{
 array.to.data.table(A, one.based = TRUE)
 }
+\arguments{
+\item{A}{Array to transform to a data.table}
+
+\item{one.based}{Should the indices start at one}
+}
 \description{
 Transforms an array into a set of index / value tuples
 }

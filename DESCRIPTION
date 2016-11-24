@@ -35,6 +35,7 @@ Collate:
     'util.data.table.R'
     'util.eval.R'
     'util.packages.R'
+    'util.random.R'
     'util.sendmail.R'
     'util.tests.R'
     'util_geocoding.R'

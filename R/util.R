@@ -19,23 +19,6 @@ jalgos.settings <- function()
     if(!"dummyDT" %in% ls(envir = .GlobalEnv)) dummyDT <<- data.table::data.table(a = c("HAHA", "HIHI", "HOHO", "HUHU"), b = rnorm(4), y = 1:4, dt = rep(Sys.Date(), 4))
 }
 
-#' Installing packages
-#'
-#' Loads a package or install it if it's not installed yet
-#' @param library.name character string, name of the package to be installed
-#' @param install.fun installation function to be used
-#' @param ... Parameters to be forwarded to the installation function
-#' @export
-load.or.install <- function(library.name,
-                            install.fun = install.packages,
-                            ...)
-{
-    if(require(library.name, character.only = TRUE)) return(library(library.name, character.only = TRUE))
-    install.packages(library.name, ...)
-    library(library.name, character.only = TRUE)
-}
-
-
 #' Add Ellipsis
 #'
 #' Adds the ... argument to a function. Useful when ... is forwarded down to functions that don't take the ellipsis as argument

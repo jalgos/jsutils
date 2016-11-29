@@ -107,11 +107,18 @@ convert.cols <- function(D,
 #'
 #' Shortcut to get the class of each columns of the table
 #' @param D table
+#' @param cols For which columns the classes should be returned
+#' @param class.fun Which function should be used to determine the type. Can be `typeof` or `class` or any function of your choice
+#' @param apply.fun Should we use `lapply` or `sapply`?
 #' @export
 col.classes <- function(D,
-                        cols = names(D))
+                        cols = names(D),
+                        class.fun = function(X) class(X)[1],
+                        apply.fun = sapply)
 {
-    sapply(cols, function(col) class(D[[col]])[1])
+    ccs <- apply.fun(cols, function(col) class.fun(D[[col]]))
+    names(ccs) <- cols
+    ccs
 }
 
 add.token.key <- function(D)

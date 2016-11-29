@@ -4,10 +4,17 @@
 \alias{col.classes}
 \title{Column classes}
 \usage{
-col.classes(D, cols = names(D))
+col.classes(D, cols = names(D), class.fun = function(X) class(X)[1],
+  apply.fun = sapply)
 }
 \arguments{
 \item{D}{table}
+
+\item{cols}{For which columns the classes should be returned}
+
+\item{class.fun}{Which function should be used to determine the type. Can be `typeof` or `class` or any function of your choice}
+
+\item{apply.fun}{Should we use `lapply` or `sapply`?}
 }
 \description{
 Shortcut to get the class of each columns of the table

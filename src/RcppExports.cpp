@@ -60,6 +60,18 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// hash_combine
+IntegerVector hash_combine(const IntegerVector& hash1, const IntegerVector& hash2);
+RcppExport SEXP jsutils_hash_combine(SEXP hash1SEXP, SEXP hash2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const IntegerVector& >::type hash1(hash1SEXP);
+    Rcpp::traits::input_parameter< const IntegerVector& >::type hash2(hash2SEXP);
+    __result = Rcpp::wrap(hash_combine(hash1, hash2));
+    return __result;
+END_RCPP
+}
 // inplace
 SEXP inplace(List ls, List newls);
 RcppExport SEXP jsutils_inplace(SEXP lsSEXP, SEXP newlsSEXP) {

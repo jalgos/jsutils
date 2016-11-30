@@ -18,3 +18,16 @@ hash.atomic <- function(x)
     else
         stop("Type is not atomic")
 }
+
+#' Combining Hash Numbers
+#'
+#' Combines two hash numbers into one
+#' @param h1 Vector of hash numbers
+#' @param h2 Vector of hash numbers
+#' @export
+hash.combine <- function(h1,
+                         h2)
+{
+    hash_combine(h1,
+                 h2)
+}

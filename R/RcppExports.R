@@ -21,6 +21,10 @@ hash_logical_vector_std <- function(sv) {
     .Call('jsutils_hash_logical_vector_std', PACKAGE = 'jsutils', sv)
 }
 
+hash_combine <- function(hash1, hash2) {
+    .Call('jsutils_hash_combine', PACKAGE = 'jsutils', hash1, hash2)
+}
+
 inplace <- function(ls, newls) {
     .Call('jsutils_inplace', PACKAGE = 'jsutils', ls, newls)
 }

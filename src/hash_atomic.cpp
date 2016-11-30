@@ -79,3 +79,17 @@ IntegerVector hash_logical_vector_std(const LogicalVector& sv)
     }
     return(res);
 } 
+
+//[[Rcpp::export]]
+IntegerVector hash_combine(const IntegerVector& hash1,
+			   const IntegerVector& hash2)
+{
+    if(hash1.size() != hash2.size())
+	Rf_error("Size mismatch");
+    IntegerVector res(hash1.size());
+    for(int i = 0; i < res.size(); i++)
+    {
+	res[i] = hash1[i] ^ (hash2[i] << 1);
+    }
+    return(res);
+}

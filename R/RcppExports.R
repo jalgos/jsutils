@@ -5,6 +5,22 @@ hash_string_vector <- function(sv) {
     .Call('jsutils_hash_string_vector', PACKAGE = 'jsutils', sv)
 }
 
+hash_string_vector_std <- function(sv) {
+    .Call('jsutils_hash_string_vector_std', PACKAGE = 'jsutils', sv)
+}
+
+hash_numeric_vector_std <- function(sv) {
+    .Call('jsutils_hash_numeric_vector_std', PACKAGE = 'jsutils', sv)
+}
+
+hash_integer_vector_std <- function(sv) {
+    .Call('jsutils_hash_integer_vector_std', PACKAGE = 'jsutils', sv)
+}
+
+hash_logical_vector_std <- function(sv) {
+    .Call('jsutils_hash_logical_vector_std', PACKAGE = 'jsutils', sv)
+}
+
 inplace <- function(ls, newls) {
     .Call('jsutils_inplace', PACKAGE = 'jsutils', ls, newls)
 }

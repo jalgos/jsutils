@@ -706,14 +706,3 @@ try.catch <- function(expr,
         tryCatch(expr,
                  ...)
 }
-
-
-#' String Hashing
-#'
-#' Hashes a string into an integer.
-#' @param x String vector to be hashed
-#' @export
-hash.string.vector <- function(x)
-{
-    hash_string_vector(x)
-}

@@ -119,7 +119,9 @@ util.type.conv.map <- list(IDate = convIDate,
                            POSIXct = partial.conversion(as.POSIXct, default.val = as.POSIXct(NaN, origin = "1970-01-01")),
                            POSIX = gen.conv.posix("%Y-%m-%dT%H:%M:%S"),
                            POSIXsec = sec.conv.posix(),
-                           POSIXmill = mill.conv.posix())
+                           POSIXmill = mill.conv.posix(),
+                           integer = as.integer,
+                           numeric = as.numeric)
 
 #' Converts Date to Hexadecimal
 #'

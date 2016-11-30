@@ -10,6 +10,6 @@ hash.atomic(x)
 \item{x}{Vector to be hashed}
 }
 \description{
-Hashes a vector of atomic type (character, numeric, integer, logical, + factor) to an integer
+Hashes a vector of atomic type as determined by `typeof` (character, numeric, integer, logical) to an integer
 }
 

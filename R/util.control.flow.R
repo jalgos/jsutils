@@ -1,3 +1,15 @@
+
+log.frames <- function(logger,
+                       frames)
+{
+    jlog.error(logger, "Call stack upon error:", attributes(frames)$error.message)
+    for(i in 1:length(frames))
+    {
+        jlog.error(logger, "Frame", i, ": `", names(frames)[i], "`")
+    }
+    jlog.error(logger, "Call stack upon error:", attributes(frames)$error.message)
+}
+
 #' Print Call Stack
 #'
 #' Prints the entire call stack. Meant to be called upon an error occurring. Especially handy for the pbdR context where 'options(error = browser)' is unavailable.
@@ -8,5 +20,5 @@ print.call.stack <- function(...,
 {
     dump.frames()
     if(is.null(logger)) print(last.dump)
-    else jlogger::jlprint.error(logger, last.dump)
+    else log.frames(logger, last.dump)
 }

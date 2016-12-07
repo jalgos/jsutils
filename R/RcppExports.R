@@ -25,8 +25,8 @@ hash_combine <- function(hash1, hash2) {
     .Call('jsutils_hash_combine', PACKAGE = 'jsutils', hash1, hash2)
 }
 
-inplace <- function(ls, newls) {
-    .Call('jsutils_inplace', PACKAGE = 'jsutils', ls, newls)
+inplace <- function(target, src) {
+    invisible(.Call('jsutils_inplace', PACKAGE = 'jsutils', target, src))
 }
 
 triplet_prod <- function(i1, j1, x1, i2, j2, x2) {

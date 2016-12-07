@@ -73,15 +73,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // inplace
-SEXP inplace(List ls, List newls);
-RcppExport SEXP jsutils_inplace(SEXP lsSEXP, SEXP newlsSEXP) {
+void inplace(SEXP target, SEXP src);
+RcppExport SEXP jsutils_inplace(SEXP targetSEXP, SEXP srcSEXP) {
 BEGIN_RCPP
-    Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< List >::type ls(lsSEXP);
-    Rcpp::traits::input_parameter< List >::type newls(newlsSEXP);
-    __result = Rcpp::wrap(inplace(ls, newls));
-    return __result;
+    Rcpp::traits::input_parameter< SEXP >::type target(targetSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type src(srcSEXP);
+    inplace(target, src);
+    return R_NilValue;
 END_RCPP
 }
 // triplet_prod

@@ -1,16 +1,11 @@
 //[[Rcpp::plugins(cpp11)]]
 #include <Rcpp.h>
 
-using namespace Rcpp;
-
-
-//In place assignation for lists
 //[[Rcpp::export]]
-SEXP inplace(List ls, List newls)
+void inplace(SEXP target, SEXP src)
 {
-    for(int i = 0; i < newls.size(); i++)
+    for(int i = 0; i < LENGTH(src); i++)
     {
-	ls[i] = newls[i];
+	SET_VECTOR_ELT(target, i, VECTOR_ELT(src, i));
     }
-    return(ls);
 } 

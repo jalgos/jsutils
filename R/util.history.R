@@ -48,7 +48,7 @@ quit.save <- function(...)
 
 #' @name rhistory
 #' @title Tracking Rhistory
-#' @details The function track.rhistory works like save.rhistory, but here we use the track library with track.library.start() to take care of the recording of the history.\cr
+#' @details The function track.rhistory works like save.rhistory, but here we use the track library with track.library.start() to take care of the recording of the history. If it was already used in the current session, track.library.start() won't be called again.\cr
 #' @import track
 #' @param info A name to identify the work you did in the session
 #' @param folder Folder into which saving the Rhistory files

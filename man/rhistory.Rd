@@ -21,7 +21,7 @@ Keeping track of your work is very important. These tools allow you to save your
 The files is saved into the specified directory under the subdirectory current date. The current timestamp is added to the info file so saving your work several time does not overwrite earlier saves.\cr
 The save.rhistory function use savehistory() to store the history in a file.\cr
 
-The function track.rhistory works like save.rhistory, but here we use the track library with track.library.start() to take care of the recording of the history.\cr
+The function track.rhistory works like save.rhistory, but here we use the track library with track.library.start() to take care of the recording of the history. If it was already used in the current session, track.library.start() won't be called again.\cr
 }
 \section{Functions}{
 \itemize{

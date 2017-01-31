@@ -11,10 +11,17 @@ quit.save(...)
 \item{info}{A name to identify the work you did in the session}
 
 \item{folder}{Folder into which saving the Rhistory files}
+
+\item{info}{A name to identify the work you did in the session}
+
+\item{folder}{Folder into which saving the Rhistory files}
 }
 \details{
 Keeping track of your work is very important. These tools allow you to save your entire RHistory so you can comme back to earlier work easily.\cr
-The files is saved into the specified directory under the subdirectory current date. The current timestamp is added to the info file so saving your work several time does not overwrite earlier saves. \cr
+The files is saved into the specified directory under the subdirectory current date. The current timestamp is added to the info file so saving your work several time does not overwrite earlier saves.\cr
+The save.rhistory function use savehistory() to store the history in a file.\cr
+
+The function track.rhistory works like save.rhistory, but here we use the track library with track.library.start() to take care of the recording of the history.\cr
 }
 \section{Functions}{
 \itemize{

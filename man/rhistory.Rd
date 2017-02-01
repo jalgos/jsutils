@@ -28,6 +28,6 @@ The files is saved into the specified directory under the subdirectory current d
 
 \item \code{quit.save}: Saves the RHistory before exiting
 
-\item \code{track.rhistory}: The function track.rhistory works like save.rhistory, but here we use the track library with track.library.start() to take care of the recording of the history. If it was already used in the current session, track.library.start() won't be called again.
+\item \code{track.rhistory}: The function track.rhistory works like save.rhistory, but here we use the track library with track.history.start() to take care of the recording of the history. If it was already used in the current session, track.history.start() won't be called again.
 }}
 

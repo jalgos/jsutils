@@ -47,7 +47,7 @@ quit.save <- function(...)
     q()
 }
 
-#' @describeIn rhistory The function track.rhistory works like save.rhistory, but here we use the track library with track.library.start() to take care of the recording of the history. If it was already used in the current session, track.library.start() won't be called again.
+#' @describeIn rhistory The function track.rhistory works like save.rhistory, but here we use the track library with track.history.start() to take care of the recording of the history. If it was already used in the current session, track.history.start() won't be called again.
 #' @export
 track.rhistory <- function(info = "", folder = "Rhistory")
 {

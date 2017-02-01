@@ -18,15 +18,17 @@ create.rhistory.file <- function(info = "", subfolder = "Rhistory")
     return(filename)
 }
 
-#' @name rhistory
-#' @title Saving Rhistory
-#' @details Keeping track of your work is very important. These tools allow you to save your entire RHistory so you can comme back to earlier work easily.\cr
+#' rhistory
+#' 
+#' Keeping track of your work is very important. These tools allow you to save your entire RHistory so you can comme back to earlier work easily.\cr
 #' The files is saved into the specified directory under the subdirectory current date. The current timestamp is added to the info file so saving your work several time does not overwrite earlier saves.\cr
-#' The save.rhistory function use savehistory() to store the history in a file.\cr
+#' @name rhistory
 #' @param info A name to identify the work you did in the session
 #' @param folder Folder into which saving the Rhistory files
+#' @import track
 NULL
 
+#' @describeIn rhistory Use savehistory() to store the history in a file.
 #' @export
 save.rhistory <- function(info = "", folder = "Rhistory")
 {
@@ -45,15 +47,7 @@ quit.save <- function(...)
     q()
 }
 
-
-#' @name rhistory
-#' @title Tracking Rhistory
-#' @details The function track.rhistory works like save.rhistory, but here we use the track library with track.library.start() to take care of the recording of the history. If it was already used in the current session, track.library.start() won't be called again.\cr
-#' @import track
-#' @param info A name to identify the work you did in the session
-#' @param folder Folder into which saving the Rhistory files
-NULL
-
+#' @describeIn rhistory The function track.rhistory works like save.rhistory, but here we use the track library with track.library.start() to take care of the recording of the history. If it was already used in the current session, track.library.start() won't be called again.
 #' @export
 track.rhistory <- function(info = "", folder = "Rhistory")
 {

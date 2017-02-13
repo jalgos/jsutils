@@ -2,11 +2,15 @@ track.env <- new.env()
 
 create.rhistory.directory <- function(folder = "Rhistory")
 {
-    V <- scan(pipe("ls"), what = "character")
+    ls1 <- pipe("ls")
+    V <- scan(ls1, what = "character")
+    close(ls1)
     if(!folder %in% V) system(paste("mkdir", folder))
     date <- gsub("-", "", Sys.Date())
     subfolder <- paste(folder, date, sep = "/")
-    V <- scan(pipe(paste("ls", folder)), what = "character")
+    ls2 <- pipe(paste("ls", folder))
+    V <- scan(ls2, what = "character")
+    close(ls2)
     if(!date %in% V) system(paste("mkdir", subfolder))
     return(subfolder)
 }

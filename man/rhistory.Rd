@@ -7,11 +7,11 @@
 \alias{track.rhistory}
 \title{rhistory}
 \usage{
-save.rhistory(info = "", folder = "Rhistory")
+save.rhistory(info, folder = "Rhistory")
 
 quit.save(...)
 
-track.rhistory(info = "", folder = "Rhistory")
+track.rhistory(info, folder = "Rhistory")
 }
 \arguments{
 \item{info}{A name to identify the work you did in the session}

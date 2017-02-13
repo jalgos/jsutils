@@ -11,8 +11,13 @@ create.rhistory.directory <- function(folder = "Rhistory")
     return(subfolder)
 }
 
-create.rhistory.file <- function(info = "", subfolder = "Rhistory")
-{
+create.rhistory.file <- function(info, subfolder = "Rhistory")
+{    
+    if(missing(info))
+    {
+        cat("Prefix of the file to track (default empty)?\n")
+        info <- get.keyboard.input()
+    }
     filename <- paste(c(info, "Rhistory", gsub(" |-|:", "", Sys.time())), collapse = ".")
     filename <- paste(c(subfolder, filename), collapse = "/")
     return(filename)
@@ -30,7 +35,7 @@ NULL
 
 #' @describeIn rhistory Use savehistory() to store the history in a file.
 #' @export
-save.rhistory <- function(info = "", folder = "Rhistory")
+save.rhistory <- function(info, folder = "Rhistory")
 {
     subfolder <- create.rhistory.directory(folder)
     filename <- create.rhistory.file(info, subfolder)
@@ -49,7 +54,7 @@ quit.save <- function(...)
 
 #' @describeIn rhistory The function track.rhistory works like save.rhistory, but here we use the track library with track.history.start() to take care of the recording of the history. If it was already used in the current session, track.history.start() won't be called again.
 #' @export
-track.rhistory <- function(info = "", folder = "Rhistory")
+track.rhistory <- function(info, folder = "Rhistory")
 {
     if(!is.null(track.env$trackfile))
     {

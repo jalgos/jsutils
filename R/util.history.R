@@ -35,7 +35,7 @@ save.rhistory <- function(info = "", folder = "Rhistory")
     subfolder <- create.rhistory.directory(folder)
     filename <- create.rhistory.file(info, subfolder)
     savehistory(file = filename)
-    print(c("saved rhistory: ", filename))
+    cat("saved rhistory: ", filename, '\n')
 }
 
 
@@ -58,8 +58,8 @@ track.rhistory <- function(info = "", folder = "Rhistory")
     
     subfolder <- create.rhistory.directory(folder)
     filename <- create.rhistory.file(info, subfolder)
-
     track::track.history.start(filename)
+    cat('tracking history in file:', filename, '\n')
     track.env$trackfile <- filename
 }
 

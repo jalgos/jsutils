@@ -9,7 +9,7 @@
 #' @param M the matrix of which DM is the triplet representation
 #' @param keep.diag should the diagonal be kept in the half vectorization
 #' @export
-vech.triplet <- function(DM = mat.to.triplet(DM),                         
+vech.triplet <- function(DM = mat.to.triplet(DM),
                          nr = nrow(M),
                          M,
                          keep.diag = TRUE)
@@ -142,13 +142,27 @@ bdiag.to.vech <- function(vdim, #vector of matrix dimensions
 #' Creates the matrix that transforms the vector of diagonal value into the half vectorization of the whole matrix
 #' @param n Size of the diagonal matrix
 #' @param logger JLogger to be used to log messages
-#' @seealso diag.to.vec, bdiag.to.vec, bdiag.to.vec
+#' @seealso diag.to.vec, bdiag.to.vec, bdiag.to.vech
 #' @export
 diag.to.vech <- function(n,
                          logger = jlogger::JLoggerFactory("jalgos filter"))
 {
     bdiag.to.vech(rep(1, n),
                   logger = logger)
+}
+
+#' Vectorization of a diagonal matrix
+#'
+#' Creates the matrix that transforms the vector of diagonal value into the vectorization of the whole matrix
+#' @param n Size of the diagonal matrix
+#' @param logger JLogger to be used to log messages
+#' @seealso diag.to.vech, bdiag.to.vec, bdiag.to.vech
+#' @export
+diag.to.vec <- function(n,
+                        logger = jlogger::JLoggerFactory("jalgos filter"))
+{
+    bdiag.to.vec(rep(1, n),
+                 logger = logger)
 }
 
 #' Half vectorization
@@ -310,6 +324,7 @@ vech.to.vec <- function(n,
     fmat(i = ID1, j = ID2, x = val, dims = dims)
 }
 
+
 ## The symmetric
 #' @describeIn vectorization Gets the indices of the upper diagonal
 #' @export
@@ -442,6 +457,6 @@ commutation.matrix <- function(n,
     }
     I1 <- findex(J, L, p)
     I2 <- findex(L, J, n)
-                                        #Need to add a switch here in case I1 or I2 exceeds 2^32-1
+    ##Need to add a switch here in case I1 or I2 exceeds 2^32-1
     sparseMatrix(I1, I2, x = 1)
 }

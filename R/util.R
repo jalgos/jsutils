@@ -108,37 +108,7 @@ eqfactors <- function(F1, F2)
     return(as.character(F1) == as.character(F2))
 }
 
-#' @name rhistory
-#' @title Saving Rhistory
-#' @details Keeping track of your work is very important. These tools allow you to save your entire RHistory so you can comme back to earlier work easily.\cr
-#' The files is saved into the specified directory under the subdirectory current date. The current timestamp is added to the info file so saving your work several time does not overwrite earlier saves. \cr
-#' @param info A name to identify the work you did in the session
-#' @param folder Folder into which saving the Rhistory files
-NULL
 
-#' @describeIn rhistory Saves the entire command history for the current session in a file.
-#' @export
-save.rhistory <- function(info = "", folder = "Rhistory")
-{
-    V <- scan(pipe("ls"), what = "character")
-    if(!folder %in% V) system(paste("mkdir", folder))
-    date <- gsub("-", "", Sys.Date())
-    subfolder <- paste(folder, date, sep = "/")
-    V <- scan(pipe(paste("ls", folder)), what = "character")
-    if(!date %in% V) system(paste("mkdir", subfolder))
-    filename <- paste(c(info, "Rhistory", gsub(" |-|:", "", Sys.time())), collapse=".")
-    filename <- paste(c(subfolder, filename), collapse = "/")
-    savehistory(file = filename)
-    print(c("saved rhistory: ", filename))
-}
-
-#' @describeIn rhistory Saves the RHistory before exiting
-#' @export
-quit.save <- function(...)
-{
-    save.rhistory(...)
-    q()
-}
 #' Dividing intervals
 #' @export
 divide.intervals <- function(D, n)
@@ -706,3 +676,5 @@ try.catch <- function(expr,
         tryCatch(expr,
                  ...)
 }
+
+

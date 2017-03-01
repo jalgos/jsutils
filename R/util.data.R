@@ -1,12 +1,22 @@
+util.data.logger.factory <- if(interactive()) JLoggerFactory else JPLoggerFactory
+
+get.util.data.logger <- function()
+{
+    util.data.logger.factory('')
+}
+
+logger <- get.util.data.logger()
 #' Split Write csv
 #'
-#' Generate an arbitrary number of random strings made of letters from the 26 characters alphabet.
+#' Allows to export a big data.table as several csv files
 #' @param TAB Data.table, usually big, to be splitted and exported as csv files
 #' @param split.size parameter controlling the max size of splits, in number of lines
+#' @param export.folder parameter for target path to repo to save the csv files
 #' @export
 split.write.csv <- function(TAB,
                             split.size,
-                            logger = get.grt.logger())
+                            export.folder = "reports",
+                            logger = get.util.data.logger())
 {
     size <- dim(TAB)[1]
     nb.files <- ceiling(size / split.size)
@@ -16,6 +26,6 @@ split.write.csv <- function(TAB,
     {
         jlog.info(logger, "Writing the", x, "split")
         y <- splits[x]
-        write.csv(TAB[(y - split.size + 1):y], file = paste0("reports/split", x, ".csv"))
+        write.csv(TAB[(y - split.size + 1):y], file = paste0(export.folder, "/split", x, ".csv"))
     })
 }

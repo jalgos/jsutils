@@ -22,18 +22,27 @@ random.matrix <- function(n,
 }
 
 #' @describeIn random.mat Generates a random symmetric matrix of independently drawn realisations of a random variable
-#'
 #' @export
 random.sym.matrix <- function(n,
                               rgen = rnorm,
                               ...)
 {
-    X <- rgen(n * (n+1) / 2, ...)
+    X <- rgen(n * (n + 1) / 2, ...)
     Matrix::forceSymmetric(vech.reverse(X))
 }
 
+
+#' @describeIn random.mat Generates a random anti symmetric matrix of independently drawn realisations of a random variable
+#' @export
+random.anti.sym.matrix <- function(n,
+                                   rgen = rnorm,
+                                   ...)
+{
+    X <- rgen(n * (n - 1) / 2, ...)
+    vech.reverse(X, keep.diag = FALSE)
+}
+
 #' @describeIn random.mat Generates a random covariance matrix. Uses random.sym.matrix
-#'
 #' @export
 random.cov.matrix <- function(n,
                               tot.vol = n,
@@ -61,6 +70,7 @@ random.sparse.matrix <- function(n,
                          x = rgen(N),
                          dims = c(n, p))
 }
+
 #' @describeIn random.mat Creates a random sparse covariance matrix. Sparsity is hard to control exactly. The target is approximate. Uses random.sparse.matrix
 #' @export
 random.sparse.cov.matrix <- function(N,
@@ -70,3 +80,15 @@ random.sparse.cov.matrix <- function(N,
     M <- random.sparse.matrix(N = as.integer(sqrt(N)), ...)
     M %*% t(M)
 }
+
+
+####### Random orthonormal matrices ######
+
+#' @describeIn random.mat Creates a random orthonormal.matrix. Effectively draws an anti symmetric matrix and uses the Cayley parametrization to create the member of SOn(R)
+#' @export
+random.orthonormal.matrix <- function(n)
+{
+    A <- random.anti.sym.matrix(n)
+    jsmath::reverse.cayley(A)
+}
+                                      

@@ -32,6 +32,7 @@ Collate:
     'util.S4.R'
     'util.beautfication.R'
     'util.control.flow.R'
+    'util.data.R'
     'util.data.table.R'
     'util.eval.R'
     'util.hash.R'

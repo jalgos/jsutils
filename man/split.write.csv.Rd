@@ -4,14 +4,17 @@
 \alias{split.write.csv}
 \title{Split Write csv}
 \usage{
-\method{split}{write.csv}(TAB, split.size, logger = get.grt.logger())
+\method{split}{write.csv}(TAB, split.size, export.folder = "reports",
+  logger = get.util.data.logger())
 }
 \arguments{
-\item{TAB}{parameter Data.table, usually big, to be splitted and exported as csv files}
+\item{TAB}{Data.table, usually big, to be splitted and exported as csv files}
 
 \item{split.size}{parameter controlling the max size of splits, in number of lines}
+
+\item{export.folder}{parameter for target path to repo to save the csv files}
 }
 \description{
-Generate an arbitrary number of random strings made of letters from the 26 characters alphabet.
+Allows to export a big data.table as several csv files
 }
 

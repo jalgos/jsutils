@@ -1,6 +1,7 @@
 ## Common functions on data.table. Some are actually natively available in the package. We encourage the user to check
 
-#'@importClassesFrom data.table data.table
+#' @importClassesFrom data.table data.table
+#' @importFrom data.table data.table as.data.table setkey copy
 NULL
 
 #' Plus Join

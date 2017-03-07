@@ -28,11 +28,20 @@ constructor.init <- function(.Class)
 #' Classes with init
 #' 
 #' Creates a class that relies on init
+#' @param class The class you want to set
+#' @param where The environment you want to set it to
+#' @param ... to be passed on to setClass
 #' @export
 setClassJ <- function(class,
+                      where,
                       ...)
 {
-    setClass(class, ...)
+    if(missing(where))
+        where <- sys.frame()
+    setClass(class,
+             where = where,
+             ...)
+    
     constructor.init(class)
 }
 

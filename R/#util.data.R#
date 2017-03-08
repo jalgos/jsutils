@@ -6,6 +6,7 @@ get.util.data.logger <- function()
 }
 
 logger <- get.util.data.logger()
+
 #' Split Write csv
 #'
 #' Allows to export a big data.table as several csv files
@@ -15,7 +16,7 @@ logger <- get.util.data.logger()
 #' @export
 split.write.csv <- function(TAB,
                             split.size,
-                            export.folder = "output",
+                            export.folder = "reports",
                             logger = get.util.data.logger())
 {
     size <- dim(TAB)[1]
@@ -26,6 +27,6 @@ split.write.csv <- function(TAB,
     {
         jlog.info(logger, "Writing the", x, "split")
         y <- splits[x]
-        write.csv(TAB[(y - split.size + 1):y], file = paste0(export.folder, "/", x, ".csv"))
+        write.csv(TAB[(y - split.size + 1):y], file = paste0(export.folder, "/split", x, ".csv"))
     })
 }

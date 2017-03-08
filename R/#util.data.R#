@@ -1,8 +1,11 @@
+util.data.logger.factory <- if(interactive()) JLoggerFactory else JPLoggerFactory
 
 get.util.data.logger <- function()
 {
-    JLoggerFactory('Data loading')
+    util.data.logger.factory('')
 }
+
+logger <- get.util.data.logger()
 
 #' Split Write csv
 #'
@@ -13,7 +16,7 @@ get.util.data.logger <- function()
 #' @export
 split.write.csv <- function(TAB,
                             split.size,
-                            export.folder = "output",
+                            export.folder = "reports",
                             logger = get.util.data.logger())
 {
     size <- dim(TAB)[1]
@@ -22,8 +25,8 @@ split.write.csv <- function(TAB,
     lapply(1:nb.files,
            FUN = function(x)
     {
-        jlog.info(logger, "Writing the", x, "split to", export.folder)
+        jlog.info(logger, "Writing the", x, "split")
         y <- splits[x]
-        write.csv(TAB[(y - split.size + 1):y], file = paste0(export.folder, "/", x, ".csv"))
+        write.csv(TAB[(y - split.size + 1):y], file = paste0(export.folder, "/split", x, ".csv"))
     })
 }

@@ -4,6 +4,20 @@
 #' @importFrom data.table data.table as.data.table setkey copy
 NULL
 
+## Creating generics
+
+
+#' @export
+setGeneric('setkeyv', data.table::setkeyv)
+
+#' @export
+setGeneric('key', data.table::key)
+
+#' @export
+setGeneric('setkey', data.table::setkey)
+
+
+
 #' Plus Join
 #'
 #' Plus join is a type of join where the columns of the same name are added together. Missing values in one of the two tables are considered to be 0 by default

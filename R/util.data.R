@@ -22,7 +22,7 @@ split.write.csv <- function(TAB,
     lapply(1:nb.files,
            FUN = function(x)
     {
-        jlog.info(logger, "Writing the", x, "split")
+        jlog.info(logger, "Writing the", x, "split to", export.folder)
         y <- splits[x]
         write.csv(TAB[(y - split.size + 1):y], file = paste0(export.folder, "/", x, ".csv"))
     })

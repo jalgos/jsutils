@@ -4,7 +4,14 @@
 \alias{setClassJ}
 \title{Classes with init}
 \usage{
-setClassJ(class, ...)
+setClassJ(class, where, ...)
+}
+\arguments{
+\item{class}{The class you want to set}
+
+\item{where}{The environment you want to set it to}
+
+\item{...}{to be passed on to setClass}
 }
 \description{
 Creates a class that relies on init

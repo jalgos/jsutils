@@ -1,11 +1,9 @@
-util.data.logger.factory <- if(interactive()) JLoggerFactory else JPLoggerFactory
 
 get.util.data.logger <- function()
 {
-    util.data.logger.factory('')
+    JLoggerFactory('Data loading')
 }
 
-logger <- get.util.data.logger()
 #' Split Write csv
 #'
 #' Allows to export a big data.table as several csv files

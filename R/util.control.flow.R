@@ -22,3 +22,27 @@ print.call.stack <- function(...,
     if(is.null(logger)) print(last.dump)
     else log.frames(logger, last.dump)
 }
+
+
+#' Print Call Stack Upon Error
+#'
+#' Prints the call stack and quits if the session is not interactive, sets option error to `recover` otherwise.
+#' @param logger The logger that will print out the stack
+#' @export
+trace.upon.error <- function(logger)
+{
+    if(!interactive())
+    { 
+        options(error = function(...)
+        {
+            jsutils::print.call.stack(..., logger = logger)
+            jlog.error(logger, "An error occurred. Aborting...")
+            barrier()
+            q('no')
+        })
+    }
+    else
+    {
+        options(error = recover)
+    }
+}

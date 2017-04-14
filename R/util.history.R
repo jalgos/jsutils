@@ -58,13 +58,23 @@ quit.save <- function(...)
 
 #' @describeIn rhistory The function track.rhistory works like save.rhistory, but here we use the track library with track.history.start() to take care of the recording of the history. If it was already used in the current session, track.history.start() won't be called again.
 #' @export
-track.rhistory <- function(info, folder = "Rhistory")
+track.rhistory <- function(info,
+                           folder = "Rhistory")
 {
+    if(!interactive())
+        return()
+    
     if(!is.null(track.env$trackfile))
     {
         return()
     }
     
+    if(!y.to.continue('(^yes$)|(y)', ignore.case = TRUE))
+    {
+        cat("Do you want to track this session?\n")
+        track.env$trackfile <- FALSE
+        return()
+    }
     subfolder <- create.rhistory.directory(folder)
     filename <- create.rhistory.file(info, subfolder)
     track::track.history.start(filename)

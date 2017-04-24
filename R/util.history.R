@@ -70,7 +70,7 @@ track.rhistory <- function(info,
     }
 
     cat("Do you want to track this session [y(es)|n]?\n")
-    if(!y.to.continue('(^yes$)|(y)', ignore.case = TRUE))
+    if(!y.to.continue('^y(es)?$', ignore.case = TRUE))
     {
         track.env$trackfile <- FALSE
         return()

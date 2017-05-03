@@ -149,6 +149,7 @@ add.token.key <- function(D)
 #' @param D2 data.table
 #' @param size.limit A limit on the size of the result. If the result exceeds that size data is randomly sampled from D1 and D2
 #' @param ... Not used
+#' @import data.table
 #' @export
 cartesian.data.table <- function(D1,
                                  D2 = D1,

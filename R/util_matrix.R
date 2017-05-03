@@ -499,14 +499,15 @@ make.symmetric <- function(M) M + t(M) - Diagonal(x = diag(M))
 
 ## Performs Conj(M1) %x% M2
 
-partial.kronecker <- function(M1,
-                              M2,
-                              DI,
-                              DJ = DI[, list(k = i, l = j, J = I)],
-                              dims = c(DI[, max(I)], DJ[, max(J)]),
-                              half.vec = TRUE,
-                              real = TRUE,
-                              logger = jlogger::JLoggerFactory("Jalgos Algebra"))
+#' @export
+dt.partial.kronecker <- function(M1,
+                                 M2,
+                                 DI,
+                                 DJ = DI[, list(k = i, l = j, J = I)],
+                                 dims = c(DI[, max(I)], DJ[, max(J)]),
+                                 half.vec = TRUE,
+                                 real = TRUE,
+                                 logger = jlogger::JLoggerFactory("Jalgos Algebra"))
 {
     DI <- DI[, list(i, j, I)]
     if(nrow(DI[i > j]) == 0)
@@ -525,8 +526,8 @@ partial.kronecker <- function(M1,
         DM2[, x2 := NULL]
     }
     KR <- merge(DM1, DI, by = "i", allow.cartesian = TRUE)
-    if(half.vec) KR <- KR[i <= j]
-    KR <-  merge(KR, DJ, by = "k", all.x = TRUE, allow.cartesian = TRUE)
+    if(half.vec) KR <- KR[i <= j] ## Don't think that is right
+    KR <- merge(KR, DJ, by = "k", all.x = TRUE, allow.cartesian = TRUE)
     KR <- merge(KR, DM2, by = c("j", "l"), allow.cartesian = TRUE)
     if("x1" %in% names(KR))
         dsparseMatrix(KR[, list(x = sum(x1 * x2)), by = list(I, J)][, list(i = I, j = J, x = x)], dims = dims)

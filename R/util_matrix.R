@@ -2,13 +2,20 @@
 #' @export
 setGeneric("t", t)
 
-## If t is not a generic a lot of functions fail
+## If tcrossprod is not a generic a lot of functions fail
 #' @export
 setGeneric("tcrossprod", tcrossprod)
 
+## DITTO
+#' @export
+setGeneric("crossprod", crossprod)
+
+
+## DITTO
 #' @export
 setGeneric("solve", solve)
 
+#DITTO
 #' @export
 setGeneric("isSymmetric", isSymmetric)
 

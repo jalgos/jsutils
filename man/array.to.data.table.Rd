@@ -14,4 +14,3 @@ array.to.data.table(A, one.based = TRUE)
 \description{
 Transforms an array into a set of index / value tuples
 }
-

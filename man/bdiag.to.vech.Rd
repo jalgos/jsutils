@@ -17,4 +17,3 @@ Creates the matrix that transforms the concatenation of each blocks half vectori
 \seealso{
 diag.to.vech, diag.to.vec, bdiag.to.vec
 }
-

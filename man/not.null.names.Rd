@@ -16,4 +16,3 @@ not.null.names(x, name.fun = names, length.fun = length, default = "")
 \description{
 Returns a vector of empty strings instead of NULL
 }
-

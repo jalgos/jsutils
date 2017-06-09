@@ -17,4 +17,3 @@ Draws an arbitrary number of items from a categorical distribution
 \seealso{
 random.data.set
 }
-

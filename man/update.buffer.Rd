@@ -14,4 +14,3 @@ update.buffer(EG, new.data, ...)
 \description{
 Replaces parts or totality of the buffer.
 }
-

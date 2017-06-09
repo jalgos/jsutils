@@ -9,4 +9,3 @@ M \%^\% exp
 \description{
 Computes the exponentiation of a matrix: M %^% 4 = M %*% M %*% M%*% M %*%
 }
-

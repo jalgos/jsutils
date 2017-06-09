@@ -14,4 +14,3 @@ shift(X, ...)
 \description{
 Function to shift an object up down left or right
 }
-

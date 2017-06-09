@@ -9,4 +9,3 @@ init(obj, ...)
 \description{
 An elegant way to build objects that require a lot of logic in their construction
 }
-

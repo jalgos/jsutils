@@ -20,4 +20,3 @@ critical.mail(from = guess.user(), to, subject, msg, ..., logger = NULL)
 \description{
 Tool to send email from R
 }
-

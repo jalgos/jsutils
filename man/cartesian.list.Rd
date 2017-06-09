@@ -14,4 +14,3 @@ cartesian.list(L, ...)
 \description{
 Cartesian product of a several data.tables
 }
-

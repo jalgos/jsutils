@@ -9,4 +9,3 @@ remove.last(X)
 \description{
 Removes the last element of a list or vector
 }
-

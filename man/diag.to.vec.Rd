@@ -17,4 +17,3 @@ Creates the matrix that transforms the vector of diagonal value into the vectori
 \seealso{
 diag.to.vech, bdiag.to.vec, bdiag.to.vech
 }
-

@@ -20,4 +20,3 @@ get.dt.names(reg.names, DT, ignore.case = TRUE, value = TRUE, ...)
 \description{
 Will get the column names of a table that match a given regex
 }
-

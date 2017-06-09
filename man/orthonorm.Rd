@@ -15,4 +15,3 @@ Returns the closest orthonormal matrix using the function \code{qr}
 \seealso{
 \link{qr}, \link{qr.Q}
 }
-

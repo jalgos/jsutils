@@ -10,4 +10,3 @@
 \description{
 Generic for vectors
 }
-

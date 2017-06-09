@@ -26,4 +26,3 @@ The first to argument of the function should be of type of the object in the lis
 \\code{D = data.table(x = 1:10, u = letters[1:10])}
 \\code{over(list(D, D, D, D), rbind)}
 }
-

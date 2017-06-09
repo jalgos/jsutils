@@ -17,4 +17,3 @@ Creates the matrix that transforms the vector of diagonal value into the half ve
 \seealso{
 diag.to.vec, bdiag.to.vec, bdiag.to.vech
 }
-

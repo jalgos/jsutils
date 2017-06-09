@@ -9,4 +9,3 @@ make.array(..., x, dim, one.based = TRUE)
 \description{
 Builds an array from a list of indices / value tuples
 }
-

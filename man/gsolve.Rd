@@ -18,4 +18,3 @@ gsolve(a, b, ...)
 \description{
 Computes a solution of the a.v = b for any type of matrix: rectangular and not full rank.
 }
-

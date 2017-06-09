@@ -11,4 +11,3 @@ non.zero.indices(M)
 Non zero indices
 Gets non zero indices
 }
-

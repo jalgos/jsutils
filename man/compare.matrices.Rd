@@ -22,4 +22,3 @@ A list with tree elements:
 \description{
 Compares two matrices by computing their norms and computing there scalar products normalized bby M1's norm.
 }
-

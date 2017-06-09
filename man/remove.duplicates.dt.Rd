@@ -17,4 +17,3 @@ Returns a data.table where there is only one record by group. By default the fir
 \seealso{
 data.table::unique
 }
-

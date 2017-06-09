@@ -16,4 +16,3 @@ try.catch(expr, ..., dev.mode = FALSE)
 \description{
 One may want to disable Try / Catch to see what causes an error. This function is a simple wrapper around \code{tryCatch} to do so.
 }
-

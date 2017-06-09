@@ -9,4 +9,3 @@ jalgos.settings()
 \description{
 Sets a few options and creates global variables to ease up development
 }
-

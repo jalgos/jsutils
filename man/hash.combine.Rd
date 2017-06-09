@@ -14,4 +14,3 @@ hash.combine(h1, h2)
 \description{
 Combines two hash numbers into one
 }
-

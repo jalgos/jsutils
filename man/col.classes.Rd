@@ -19,4 +19,3 @@ col.classes(D, cols = names(D), class.fun = function(X) class(X)[1],
 \description{
 Shortcut to get the class of each columns of the table
 }
-

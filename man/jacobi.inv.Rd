@@ -31,4 +31,3 @@ Simple implementation of the Jacobi Method
 \references{
 https://en.wikipedia.org/wiki/Jacobi_method
 }
-

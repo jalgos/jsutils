@@ -18,5 +18,5 @@ Request or assigns values deep in the list at any arbitrary depth.
 }
 \examples{
 L = deep.list(list(), c("A", "B", "C"), 1)
+deep.list(L, c("A", "B", "C"))
 }
-

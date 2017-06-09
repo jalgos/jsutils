@@ -17,4 +17,3 @@ Generate a random data sets using random.cat.var
 \seealso{
 random.cat.var
 }
-

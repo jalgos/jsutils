@@ -16,4 +16,3 @@ array.index(..., LI = list(...), dim)
 \description{
 Computes the index in the vectorization of a multidimensional array corresponding to the individual coordinates
 }
-

@@ -14,4 +14,3 @@ put.names(L, name = "x", ...)
 \description{
 Names a list
 }
-

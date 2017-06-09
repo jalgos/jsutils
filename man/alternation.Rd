@@ -9,4 +9,3 @@ alternation(v)
 \description{
 Builds an alternation regex pattern from a vector of regex patterns. (pat1|pat2|pat3...)
 }
-

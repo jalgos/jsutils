@@ -21,4 +21,3 @@ change.double.cols(TAB, ter1, ter2, termination2 = "\\\\.1",
 \description{
 Changes the default column suffixes added by data.table when merging
 }
-

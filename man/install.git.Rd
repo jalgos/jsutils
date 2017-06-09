@@ -22,4 +22,3 @@ install.git(name, group, url = sprintf("git@www.datasaiyan.com:\%s/\%s.git",
 \description{
 Installing Jalgos packages with git without using git2r package.
 }
-

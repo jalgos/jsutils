@@ -8,4 +8,17 @@
 \description{
 A toolbox with functions to perform common tasks.
 }
+\author{
+\strong{Maintainer}: Sébastien Lamy de la Chapelle \email{sebastien@jalgos.com}
 
+Authors:
+\itemize{
+  \item Julien Murésianu \email{julien@jalgos.com}
+}
+
+Other contributors:
+\itemize{
+  \item Michael Pursey \email{michael@jalgos.com} [contributor]
+}
+
+}

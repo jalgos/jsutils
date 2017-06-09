@@ -9,4 +9,3 @@ bdiag.with.names(L)
 \description{
 Build a block diagonal matrix and computes the row names and column names from the block names
 }
-

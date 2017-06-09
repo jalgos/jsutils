@@ -9,4 +9,3 @@ divide.intervals(D, n)
 \description{
 Dividing intervals
 }
-

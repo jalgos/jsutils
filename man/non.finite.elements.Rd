@@ -13,4 +13,3 @@ non.finite.elements(x)
 \description{
 Non finite elements
 }
-

@@ -16,4 +16,3 @@ random.word(n, wsize = 100, wprob = 0.1)
 \description{
 Generate an arbitrary number of random strings made of letters from the 26 characters alphabet.
 }
-

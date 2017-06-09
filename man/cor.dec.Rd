@@ -12,4 +12,3 @@ Computes the correlation matrix associated with a given covariance matrix
 \seealso{
 cov2cor
 }
-

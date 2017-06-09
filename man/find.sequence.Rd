@@ -18,4 +18,3 @@ find.sequence(R, increment = 1L, sort = FALSE, unique = FALSE)
 \description{
 Finds sequences in a vector. Sequences are subset of consecutive items. Two items are consecutive if x[N + 1] - x[N] == increment
 }
-

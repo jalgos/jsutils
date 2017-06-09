@@ -9,4 +9,3 @@ guess.user()
 \description{
 Guess a username@domain string for the current user
 }
-

@@ -9,4 +9,3 @@ replace.whole.string(pattern, replacement, text, ...)
 \description{
 describeIn text.to.data Replaces the entirety of a string with the replacement pattern. Useful when we are more concerned with discarding everything that doesn't match than the contrary.
 }
-

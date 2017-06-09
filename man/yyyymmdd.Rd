@@ -9,4 +9,3 @@ yyyymmdd(date)
 \description{
 Formats a date into the %Y%m%d format
 }
-

@@ -14,4 +14,3 @@ eqfactors(F1, F2)
 \description{
 Tests equality for factor vectors with possibly different levels. This is simply done by converting the factors to character.
 }
-

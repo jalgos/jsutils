@@ -14,4 +14,3 @@ empty.column(type, N)
 \description{
 Creates empty columns of a given type
 }
-

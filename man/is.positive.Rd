@@ -16,4 +16,3 @@ is.positive(S, tol = .Machine$double.eps, definite = FALSE)
 \description{
 Tests whether a matrix is positive and optionally definite.
 }
-

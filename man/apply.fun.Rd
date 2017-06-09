@@ -12,4 +12,3 @@ Applies f to X and ...
 \seealso{
 do.call
 }
-

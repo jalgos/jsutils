@@ -14,4 +14,3 @@ flip(DT, by)
 \description{
 Transposes a data.table so the columns become the rows and vice versa
 }
-

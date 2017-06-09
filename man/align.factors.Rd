@@ -14,4 +14,3 @@ align.factors(..., facts = list(...))
 \description{
 Transform a list of factors into a list of factors with compatible levels
 }
-

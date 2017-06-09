@@ -9,4 +9,3 @@ add.ellipsis(f)
 \description{
 Adds the ... argument to a function. Useful when ... is forwarded down to functions that don't take the ellipsis as argument
 }
-

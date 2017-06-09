@@ -2,14 +2,14 @@
 % Please edit documentation in R/filter.non.finite.R
 \name{non.finite}
 \alias{non.finite}
-\alias{outlier.filter}
-\alias{replaceNA}
-\alias{safe.cor}
-\alias{safe.max}
-\alias{safe.mean}
-\alias{safe.min}
 \alias{safe.sum}
+\alias{safe.mean}
+\alias{safe.max}
+\alias{safe.min}
 \alias{safe.var}
+\alias{safe.cor}
+\alias{replaceNA}
+\alias{outlier.filter}
 \title{Handling non finite values}
 \usage{
 safe.sum(X, Y, finite.fun = is.finite, replacement.value = 0)

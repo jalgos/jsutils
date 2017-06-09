@@ -9,4 +9,3 @@ rep.list(x, N)
 \description{
 Repeats any object N times into a list
 }
-

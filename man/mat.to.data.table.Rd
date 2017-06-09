@@ -3,12 +3,12 @@
 \docType{methods}
 \name{mat.to.data.table}
 \alias{mat.to.data.table}
+\alias{mat.to.triplet}
 \alias{mat.to.data.table,Matrix-method}
-\alias{mat.to.data.table,diagonalMatrix-method}
 \alias{mat.to.data.table,matrix-method}
+\alias{mat.to.data.table,diagonalMatrix-method}
 \alias{mat.to.data.table,symmetricMatrix-method}
 \alias{mat.to.data.table,vector-method}
-\alias{mat.to.triplet}
 \title{Matrix to data table}
 \usage{
 mat.to.data.table(M, ...)
@@ -36,4 +36,3 @@ mat.to.data.table(M, ...)
 \description{
 Transforms a matrix into its triplet version in a data.table
 }
-

@@ -9,4 +9,3 @@ date.to.hexmode(d)
 \description{
 Conversion tool that is sometimes needed to interface with other services
 }
-

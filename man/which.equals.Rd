@@ -9,4 +9,3 @@ which.equals(X, Y)
 \description{
 Returns the list of indices where X equals Y
 }
-

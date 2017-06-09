@@ -12,4 +12,3 @@ Reserves additional data, so when more data is inserted no copy is dones
 \details{
 Some objects are meant to be growing as some algorithms run. These functions provides feature to handle these cases
 }
-

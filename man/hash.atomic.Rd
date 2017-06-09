@@ -12,4 +12,3 @@ hash.atomic(x)
 \description{
 Hashes a vector of atomic type as determined by `typeof` (character, numeric, integer, logical) to an integer
 }
-

@@ -16,4 +16,3 @@ gen.inverse(a, b, fsolve = solve)
 \description{
 Computes the generalized solution to a linear system for rectangular matrices.
 }
-

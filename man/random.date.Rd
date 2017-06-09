@@ -19,4 +19,3 @@ random.date(n, date.ref = as.POSIXct(Sys.time()), rdist = function(..., sd =
 \description{
 Generate random dates around a reference date
 }
-

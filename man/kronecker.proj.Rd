@@ -18,4 +18,3 @@ kronecker.proj(M1, M2, Pl, Pr)
 \description{
 Efficiently projects the result of a kronecker into two (or one) smaller spaces
 }
-

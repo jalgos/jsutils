@@ -16,4 +16,3 @@ mtdt.add.row.col.names(D, M, one.based = TRUE)
 \description{
 Adds two columns i.names and j.names to the triplet represantation of a Matrix
 }
-

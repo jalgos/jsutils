@@ -18,4 +18,3 @@ insert(EG, new.data, i, j, ...)
 \description{
 Inserting Data Into a Buffer
 }
-

@@ -9,4 +9,3 @@ recenter(T, name.cols, fun = mean, ...)
 \description{
 Recenters a set of columns
 }
-

@@ -12,4 +12,3 @@ trace.upon.error(logger)
 \description{
 Prints the call stack and quits if the session is not interactive, sets option error to `recover` otherwise.
 }
-

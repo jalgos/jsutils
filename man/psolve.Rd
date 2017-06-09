@@ -16,4 +16,3 @@ psolve(a, b, var.thresh = 0.95)
 \description{
 Inverts a matrix by truncating the eigen values that contribute to 95% of the whole volatility.
 }
-

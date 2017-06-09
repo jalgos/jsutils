@@ -18,4 +18,3 @@ cartesian.data.table(D1, D2 = D1, size.limit = Inf, ...)
 \description{
 Will create a table of size nrow(D1) * nrow(D2) consisting of all the possible combinations of rows in D1 and D2
 }
-

@@ -9,4 +9,3 @@ make.symmetric(M)
 \description{
 Builds a symmetric table from all the values of a regular matrix.
 }
-

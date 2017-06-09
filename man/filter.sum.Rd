@@ -9,4 +9,3 @@ filter.sum(X, Y, filter)
 \description{
 Sums two vectors on a subset of the indices
 }
-

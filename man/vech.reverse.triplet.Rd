@@ -17,4 +17,3 @@ vech.reverse.triplet(DV = mat.to.triplet(V), nr = findN(nrow(V)) +
 \description{
 Half vectorization triplet to matrix triplet
 }
-

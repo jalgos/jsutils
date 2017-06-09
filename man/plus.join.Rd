@@ -21,4 +21,3 @@ plus.join(D1, D2, col.plus = setdiff(intersect(names(D1), names(D2)), by), by,
 \description{
 Plus join is a type of join where the columns of the same name are added together. Missing values in one of the two tables are considered to be 0 by default
 }
-

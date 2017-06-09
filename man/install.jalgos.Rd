@@ -9,4 +9,3 @@ install.jalgos(url, lib.loc = "lib", ...)
 \description{
 Wrapper around install_git to install packages from Jalgos repos (uses git2r)
 }
-

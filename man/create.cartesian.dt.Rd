@@ -12,4 +12,3 @@ create.cartesian.dt(...)
 \description{
 Cartesian product of several vectors
 }
-

@@ -9,4 +9,3 @@ add.to.date(date, y = 0, m = 0, d = 0, ...)
 \description{
 Adds months years and days to a date object
 }
-

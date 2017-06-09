@@ -19,4 +19,3 @@ S4 classes slots cannot be modified. Solution such as \code{obj@slot <- new.valu
 The proper way to update an S4 object is to use the \code{new} operator. The problem with new is that it requires the class name. Hardcoding it prevents sub classes to use a parent function properly.\cr
 The solution is to give the class of the object to be updated as a parameter of new. To be DRY we provide this function.
 }
-

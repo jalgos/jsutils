@@ -16,4 +16,3 @@ fusion.factors(F1, F2, lev = union(levels(F1), levels(F2)))
 \description{
 Binds two factor vectors. Will take care of setting the new levels. Binding with a call to \code{c} returns a integer vector
 }
-

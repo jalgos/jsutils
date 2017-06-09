@@ -14,4 +14,3 @@ make.id(cols, vals)
 \description{
 Creates a column that uniquely identifies a set of records
 }
-

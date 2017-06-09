@@ -9,4 +9,3 @@ total.vol(S)
 \description{
 Total volatility contained in a covariance matrix. It's simply its trace
 }
-

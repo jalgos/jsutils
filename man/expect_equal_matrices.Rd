@@ -26,4 +26,3 @@ Tests whether two matrix represent the same data by converting them to a triplet
 \details{
 Calls to \code{expect_equal} yield to unexpected results. If the goal of the comparison is only to check whether the conceptual matrices represented by M1 and M2 are identical this does the trick.
 }
-

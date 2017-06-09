@@ -19,4 +19,3 @@ Half vectorization can be done in a pretty straightforward fashion for sparse ma
 \references{
 https://en.wikipedia.org/wiki/Vectorization_\%28mathematics\%29#Half-vectorization
 }
-

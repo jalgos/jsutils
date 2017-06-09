@@ -21,4 +21,3 @@ vech.reverse(V, ...)
 \description{
 Take an half vectorization and returns the corresponding matrix.
 }
-

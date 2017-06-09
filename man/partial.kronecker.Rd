@@ -21,4 +21,3 @@ Computes a kronecker product for a limited subset of the rows and columns.
 \details{
 Kronecker products produce are very costly in terms of memory usage.
 }
-

@@ -14,4 +14,3 @@ indexation(X, N = length(X))
 \description{
 Returns the indices of a vector. Either 1:N if N > 0 or integer(0).
 }
-

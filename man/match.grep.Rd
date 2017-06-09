@@ -17,4 +17,3 @@ The first occurence of L for which its name matches the parameter \code{name}
 \description{
 Retrieving an element of a list by matching the names
 }
-

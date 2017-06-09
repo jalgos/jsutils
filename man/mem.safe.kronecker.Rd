@@ -32,4 +32,3 @@ The memory taken by a Matrix (in the triplet form) with N non zero elements is r
 If you want to limit the memory to 1Gb you need to set the size.limit to 2 ^ 26. \cr
 Keep in mind however that the chunking process will use twice the size provided. If you want to limit the mmeory usage to 2Gb give 1Gb as parameter.
 }
-

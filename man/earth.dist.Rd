@@ -21,4 +21,3 @@ Second order approximation of the distance between the two points in kilometers.
 \description{
 Second order estimation of the distance between two points parametrized by latitude and longitude
 }
-

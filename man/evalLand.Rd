@@ -14,4 +14,3 @@ evalLand(Tab, Filts)
 \description{
 Evaluate several filters related to a 'data.table'
 }
-

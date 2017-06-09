@@ -12,4 +12,3 @@ vecdim(x)
 \description{
 Returns the dimension of an algebraic vector. Will work with objects of type 'vector' and one row matrices
 }
-

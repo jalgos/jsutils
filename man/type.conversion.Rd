@@ -2,19 +2,19 @@
 % Please edit documentation in R/type.conversion.R
 \docType{data}
 \name{type.conversion}
-\alias{convIDate}
-\alias{csv.convert.date}
+\alias{type.conversion}
 \alias{empty.date}
-\alias{empty.posix}
 \alias{empty.time}
+\alias{empty.posix}
+\alias{util.type.fun.map}
+\alias{csv.convert.date}
+\alias{util.type.csv.map}
 \alias{gen.conv.date}
 \alias{gen.conv.posix}
-\alias{mill.conv.posix}
 \alias{sec.conv.posix}
-\alias{type.conversion}
+\alias{mill.conv.posix}
+\alias{convIDate}
 \alias{util.type.conv.map}
-\alias{util.type.csv.map}
-\alias{util.type.fun.map}
 \title{Type conversion}
 \usage{
 empty.date()
@@ -72,6 +72,7 @@ Type conversion is often needed when scraping or aggregating data from different
 
 \item \code{convIDate}: Function to convert integers to IDate objects
 }}
+
 \section{Type maps}{
 
 \itemize{
@@ -88,8 +89,8 @@ Type conversion is often needed when scraping or aggregating data from different
 \item{\code{util.type.conv.map}:} {List that maps the type and the function that converts character into the desired type}
 }
 }
+
 \seealso{
 format
 }
 \keyword{datasets}
-

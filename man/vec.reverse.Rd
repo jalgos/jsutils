@@ -9,4 +9,3 @@ vec.reverse(V, ...)
 \description{
 Builds the matrix corresponding to a vectorization
 }
-

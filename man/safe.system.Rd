@@ -17,4 +17,3 @@ safe.system(command, error.message = paste("Error running command:", command),
 \description{
 Calls 'system' and returns an error if the call failed
 }
-

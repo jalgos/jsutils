@@ -14,4 +14,3 @@ dt.cart.apply(funapp, Largs, ...)
 \description{
 Applies a function for all possible combinations of a set of parameters using a data.table
 }
-

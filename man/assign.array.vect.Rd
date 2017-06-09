@@ -9,4 +9,3 @@ assign.array.vect(M, I, values, dimn = dim(M))
 \description{
 Assigning data by index value pair
 }
-

@@ -9,4 +9,3 @@ defined(x)
 \description{
 Opposite of missing.
 }
-

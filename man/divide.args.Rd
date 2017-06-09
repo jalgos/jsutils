@@ -18,4 +18,3 @@ Will split occurence such as (--)?option=value into a named character vector of 
 \examples{
 \\code{divide.args('RScript --my.number=10 my.fit.param1=up --all.extract=1.56')}
 }
-

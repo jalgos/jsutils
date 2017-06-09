@@ -18,4 +18,3 @@ vech.triplet(DM = mat.to.triplet(DM), nr = nrow(M), M, keep.diag = TRUE)
 \description{
 Transforms a triplet representation of a matrix into its half vectorization
 }
-

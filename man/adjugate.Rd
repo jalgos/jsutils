@@ -2,10 +2,10 @@
 % Please edit documentation in R/util_matrix.R
 \name{adjugate}
 \alias{adjugate}
+\alias{minor}
+\alias{cofactor}
 \alias{adjugate1}
 \alias{adjugate2}
-\alias{cofactor}
-\alias{minor}
 \title{Minor, Cofactor, Adjugates}
 \usage{
 minor(A, i, j)
@@ -39,7 +39,7 @@ From stackoverflow Vincent Zoonekynd: http://stackoverflow.com/questions/1675710
 
 \item \code{adjugate2}: Adjugate Matrix computed without the use of for loopsbut with outer and Vectorize
 }}
+
 \references{
 https://en.wikipedia.org/wiki/Adjugate_matrix
 }
-

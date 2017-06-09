@@ -21,4 +21,3 @@ Moments of a multidimensional normal variable
 This function computes the 4th order moment of a multidimensional normal distribution of covariance matrix S. \cr
 Let X be the random variable. This function computes the matrix E(tcrossprod(X %x% X))
 }
-

@@ -17,4 +17,3 @@ a Matrix of class Matrix
 \description{
 Builds a sparseMatrix from a data.table containing a triplet representation of a matrix. The function will only use the i, j, x columns
 }
-

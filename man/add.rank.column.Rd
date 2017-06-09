@@ -20,4 +20,3 @@ add.rank.column(T, name.cols, prefix = "rnk", pct = FALSE, by = NULL)
 \description{
 Adds a rank column for the column specified
 }
-

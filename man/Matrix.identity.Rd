@@ -9,4 +9,3 @@ Matrix.identity(n)
 \description{
 Identity for object of class Matrix
 }
-

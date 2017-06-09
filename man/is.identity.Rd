@@ -9,4 +9,3 @@ is.identity(M)
 \description{
 Checks whether a matrix is identical to the identity matrix
 }
-

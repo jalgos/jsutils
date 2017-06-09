@@ -16,4 +16,3 @@ setClassJ(class, where, ...)
 \description{
 Creates a class that relies on init
 }
-

@@ -9,4 +9,3 @@ proportion(q1, q2)
 \description{
 Shortcut to computing q1 / (q1 + q1)
 }
-

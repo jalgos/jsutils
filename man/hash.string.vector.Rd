@@ -12,4 +12,3 @@ hash.string.vector(x)
 \description{
 Hashes a string into an integer.
 }
-

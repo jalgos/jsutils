@@ -9,4 +9,3 @@ neg.fun(FUN)
 \description{
 Returns the opposite function
 }
-

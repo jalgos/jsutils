@@ -9,4 +9,3 @@ make.empty.factors(N)
 \description{
 Creates an empty factor vector of arbitrary size
 }
-

@@ -12,4 +12,3 @@ sum.non.finite(M)
 \description{
 Returns the number of non finite entries in a matrix
 }
-

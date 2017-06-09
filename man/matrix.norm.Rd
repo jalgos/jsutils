@@ -2,6 +2,7 @@
 % Please edit documentation in R/util_matrix.R
 \name{matrix.norm}
 \alias{matrix.norm}
+\alias{matrix.norm}
 \alias{matrix.norm.inf}
 \alias{matrix.scal}
 \title{Norms of a Matrix}

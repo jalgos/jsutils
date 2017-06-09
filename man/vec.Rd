@@ -12,4 +12,3 @@ Vectorizes a matrix
 \references{
 https://en.wikipedia.org/wiki/Vectorization_\%28mathematics\%29
 }
-

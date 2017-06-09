@@ -12,4 +12,3 @@ print.call.stack(..., logger = NULL)
 \description{
 Prints the entire call stack. Meant to be called upon an error occurring. Especially handy for the pbdR context where 'options(error = browser)' is unavailable.
 }
-

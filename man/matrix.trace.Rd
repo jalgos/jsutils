@@ -9,4 +9,3 @@ matrix.trace(M)
 \description{
 Trace of a matrix
 }
-

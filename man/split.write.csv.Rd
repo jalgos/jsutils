@@ -17,4 +17,3 @@
 \description{
 Allows to export a big data.table as several csv files
 }
-

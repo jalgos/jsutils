@@ -16,4 +16,3 @@ Increases width of object printing
 Courtesy of Steve Lianoglou
 http://stackoverflow.com/questions/1172485/how-to-increase-the-number-of-columns-using-r-in-linux
 }
-

@@ -14,4 +14,3 @@ safeGeneric(f, ...)
 \description{
 Creates a generic only if f is not a generic yet. Useful when generics are created in different files and the user doesn't have control over the order in which it's loaded
 }
-

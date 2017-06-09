@@ -16,4 +16,3 @@ partial.conversion(conv.fun, default.val, null.val = "")
 \description{
 Converts object that don't match a set of values
 }
-

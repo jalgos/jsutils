@@ -39,7 +39,7 @@ random.anti.sym.matrix <- function(n,
                                    ...)
 {
     X <- rgen(n * (n - 1) / 2, ...)
-    vech.reverse(X, keep.diag = FALSE)
+    vech.reverse(X, keep.diag = FALSE, symmetric = FALSE)
 }
 
 #' @describeIn random.mat Generates a random covariance matrix. Uses random.sym.matrix

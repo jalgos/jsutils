@@ -4,7 +4,7 @@
 \alias{vec.reverse}
 \title{Full vectorization}
 \usage{
-vec.reverse(V, ...)
+vec.reverse(V, n = findN(nrow(V), FALSE), p = n, ...)
 }
 \description{
 Builds the matrix corresponding to a vectorization

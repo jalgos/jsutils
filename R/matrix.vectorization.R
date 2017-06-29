@@ -375,12 +375,13 @@ gen.vec <- function(M,
 }
 
 gen.vec.reverse <- function(V,
+                            n = findN(nrow(V), FALSE),
+                            p = n,
                             ...)
 {
     if(is.vector(V)) V <- Matrix(V, length(V))
-    n <- findN(nrow(V), FALSE)
     V <- Matrix(V)
-    dim(V) <- c(n, n)
+    dim(V) <- c(n, p)
     V
 }
 

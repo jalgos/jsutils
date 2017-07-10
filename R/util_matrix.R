@@ -56,7 +56,7 @@ matrix.scal <- function(M1, M2, normalized = FALSE)
 #' 
 #' Generic for vectors
 #' @export
-setMethod("norm", c("vector", "ANY"), function(x, type, ...) base::norm(as.matrix(x), type))
+setMethod("norm", c("vector", "ANY"), function(x, type, ...) norm(Matrix(x), type))
 
 
 #' Trace of a matrix

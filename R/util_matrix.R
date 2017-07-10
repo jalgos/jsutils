@@ -46,7 +46,7 @@ matrix.norm.inf <- function(M)
 #' @export
 matrix.scal <- function(M1, M2, normalized = FALSE)
 {
-    if(normalized) N <- matrix.norm(M1)
+    if(normalized) N <- matrix.scal(M1, M1, normalized = FALSE)
     else N <- 1
     return(sum(M1 * M2) / N ^ 2)
 }

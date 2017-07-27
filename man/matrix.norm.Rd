@@ -11,7 +11,7 @@ matrix.norm(M)
 
 matrix.norm.inf(M)
 
-matrix.scal(M1, M2, normalized = FALSE)
+matrix.scal(M1, M2, normalized = TRUE)
 }
 \arguments{
 \item{M}{a matrix}

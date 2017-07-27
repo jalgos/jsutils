@@ -42,13 +42,21 @@ matrix.norm.inf <- function(M)
     norm(M, "i")
 }
 
+#' Scalar Product Matrix
+#'
+#' Computes the scalar product between two matrices. Simply the sum of the product Hadamard product
+#' @param M1 Matrix
+#' @param M2 Matrix
+#' @export
+setGeneric("matrix.scal.raw", function(M1, M2) sum(M1 * M2))
+
 #' @describeIn matrix.norm scalar product of matrices. Identitical to the scalar product of the vectorized form of the matrices
 #' @export
-matrix.scal <- function(M1, M2, normalized = FALSE)
+matrix.scal <- function(M1, M2, normalized = TRUE)
 {
-    if(normalized) N <- matrix.scal(M1, M1, normalized = FALSE)
+    if(normalized) N <- matrix.scal.raw(M1, M1)
     else N <- 1
-    return(sum(M1 * M2) / N)
+    return(matrix.scal.raw(M1, M2) / N)
 }
 
 ##Equivalent to Matrix's norm(M, "f")

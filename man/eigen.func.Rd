@@ -2,7 +2,6 @@
 % Please edit documentation in R/util_matrix.R
 \name{eigen.func}
 \alias{eigen.func}
-\alias{funcM}
 \alias{sqrtM}
 \alias{absM}
 \alias{posD}
@@ -11,8 +10,6 @@
 \alias{logM}
 \title{Applying functions to the eigen value}
 \usage{
-funcM(M, func, ...)
-
 sqrtM(M, eps = .Machine$double.eps)
 
 absM(M)
@@ -28,16 +25,14 @@ logM(M, ...)
 \arguments{
 \item{M}{Matrix on which we want to apply func}
 
-\item{func}{Function to apply to the eigen values of M}
+\item{D}{eigen values}
 
 \item{...}{Parameters to pass on to func}
 
-\item{D}{eigen values}
+\item{func}{Function to apply to the eigen values of M}
 }
 \section{Functions}{
 \itemize{
-\item \code{funcM}: Applies a function to the eigen decomposition of a matrix in this fashion: let M = Pdiag(V)P^-1 then the result is Q = Pdiag(f(V))P^-1 where f is a function that is applied to the vector of eigen values.
-
 \item \code{sqrtM}: The function applied is the square root. A tolerance can be given to consider negative values close to 0 to be 0
 
 \item \code{absM}: Absolute value of the eigen values

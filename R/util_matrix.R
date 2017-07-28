@@ -15,7 +15,7 @@ setGeneric("crossprod", crossprod)
 #' @export
 setGeneric("solve", solve)
 
-#DITTO
+## DITTO
 #' @export
 setGeneric("isSymmetric", isSymmetric)
 
@@ -80,18 +80,30 @@ matrix.trace <- function(M) sum(diag(M))
 #' @param ... Parameters to pass on to func
 NULL
 
-#' @describeIn eigen.func Applies a function to the eigen decomposition of a matrix in this fashion: let M = Pdiag(V)P^-1 then the result is Q = Pdiag(f(V))P^-1 where f is a function that is applied to the vector of eigen values.
-#' @export
-funcM <- function(M,
-                  func,
-                  ...)
+do.funcM <- function(M,
+                     func,
+                     ...)
 {
     n <- nrow(M)
     E <- eigen(M, symmetric = TRUE)
     V <- Matrix(E$vectors)
     D <- E$values
-    V %*% Diagonal(n, x = func(D, ...)) %*% t(V)
+    tcrossprod(V %*% Diagonal(n, x = func(D, ...)), V)
 }
+
+#' Factors Handling
+#'
+#' Applies a function to the eigen decomposition of a matrix in this fashion: let M = Pdiag(V)P^-1 then the result is Q = Pdiag(f(V))P^-1 where f is a function that is applied to the vector of eigen values.
+#' @param M Matrix to be decomposed
+#' @param func Function to be applied to the eigen values
+#' @export
+setGeneric("funcM", function(M, ...) standardGeneric("funcM"))
+
+#' @export
+setMethod("funcM", "Matrix", do.funcM)
+
+#' @export
+setMethod("funcM", "matrix", do.funcM)
 
 #' @describeIn eigen.func The function applied is the square root. A tolerance can be given to consider negative values close to 0 to be 0
 #' @export

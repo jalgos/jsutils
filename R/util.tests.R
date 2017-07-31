@@ -37,5 +37,5 @@ expect_equal_matrices <- function(M1,
         MT2 <- mat.to.triplet(M2)[order(i, j, x)][is.na(x) | abs(x) >= tol][, .(i, j, x)]
     }
 
-    testthat::expect_equal(as.data.frame(MT1), as.data.frame(MT2))
+    testthat::expect_equal(as.data.frame(MT1), as.data.frame(MT2), check.attributes = FALSE)
 }

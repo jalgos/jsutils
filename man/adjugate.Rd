@@ -37,7 +37,7 @@ From stackoverflow Vincent Zoonekynd: http://stackoverflow.com/questions/1675710
 
 \item \code{adjugate1}: Adjugate Matrix. Adjugate(M)[i, j] = Cofactor(M, j, i)
 
-\item \code{adjugate2}: Adjugate Matrix computed without the use of for loopsbut with outer and Vectorize
+\item \code{adjugate2}: Adjugate Matrix computed without the use of for loops but with outer and Vectorize
 }}
 
 \references{

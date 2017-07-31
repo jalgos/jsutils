@@ -72,6 +72,7 @@ random.sparse.matrix <- function(n,
 }
 
 #' @describeIn random.mat Creates a random sparse covariance matrix. Sparsity is hard to control exactly. The target is approximate. Uses random.sparse.matrix
+#' @importMethodsFrom Matrix t
 #' @export
 random.sparse.cov.matrix <- function(N,
                                      ...)

@@ -752,7 +752,7 @@ adjugate1 <- function(A)
     B
 }
 
-#' @describeIn adjugate Adjugate Matrix computed without the use of for loopsbut with outer and Vectorize
+#' @describeIn adjugate Adjugate Matrix computed without the use of for loops but with outer and Vectorize
 #' @export
 adjugate2 <- function(A)
 {
@@ -760,61 +760,6 @@ adjugate2 <- function(A)
     t(outer(1:n, 1:n, Vectorize(
                           function(i, j) cofactor(A,i,j)
                       )))
-}
-
-##### Jacobi inverse
-
-#' Jacobi Inverse
-#'
-#' Simple implementation of the Jacobi Method
-#' @references https://en.wikipedia.org/wiki/Jacobi_method
-#' @param a Matrix
-#' @param b Right hand side of a.x = b
-#' @param p1 Predictioner, an approximation of the inverse of a. The closest it is from the real value the better. If it's too far away, it will not converge
-#' @param p Inverse of the preconditioner.
-#' @param x First guess of the solution
-#' @param tol Convergence tolerance
-#' @param iter.max Number maximum of iterations to achieve convergence
-#' @param logger JLogger to log messages
-#' @export
-jacobi.inv <- function(a,
-                       b,
-                       p1 = Diagonal(x = 1 / diag(a)), ## Preconditioner the closer from the inverse of a the better,
-                       p = Diagonal(x = diag(a)),
-                       x = p1 %*% b, ## First guess
-                       tol = sqrt(.Machine$double.eps),
-                       iter.max = 1000,
-                       logger = jlogger::JLoggerFactory("Jalgos Algebra"))
-{
-    if(nrow(b) != nrow(a))
-    {
-        jlogger::jlog.error(logger, "Dimension of b and a don't match:", dim(a), dim(b))
-        stop("Dimension mismatch")
-    }
-    r <- a - p
-    inm <- matrix.norm(Diagonal(nrow(M)) -  p1 %*% a)
-    if(inm > 1) jlogger::jlog.warn(logger, "The jacobi method may not convergence as the preconditioner is too far from the real inverse. Norm(I - PA):", inm)
-    err <- matrix.norm(a %*% x - b)
-    iter <- 1
-    while(err > tol)
-    {
-        if(!is.finite(err))
-        {
-            jlogger::jlog.error(logger, "Error is not finite:", err)
-            stop("non finite error")
-        }
-        if(iter == iter.max)
-        {
-            jlogger::jlog.error(logger, "Jacobi method did not converge after", iter.max,"iterations, current error:", err, "tolerance:", tol)
-            stop("maxiter")
-        }
-        iter <- iter + 1
-        x <- p1 %*% (b - r %*% x)
-        err <- matrix.norm(a %*% x - b)
-        jlogger::jlog.debug(logger, "After", iter, "iterations, error is at:", err, "tol:", tol)
-    }
-    jlogger::jlog.debug(logger, "Method converged in:", iter, "iterations", err)
-    x
 }
 
 #' Moments of a multidimensional normal variable

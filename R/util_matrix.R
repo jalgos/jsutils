@@ -568,16 +568,6 @@ dt.partial.kronecker <- function(M1,
         matrix(complex(real = as.matrix(RM), imaginary = as.matrix(IM)), nrow = nrow(IM), ncol = ncol(RM))
     }
 }
-
-##is.finite fails in case prod(dims) is passed the integer bound
-
-#' Non Finite Coefficients
-#'
-#' Returns the number of non finite entries in a matrix
-#' @param M the matrix
-#' @usage sum.non.finite(M)
-#' @export sum.non.finite
-sum.non.finite <- function(M) nrow(mat.to.triplet(M)[!is.finite(x)])
     
 #### Memory safe kronecker product #######
 
@@ -699,14 +689,6 @@ not.null.names <- function(x,
     if(is.null(nm)) rep(default, length.fun(x))
     else nm
 }
-
-#' Non finite elements
-#' @export
-setGeneric("non.finite.elements", function(x) sum(!is.finite(x)))
-
-#' @rdname non.finite.elements
-#' @export
-setMethod("non.finite.elements", c(x = "sparseMatrix"), function(x) non.finite.elements(x@x))
 
 #' Matrix rows and column names
 #'

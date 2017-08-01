@@ -120,3 +120,21 @@ filter.sum <- function(X, Y, filter)
     Z[filter] <- Z[filter] + Y
     return(Z)
 }
+
+##is.finite fails in case prod(dims) is passed the integer bound
+
+#' Non Finite Coefficients
+#'
+#' Returns the number of non finite entries in a matrix
+#' @param M the matrix
+#' @usage sum.non.finite(M)
+#' @export sum.non.finite
+sum.non.finite <- function(M) nrow(mat.to.triplet(M)[!is.finite(x)])
+
+#' Non finite elements
+#' @export
+setGeneric("non.finite.elements", function(x) sum(!is.finite(x)))
+
+#' @rdname non.finite.elements
+#' @export
+setMethod("non.finite.elements", c(x = "sparseMatrix"), function(x) non.finite.elements(x@x))

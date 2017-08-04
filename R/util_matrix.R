@@ -1132,3 +1132,30 @@ vecdim <- function(x)
     else if(ncol(x) == 1) nrow(x)
     else stop('matrix is not a vector')
 }
+
+
+safe.cov2cor <- function(M,
+                         sqDl = sqrt(posD(diag(M))),
+                         sqDr = sqDl,
+                         tol.inv = 10 * .Machine$double.eps,
+                         diag.fun = Matrix::Diagonal)
+{
+    Dr <- diag.fun(x = sqDr)
+    D1r <- diag.fun(x = ifelse(abs(sqDr) > tol.inv, 1 / sqDr, 0))
+    Dl <- diag.fun(x = sqDl)
+    D1l <- diag.fun(x = ifelse(abs(sqDl) > tol.inv, 1 / sqDl, 0))
+    D1l %*% M %*% D1r
+}
+
+#' Covariance Matrix To Correlation Matrix
+#'
+#' Transforms a covariance matrix into a correlation matrix with parameters to handle 
+#' @param M Matrix to transform
+#' @param sqDl Diagonal to multiply on the left side
+#' @param sqDr Diagonal to multiply on the right side
+#' @param diag.fun Function to generate the diagonal matrix
+#' @export
+setGeneric("safe.cov2cor", function(M, ...) standardGeneric("safe.cov2cor"))
+
+#' @export
+setMethod("safe.cov2cor", "genMatrix", safe.cov2cor)

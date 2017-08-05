@@ -4,8 +4,7 @@
 \alias{bdiag.to.vec}
 \title{Vectorization of block diagonal matrix}
 \usage{
-bdiag.to.vec(vdim, fmat = hugesparse::HugeMatrix, ...,
-  logger = jlogger::JLoggerFactory("Matrix vectorization"))
+bdiag.to.vec(...)
 }
 \arguments{
 \item{vdim}{vector of size of each block}

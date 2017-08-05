@@ -14,13 +14,16 @@ findN(nv, half.vec = TRUE, check.integer = TRUE)
 
 nn12(n, keep.diag = TRUE)
 
-vech.to.vec(n, keep.diag = TRUE, fmat = hugesparse::HugeMatrix)
+vech.to.vec(n, keep.diag = TRUE, fmat = default.matrix.builder())
 
-get.upper.indices(n, i1 = 1:n, i2 = 1:n, keep.diag = TRUE)
+get.upper.indices(n, i1 = indexation(N = n), i2 = indexation(N = n),
+  keep.diag = TRUE, distributed = mat.vectorization.distributed())
 
-vec.to.vech(n, keep.diag = TRUE, fmat = hugesparse::HugeMatrix)
+vec.to.vech(n, keep.diag = TRUE, fmat = default.matrix.builder())
 
-commutation.matrix(n, p = n, half.vec = FALSE)
+commutation.matrix(n, p = n, i = indexation(N = n), j = indexation(N = p),
+  half.vec = FALSE, fmat = default.matrix.builder(),
+  distributed = mat.vectorization.distributed())
 }
 \arguments{
 \item{nv}{length of the vectorization}

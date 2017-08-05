@@ -3,12 +3,15 @@
 \name{mat.index}
 \alias{mat.index}
 \alias{mat.index}
+\alias{reverse.mat.index}
 \alias{index.sym}
 \alias{reverse.index.sym}
 \alias{assign.matrix.vect}
 \title{Matrix index to vectorization index}
 \usage{
 mat.index(i, j, n)
+
+reverse.mat.index(I, n)
 
 index.sym(i, j, n, keep.diag = TRUE)
 
@@ -23,9 +26,9 @@ assign.matrix.vect(M, i, j, values)
 
 \item{n}{number of rows}
 
-\item{keep.diag}{is the diagonal kept in the half vectorization}
+\item{I}{Full or half vectorization index}
 
-\item{I}{Half vectorization index}
+\item{keep.diag}{is the diagonal kept in the half vectorization}
 
 \item{M}{matrix}
 
@@ -34,6 +37,8 @@ assign.matrix.vect(M, i, j, values)
 \section{Functions}{
 \itemize{
 \item \code{mat.index}: Computes the vectorization index corresponding to a given row column combination in a matrix
+
+\item \code{reverse.mat.index}: Computes the corresponding i, j indices from a full vectorization index
 
 \item \code{index.sym}: Computes the half vectorization index corresponding to a given row column combination in a matrix
 

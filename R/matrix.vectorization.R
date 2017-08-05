@@ -2,19 +2,39 @@
 ## safe for sparse matrices
 
 .mat.vectorization <- new.env()
-.mat.vectorization$distributed 
+.mat.vectorization$distributed <- FALSE
 
 #' Set Distribution
 #'
 #' Gets/ sets the distribution behaviour of the matrix vectorization function
 #' @param new.context New context to set (TRUE or FALSE) if not provided returns the current context
 #' @export
-set.mat.vectorization.distributed <- function(new.context)
+mat.vectorization.distributed <- function(new.context)
 {
     old.context <- .mat.vectorization$distributed 
     if(!missing(new.context))
         .mat.vectorization$distributed <- new.context
     old.context
+}
+
+switch.local.distributed <- function(fun.local,
+                                     fun.distributed)
+{
+    function(...)
+    {
+        if(mat.vectorization.distributed())
+            fun.distributed(...)
+        else
+            fun.local(...)
+    }    
+}
+
+default.matrix.builder <- function()
+{
+    if(mat.vectorization.distributed())
+        distributedhugesparse::DHugeMatrix
+    else
+        hugesparse::HugeMatrix
 }
 
 #' Triplet to half vectorization
@@ -124,6 +144,49 @@ gen.vech.reverse <- function(V,
 #' @param symmetric Is the matrix symmetric
 NULL
 
+#' @export
+bdiag.to.vech.local <- function(vdim, #vector of matrix dimensions
+                                fmat = default.matrix.builder(),
+                                vds = cumsum(vdim),
+                                N = last(vds),
+                                ND = sum(nn12(vdim)),
+                                start = c(0L, vds[-length(vds)]),
+                                ...,
+                                logger = jlogger::JLoggerFactory("Matrix vectorization"))
+{
+    jlogger::jlog.debug(logger, "Creating a bdiag transition matrix of dimension", nn12(N), ND, "with:", length(vds), "blocks")
+    IUT <- data.table(dm = vdim, start = start)
+    IUT <- IUT[, CJ(j = start + indexation(N = dm), i = start + indexation(N = dm)), by = start]
+    IUT <- IUT[j <= i]
+    IUT[, IS := index.sym(i, j, N)]
+    dims <- c(nn12(N), ND)
+    fmat(data = IUT[, .(i = IS, j = .I, x = 1)], dims = dims)
+}
+
+bdiag.to.vecs.distributed <- function(vdim,
+                                      fdim,
+                                      fbdv,
+                                      ...)
+{
+    function(vdim, ...)
+    {
+        vds <- cumsum(vdim)
+        N <- last(vds)
+        ND <- sum(fdim)
+        start <- c(0L, vds[-length(vds)])
+        fdbv(jsparallel::divide.load(vdim),
+             fmat = fmat,
+             N = N,
+             ND = ND,
+             start = start,
+             ...,
+             logger = logger)
+    }
+}
+
+#' @export
+bdiag.to.vech.distributed <- bdiag.to.vecs.distributed(fdim = nn12, fbdv = bdiag.to.vech.local)
+
 #' Vectorization of block diagonal matrix
 #'
 #' Creates the matrix that transforms the concatenation of each blocks half vectorization into the a half vectorization of the entire matrix
@@ -131,39 +194,8 @@ NULL
 #' @param logger JLogger to be used to log messages
 #' @seealso diag.to.vech, diag.to.vec, bdiag.to.vec
 #' @export
-bdiag.to.vech <- function(vdim, #vector of matrix dimensions
-                          fmat = hugesparse::HugeMatrix,
-                          ...,
-                          logger = jlogger::JLoggerFactory("Matrix vectorization"))
-{
-    vds <- cumsum(vdim)
-    N <- last(vds)
-    ND <- sum(nn12(vdim))
-    jlogger::jlog.debug(logger, "Creating a bdiag transition matrix of dimension", nn12(N), ND, "with:", length(vds), "blocks")
-    IUT <- data.table(dm = vdim, start = c(0L, vds[-length(vds)]))
-    IUT <- IUT[, CJ(i = start + 1:dm, j = start + 1:dm), by = start]
-    IUT <- IUT[i <= j]
-    IUT[, IS := index.sym(i, j, N)]
-    dims <- c(nn12(N), ND)
-    fmat(data = IUT[, .(i = IS, j = .I, x = 1)], dims = dims)
-}
-
-dbdiag.to.vech <- function(vdim, #vector of matrix dimensions
-                           fmat = hugesparse::HugeMatrix,
-                           ...,
-                           logger = jlogger::JLoggerFactory("Matrix vectorization"))
-{
-    vds <- cumsum(vdim)
-    N <- last(vds)
-    ND <- sum(nn12(vdim))
-    jlogger::jlog.debug(logger, "Creating a bdiag transition matrix of dimension", nn12(N), ND, "with:", length(vds), "blocks")
-    IUT <- data.table(dm = vdim, start = c(0L, vds[-length(vds)]))
-    IUT <- IUT[, CJ(i = start + 1:dm, j = start + 1:dm), by = start]
-    IUT <- IUT[i <= j]
-    IUT[, IS := index.sym(i, j, N)]
-    dims <- c(nn12(N), ND)
-    fmat(data = IUT[, .(i = IS, j = .I, x = 1)], dims = dims)
-}
+bdiag.to.vech <-  switch.local.distributed(fun.local = bdiag.to.vech.local,
+                                           fun.distributed = bdiag.to.vech.distributed)
 
 #' Vectorization of a diagonal matrix
 #'
@@ -273,7 +305,7 @@ nn12 <- function(n, keep.diag = TRUE)  n * (n - 1 + 2 * keep.diag) / 2
 #' @param i row index
 #' @param j column index
 #' @param n number of rows
-#' @param I Half vectorization index
+#' @param I Full or half vectorization index
 #' @param keep.diag is the diagonal kept in the half vectorization
 #' @param M matrix
 #' @param values numeric vector
@@ -282,6 +314,10 @@ NULL
 #' @describeIn mat.index Computes the vectorization index corresponding to a given row column combination in a matrix
 #' @export
 mat.index <- function(i, j, n) (j - 1) * n + i
+
+#' @describeIn mat.index Computes the corresponding i, j indices from a full vectorization index
+#' @export
+reverse.mat.index <- function(I, n) c(I %% n, I %/% n + 1L)
 
 #' @describeIn mat.index Computes the half vectorization index corresponding to a given row column combination in a matrix
 #' @export
@@ -299,7 +335,7 @@ index.sym <- function(i, j, n, keep.diag = TRUE)
 reverse.index.sym <- function(I, n, keep.diag = TRUE)
 {
     if(length(I) == 0) return(list(i = integer(0), k = integer(0)))
-    di <- 1:n
+    di <- indexation(N = n)
     adj <- !keep.diag
     d <- index.sym(di, di + adj, n, keep.diag = keep.diag)
     D <- data.table::data.table(i = di, d = d, I = d)
@@ -323,7 +359,7 @@ assign.matrix.vect <- function(M, i, j, values)
 #' @export
 vech.to.vec <- function(n,
                         keep.diag = TRUE,
-                        fmat = hugesparse::HugeMatrix)
+                        fmat = default.matrix.builder())
 {
     if(n < 0L)
     {
@@ -343,24 +379,61 @@ vech.to.vec <- function(n,
          dims = dims)
 }
 
+divide.size <- function(size,
+                        k)
+{
+    rep(size %/% k, k) + as.integer(size %% k >= (1:k))
+}
+
+compute.process.grid <- function(nprocs = comm.size())
+{
+    nprocs <- comm.size()
+    sq <- ceiling(sqrt(nprocs))
+    ndivs <- (sq:2)
+    dvs <- ndivs[which(nprocs %% ndivs == 0)]
+    if(length(dvs) == 0)
+        c(nprocs, 1L)
+    else
+    {
+        div.max <- dvs[1]
+        c(nprocs / div.max, div.max)
+    }        
+}
 
 ## The symmetric
 #' @describeIn vectorization Gets the indices of the upper diagonal
 #' @export
 get.upper.indices <- function(n,
-                              i1 = 1:n,
-                              i2 = 1:n,
-                              keep.diag = TRUE)
+                              i1 = indexation(N = n),
+                              i2 = indexation(N = n),
+                              keep.diag = TRUE,
+                              distributed = mat.vectorization.distributed())
 {
-    UI <- data.table::CJ(i = i1, j = i2)
-    UI[, .(i, j, I = mat.index(i, j, n), IS = index.sym(i, j, n, keep.diag = keep.diag))]
+    if(!distributed || comm.size() == 1L)
+    {
+        UI <- data.table::CJ(i = i1, j = i2)
+        UI[, .(i, j, I = mat.index(i, j, n), IS = index.sym(i, j, n, keep.diag = keep.diag))]
+    }
+    else
+    {
+        ## Finding the two biggest divisors of comm.size()
+        grid <- compute.process.grid()
+        dv1 <- divide.size(n, grid[1])
+        dv2 <- divide.size(n, grid[2])
+        ids <- reverse.mat.index(comm.rank() + 1L, grid[1])
+        get.upper.indices(n = n,
+                          i1 = dv1[ids[1]],
+                          i2 = dv2[ids[2]],
+                          keep.diag = keep.diag,
+                          distributed = FALSE)
+    }
 }
 
 #' @describeIn vectorization Matrix to go from full vectorization to half vectorization
 #' @export
 vec.to.vech <- function(n,
                         keep.diag = TRUE,
-                        fmat = hugesparse::HugeMatrix)
+                        fmat = default.matrix.builder())
 {
     if ( n < 0L )
     {
@@ -419,6 +492,28 @@ setGeneric("vec", gen.vec)
 #' @export
 setGeneric("vec.reverse", gen.vec.reverse)
 
+
+#' @export
+bdiag.to.vec.local <- function(vdim, #vector of matrix dimensions
+                               fmat = default.matrix.builder(),
+                               vds = cumsum(vdim),
+                               N = last(vds),
+                               ND = sum(vdim ^ 2),
+                               start = c(0L, vds[-length(vds)]),
+                               ...,
+                               logger = jlogger::JLoggerFactory("Matrix vectorization"))
+{
+    jlogger::jlog.debug(logger, "Creating a bdiag transition matrix of dimension", nn12(N), ND, "with:", length(vds), "blocks")
+    IUT <- data.table(dm = vdim, start = start)
+    IUT <- IUT[, CJ(j = start + indexation(N = dm), i = start + indexation(N = dm)), by = start]
+    IUT[, IS := mat.index(i, j, N)]
+    dims <- c(N ^ 2, ND)
+    fmat(data = IUT[, .(i = IS, j = .I, x = 1)], dims = dims)
+}
+
+#' @export
+bdiag.to.vec.distributed <- bdiag.to.vecs.distributed(fdim = function(x) x ^ 2, fbdv = bdiag.to.vec.local)
+
 #' Vectorization of block diagonal matrix
 #'
 #' Creates the matrix that transforms the concatenation of each blocks half vectorization into the a vectorization of the entire matrix
@@ -426,21 +521,10 @@ setGeneric("vec.reverse", gen.vec.reverse)
 #' @param logger JLogger to be used to log messages
 #' @seealso diag.to.vech, diag.to.vec, bdiag.to.vech
 #' @export
-bdiag.to.vec <- function(vdim, #vector of matrix dimensions
-                         fmat = hugesparse::HugeMatrix,
-                         ...,
-                         logger = jlogger::JLoggerFactory("Matrix vectorization"))
-{
-    vds <- cumsum(vdim)
-    N <- last(vds)
-    ND <- sum(vdim ^ 2)
-    jlogger::jlog.debug(logger, "Creating a bdiag transition matrix of dimension", nn12(N), ND, "with:", length(vds), "blocks")
-    IUT <- data.table(dm = vdim, start = c(0L, vds[-length(vds)]))
-    IUT <- IUT[, CJ(i = start + 1:dm, j = start + 1:dm), by = start]
-    IUT[, IS := mat.index(i, j, N)]
-    dims <- c(N ^ 2, ND)
-    fmat(data = IUT[, .(i = IS, j = .I, x = 1)], dims = dims)
-}
+
+bdiag.to.vec <-  switch.local.distributed(fun.local = bdiag.to.vec.local,
+                                          fun.distributed = bdiag.to.vec.distributed)
+
 
 #' @describeIn vectorization Computes the commuation matrix, i.e matrix K such that K %*%  vec(A) = vec(t(A))
 #' @details Function to compute the matrix that will transform M(i, j, k, l) into M(i, l, k, j)
@@ -449,22 +533,37 @@ bdiag.to.vec <- function(vdim, #vector of matrix dimensions
 #' @export
 commutation.matrix <- function(n,
                                p = n,
-                               half.vec = FALSE)
+                               i = indexation(N = n),
+                               j = indexation(N = p),
+                               half.vec = FALSE,
+                               fmat = default.matrix.builder(),
+                               distributed = mat.vectorization.distributed())
 {
-    if(n == 1) return(Matrix::Diagonal(p))
-    if(p == 1) return(Matrix::Diagonal(n))
-    findex <- mat.index
-    if(half.vec) findex <- index.sym
-    J <- rep(1:p, n)
-    L <- rep(1:n, each = p)
-    if(half.vec)
+    if(!distributed || comm.size() == 1L)
     {
-        F <- J <= L
-        J <- J[F]
-        L <- L[F]
+        findex <- mat.index
+        if(half.vec) findex <- index.sym
+        IUT <- CJ(i = i, j = j)
+        if(half.vec)
+        {
+            IUT <- IUT[i <= j]
+        }
+        IUT[, J := findex(i, j, n)]
+        IUT[, I := findex(j, i, p)]
+        fmat(data = IUT[, .(i = I, j = J, x = 1)], dims = c(n * p, n * p))
     }
-    I1 <- findex(J, L, p)
-    I2 <- findex(L, J, n)
-    ##Need to add a switch here in case I1 or I2 exceeds 2^32-1
-    sparseMatrix(I1, I2, x = 1)
+    else
+    {
+        grid <- compute.process.grid()
+        dv1 <- divide.size(n, grid[1])
+        dv2 <- divide.size(p, grid[2])
+        ids <- reverse.mat.index(comm.rank() + 1L, grid[1])
+        commutation.matrix(n = n,
+                           p = p,
+                           i = dv1[ids[1]],
+                           j = dv1[ids[2]],
+                           half.vec = half.vec,
+                           fmat = fmat,
+                           distributed = FALSE)
+    }
 }

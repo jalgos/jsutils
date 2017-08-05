@@ -744,31 +744,6 @@ adjugate2 <- function(A)
                       )))
 }
 
-#' Moments of a multidimensional normal variable
-#'
-#' @param S Covariance matrix
-#' @param half.vec Should the result concern only the free parameters of the distribution.
-#' @param logger JLogger used to log messages
-#' @details This function computes the 4th order moment of a multidimensional normal distribution of covariance matrix S. \cr
-#' Let X be the random variable. This function computes the matrix E(tcrossprod(X %x% X))
-#' @export
-JF.S1 <- function(S,
-                  half.vec = TRUE,
-                  ...,
-                  logger = jlogger::JLoggerFactory("jalgos filter"))
-{
-    jlogger::jlog.debug(logger, "Computing S1 for a matrix of dimension:", nrow(S))
-    n <- nrow(S)
-    I <- Diagonal(n ^ 2)
-    P <- commutation.matrix(n)
-    S1 <- (I + P) %*% (S %x% S)
-    if(half.vec)
-    {
-        D <- vec.to.vech(n)
-        D %*% S1 %*% t(D)
-    }
-    else S1
-}
 
 ## Efficiently computes t(D1) %*% (M %x% M) %*% t(D) for a symmetric matrix
 ## Does not work!!
@@ -1159,3 +1134,11 @@ setGeneric("safe.cov2cor", function(M, ...) standardGeneric("safe.cov2cor"))
 
 #' @export
 setMethod("safe.cov2cor", "genMatrix", safe.cov2cor)
+
+#' Sparsity Ratio
+#'
+#' Computes the ratio between the non empty elements and the total elements of a matrix
+#' @param M a matrix
+#' @export
+sparsity.ratio <- function(M)
+    nnzero(M) / prod(dim(M))

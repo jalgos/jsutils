@@ -1,6 +1,22 @@
 ######## Rewriting some utility functions #####
 ## safe for sparse matrices
 
+.mat.vectorization <- new.env()
+.mat.vectorization$distributed 
+
+#' Set Distribution
+#'
+#' Gets/ sets the distribution behaviour of the matrix vectorization function
+#' @param new.context New context to set (TRUE or FALSE) if not provided returns the current context
+#' @export
+set.mat.vectorization.distributed <- function(new.context)
+{
+    old.context <- .mat.vectorization$distributed 
+    if(!missing(new.context))
+        .mat.vectorization$distributed <- new.context
+    old.context
+}
+
 #' Triplet to half vectorization
 #'
 #' Transforms a triplet representation of a matrix into its half vectorization
@@ -119,6 +135,23 @@ bdiag.to.vech <- function(vdim, #vector of matrix dimensions
                           fmat = hugesparse::HugeMatrix,
                           ...,
                           logger = jlogger::JLoggerFactory("Matrix vectorization"))
+{
+    vds <- cumsum(vdim)
+    N <- last(vds)
+    ND <- sum(nn12(vdim))
+    jlogger::jlog.debug(logger, "Creating a bdiag transition matrix of dimension", nn12(N), ND, "with:", length(vds), "blocks")
+    IUT <- data.table(dm = vdim, start = c(0L, vds[-length(vds)]))
+    IUT <- IUT[, CJ(i = start + 1:dm, j = start + 1:dm), by = start]
+    IUT <- IUT[i <= j]
+    IUT[, IS := index.sym(i, j, N)]
+    dims <- c(nn12(N), ND)
+    fmat(data = IUT[, .(i = IS, j = .I, x = 1)], dims = dims)
+}
+
+dbdiag.to.vech <- function(vdim, #vector of matrix dimensions
+                           fmat = hugesparse::HugeMatrix,
+                           ...,
+                           logger = jlogger::JLoggerFactory("Matrix vectorization"))
 {
     vds <- cumsum(vdim)
     N <- last(vds)

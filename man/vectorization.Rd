@@ -14,11 +14,11 @@ findN(nv, half.vec = TRUE, check.integer = TRUE)
 
 nn12(n, keep.diag = TRUE)
 
-vech.to.vec(n, keep.diag = TRUE)
+vech.to.vec(n, keep.diag = TRUE, fmat = hugesparse::HugeMatrix)
 
-get.upper.indices(n, keep.diag = TRUE)
+get.upper.indices(n, i1 = 1:n, i2 = 1:n, keep.diag = TRUE)
 
-vec.to.vech(n, keep.diag = TRUE)
+vec.to.vech(n, keep.diag = TRUE, fmat = hugesparse::HugeMatrix)
 
 commutation.matrix(n, p = n, half.vec = FALSE)
 }

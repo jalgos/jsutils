@@ -95,7 +95,6 @@ vec_array <- function(A)
      matrix(A, dim(A)[1] * dim(A)[2], dim(A)[3])
 }
 
-#' 
 array.prod <- function(A, B)
 {
     dA <- dim(A)

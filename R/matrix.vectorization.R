@@ -17,9 +17,9 @@ vech.triplet <- function(DM = mat.to.triplet(DM),
     if(keep.diag) F <- DM[, i <= j]
     else F <- DM[, i < j]
     N <- sum(F)
-    DM[F, list(i = index.sym(i, j, nr, keep.diag = keep.diag),
-               j = rep(1, .N),
-               x)]
+    DM[F, .(i = index.sym(i, j, nr, keep.diag = keep.diag),
+            j = rep(1, .N),
+            x)]
 }
 
 safe.mat.constr <- function(data,
@@ -33,9 +33,9 @@ safe.mat.constr <- function(data,
                             dims = dims,
                           ...)]
     else if(require(hugesparse))
-        HugeMatrix(data = data,
-                   dims = dims,
-                   ...)
+        hugesparse::HugeMatrix(data = data,
+                               dims = dims,
+                               ...)
     else
         stop('Half vectorization failed: size exceeds integer limit')
 }
@@ -116,25 +116,20 @@ NULL
 #' @seealso diag.to.vech, diag.to.vec, bdiag.to.vec
 #' @export
 bdiag.to.vech <- function(vdim, #vector of matrix dimensions
-                          logger = jlogger::JLoggerFactory("jalgos filter"))
+                          fmat = hugesparse::HugeMatrix,
+                          ...,
+                          logger = jlogger::JLoggerFactory("Matrix vectorization"))
 {
-    fmat <- sparseMatrix
     vds <- cumsum(vdim)
     N <- last(vds)
     ND <- sum(nn12(vdim))
     jlogger::jlog.debug(logger, "Creating a bdiag transition matrix of dimension", nn12(N), ND, "with:", length(vds), "blocks")
-    Ivd <- lapply(vdim, function(n) rep((1 - n):0, each = n))
-    Jvd <- lapply(vdim, function(n) rep((1 - n):0, n))
-    I <- unlist(mapply(Ivd, vds, FUN = "+", SIMPLIFY = FALSE))
-    J <- unlist(mapply(vds, Jvd, FUN = "+", SIMPLIFY = FALSE))
-    F <- I <= J
-    I <- I[F]
-    J <- J[F]
-    Ibd <- 1:ND
-    Jbd <- index.sym(I, J, N)
+    IUT <- data.table(dm = vdim, start = c(0L, vds[-length(vds)]))
+    IUT <- IUT[, CJ(i = start + 1:dm, j = start + 1:dm), by = start]
+    IUT <- IUT[i <= j]
+    IUT[, IS := index.sym(i, j, N)]
     dims <- c(nn12(N), ND)
-    if(any(is.na(as.integer(dims)))) fmat <- HugeMatrix
-    fmat(i = Jbd, j = Ibd, x = 1, dims = dims)
+    fmat(data = IUT[, .(i = IS, j = .I, x = 1)], dims = dims)
 }
 
 #' Vectorization of a diagonal matrix
@@ -294,34 +289,25 @@ assign.matrix.vect <- function(M, i, j, values)
 #' @describeIn vectorization Matrix to go from half vectorization to full vectorization
 #' @export
 vech.to.vec <- function(n,
-                        keep.diag = TRUE)
+                        keep.diag = TRUE,
+                        fmat = hugesparse::HugeMatrix)
 {
-    fmat <- sparseMatrix
     if(n < 0L)
     {
         stop("n must be a positive integer")
     }
     
-    if(n == 0L)
-    {
-        return(Matrix(0, 0, 0))
-    }
-    
-    I <- rep(1:n, n)
-    J <- rep(1:n, each = n)
-    val <- 1
+    IUT <- get.upper.indices(n, keep.diag = keep.diag)
     if(!keep.diag)
     {
-        F <- I != J
-        I <- I[F]
-        J <- J[F]
-        val <- ifelse(I < J, 1, -1)
+        IUT <- IUT[i != j,]
+        IUT[, x := ifelse(i < j, 1L, -1L)]
     }
-    ID1 <- (J - 1) * n + (I - 1) + 1
-    ID2 <- index.sym(I, J, n, keep.diag = keep.diag)
-    dims <- c(n ^ 2, nn12(n, keep.diag = keep.diag))
-    if(any(is.na(as.integer(dims)))) fmat = HugeMatrix
-    fmat(i = ID1, j = ID2, x = val, dims = dims)
+    else
+        IUT[, x := 1L]
+    dims <- c(n ^ 2, nn12(n, keep.diag = keep.diag))    
+    fmat(data = IUT[, .(i = I, j = IS, x = x)],
+         dims = dims)
 }
 
 
@@ -329,39 +315,33 @@ vech.to.vec <- function(n,
 #' @describeIn vectorization Gets the indices of the upper diagonal
 #' @export
 get.upper.indices <- function(n,
+                              i1 = 1:n,
+                              i2 = 1:n,
                               keep.diag = TRUE)
 {
-    I <- unlist(mapply(function(i, j) rep(i, j), 1:n, n:1))
-    J <- unlist(sapply(1:n, function(i, n) i:n, n = n))
-    if(!keep.diag)
-    {
-        F <- I < J
-        I <- I[F]
-        J <- J[F]
-    }
-    list(I = I, ID = (J - 1) * n + (I - 1) + 1, J = J)
+    UI <- data.table::CJ(i = i1, j = i2)
+    UI[, .(i, j, I = mat.index(i, j, n), IS = index.sym(i, j, n, keep.diag = keep.diag))]
 }
 
 #' @describeIn vectorization Matrix to go from full vectorization to half vectorization
 #' @export
-vec.to.vech <- function(n, keep.diag = TRUE)
+vec.to.vech <- function(n,
+                        keep.diag = TRUE,
+                        fmat = hugesparse::HugeMatrix)
 {
-    fmat <- sparseMatrix
     if ( n < 0L )
     {
         stop("n must be a positive integer")
     }
     
-    if( n == 0L)
-    {
-        return(Matrix(0, 0, 0))
-    }
-
     IUT <- get.upper.indices(n, keep.diag = keep.diag)
-    ID2 <-  index.sym(IUT$I, IUT$J, n, keep.diag = keep.diag)
     dims <- c(nn12(n, keep.diag = keep.diag), n ^ 2)
-    if(any(is.na(as.integer(dims)))) fmat <- HugeMatrix
-    fmat(i = ID2, j = IUT$ID, x = 1, dims = dims)    
+    if(!keep.diag)
+        fmat(data = IUT[i < j, .(i = IS, j = I, x = 1)],
+             dims = dims)
+    else
+        fmat(data = IUT[i <= j, .(i = IS, j = I, x = 1)],
+             dims = dims)
 }
 
 ## Full Vectorization
@@ -414,25 +394,19 @@ setGeneric("vec.reverse", gen.vec.reverse)
 #' @seealso diag.to.vech, diag.to.vec, bdiag.to.vech
 #' @export
 bdiag.to.vec <- function(vdim, #vector of matrix dimensions
-                         logger = jlogger::JLoggerFactory("jalgos filter"),
-                         ...)
+                         fmat = hugesparse::HugeMatrix,
+                         ...,
+                         logger = jlogger::JLoggerFactory("Matrix vectorization"))
 {
-    fmat <- sparseMatrix
     vds <- cumsum(vdim)
     N <- last(vds)
     ND <- sum(vdim ^ 2)
-    jlogger::jlog.debug(logger, "Creating a bdiag transition matrix of dimension", N ^ 2, ND, "with:", length(vds), "blocks")
-    Ivd <- lapply(vdim, function(n) rep((1 - n):0, each = n))
-    Jvd <- lapply(vdim, function(n) rep((1 - n):0, n))
-    I <- unlist(mapply(Ivd, vds, FUN = "+", SIMPLIFY = FALSE))
-    J <- unlist(mapply(vds, Jvd, FUN = "+", SIMPLIFY = FALSE))
-    I <- I
-    J <- J
-    Ibd <- 1:ND
-    Jbd <- mat.index(I, J, N)
+    jlogger::jlog.debug(logger, "Creating a bdiag transition matrix of dimension", nn12(N), ND, "with:", length(vds), "blocks")
+    IUT <- data.table(dm = vdim, start = c(0L, vds[-length(vds)]))
+    IUT <- IUT[, CJ(i = start + 1:dm, j = start + 1:dm), by = start]
+    IUT[, IS := mat.index(i, j, N)]
     dims <- c(N ^ 2, ND)
-    if(any(is.na(as.integer(dims)))) fmat <- HugeMatrix
-    fmat(i = Jbd, j = Ibd, x = 1, dims = dims)
+    fmat(data = IUT[, .(i = IS, j = .I, x = 1)], dims = dims)
 }
 
 #' @describeIn vectorization Computes the commuation matrix, i.e matrix K such that K %*%  vec(A) = vec(t(A))
@@ -444,8 +418,8 @@ commutation.matrix <- function(n,
                                p = n,
                                half.vec = FALSE)
 {
-    if(n == 1) return(Diagonal(p))
-    if(p == 1) return(Diagonal(n))
+    if(n == 1) return(Matrix::Diagonal(p))
+    if(p == 1) return(Matrix::Diagonal(n))
     findex <- mat.index
     if(half.vec) findex <- index.sym
     J <- rep(1:p, n)

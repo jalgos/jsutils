@@ -628,7 +628,9 @@ rep.list <- function(x,
 indexation <- function(X,
                        N = length(X))
 {
-    if(N > 0)
+    if(length(N) == 0)
+        integer(0)
+    else if(N > 0)
         1:N
     else
         integer(0)

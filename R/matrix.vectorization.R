@@ -29,6 +29,11 @@ switch.local.distributed <- function(fun.local,
     }    
 }
 
+empty.mat <- function(fmat, ...)
+{
+    fmat(data = data.table::data.table(i = integer(0), j = integer(0), x = numeric(0)), ...)
+}
+
 default.matrix.builder <- function()
 {
     if(mat.vectorization.distributed())
@@ -151,16 +156,19 @@ bdiag.to.vech.local <- function(vdim, #vector of matrix dimensions
                                 N = last(vds),
                                 ND = sum(nn12(vdim)),
                                 start = c(0L, vds[-length(vds)]),
+                                bdims = c(0, cumsum(nn12(vdim))[-length(vdim)]),
                                 ...,
                                 logger = jlogger::JLoggerFactory("Matrix vectorization"))
 {
-    jlogger::jlog.debug(logger, "Creating a bdiag transition matrix of dimension", nn12(N), ND, "with:", length(vds), "blocks")
-    IUT <- data.table(dm = vdim, start = start)
-    IUT <- IUT[, CJ(j = start + indexation(N = dm), i = start + indexation(N = dm)), by = start]
-    IUT <- IUT[j <= i]
-    IUT[, IS := index.sym(i, j, N)]
+    jlogger::jlog.debug(logger, "Creating a bdiag transition matrix of dimension", nn12(N), ND, "with:", length(vdim), "blocks")
     dims <- c(nn12(N), ND)
-    fmat(data = IUT[, .(i = IS, j = .I, x = 1)], dims = dims)
+    if(length(vdim) == 0L)
+        return(empty.mat(fmat, dims = dims))
+    IUT <- data.table(dm = vdim, start = start, bdims = bdims)
+    IUT <- IUT[, CJ(j = start + indexation(N = dm), i = start + indexation(N = dm)), by = .(start, bdims)]
+    IUT <- IUT[j <= i]
+    IUT[, `:=`(IS = index.sym(i, j, N), IBD = bdims + 1:.N), by = start]
+    fmat(data = IUT[, .(i = as.integer(IS), j = as.integer(IBD), x = 1)], dims = dims)
 }
 
 bdiag.to.vecs.distributed <- function(vdim,
@@ -172,15 +180,15 @@ bdiag.to.vecs.distributed <- function(vdim,
     {
         vds <- cumsum(vdim)
         N <- last(vds)
-        ND <- sum(fdim)
+        ND <- sum(fdim(vdim))
         start <- c(0L, vds[-length(vds)])
-        fdbv(jsparallel::divide.load(vdim),
-             fmat = fmat,
+        bdims <- c(0L, cumsum(fdim(vdim))[-length(vdim)])
+        fbdv(jsparallel::divide.load(vdim),
              N = N,
              ND = ND,
-             start = start,
-             ...,
-             logger = logger)
+             start = jsparallel::divide.load(start),
+             bdims = jsparallel::divide.load(bdims),
+             ...)
     }
 }
 
@@ -317,7 +325,13 @@ mat.index <- function(i, j, n) (j - 1) * n + i
 
 #' @describeIn mat.index Computes the corresponding i, j indices from a full vectorization index
 #' @export
-reverse.mat.index <- function(I, n) c(I %% n, I %/% n + 1L)
+reverse.mat.index <- function(I, n)
+{
+    if(n == 1)
+        c(1L, I)
+    else
+        c((I - 1L) %% n + 1L, (I - 1L) %/% n + 1L)
+}
 
 #' @describeIn mat.index Computes the half vectorization index corresponding to a given row column combination in a matrix
 #' @export
@@ -370,12 +384,12 @@ vech.to.vec <- function(n,
     if(!keep.diag)
     {
         IUT <- IUT[i != j,]
-        IUT[, x := ifelse(i < j, 1L, -1L)]
+        IUT[, x := ifelse(i < j, 1, -1)]
     }
     else
-        IUT[, x := 1L]
+        IUT[, x := 1]
     dims <- c(n ^ 2, nn12(n, keep.diag = keep.diag))    
-    fmat(data = IUT[, .(i = I, j = IS, x = x)],
+    fmat(data = IUT[, .(i = as.integer(I), j = as.integer(IS), x = x)],
          dims = dims)
 }
 
@@ -387,7 +401,6 @@ divide.size <- function(size,
 
 compute.process.grid <- function(nprocs = comm.size())
 {
-    nprocs <- comm.size()
     sq <- ceiling(sqrt(nprocs))
     ndivs <- (sq:2)
     dvs <- ndivs[which(nprocs %% ndivs == 0)]
@@ -400,6 +413,29 @@ compute.process.grid <- function(nprocs = comm.size())
     }        
 }
 
+divide.load.matrix <- function(nr,
+                               nc = nr)
+{
+    grid <- compute.process.grid()
+    dv1 <- divide.size(nr, grid[1])
+    dvb1 <- c(0, cumsum(dv1)[-length(dv1)])
+    dv2 <- divide.size(nc, grid[2])
+    dvb2 <- c(0, cumsum(dv2)[-length(dv2)])
+    ids <- reverse.mat.index(comm.rank() + 1L, grid[1])
+    u1 <- ids[1]
+    u2 <- ids[2]
+    if(dv1[u1] > 0L)
+        i1 <- dvb1[ids[1]] + 1:dv1[ids[1]]
+    else
+        i1 <- integer(0)
+    
+    if(dv2[u2] > 0L)
+        i2 <- dvb2[ids[2]] + 1:dv2[ids[2]]
+    else
+        i2 <- integer(0)
+    list(i1, i2)
+}
+
 ## The symmetric
 #' @describeIn vectorization Gets the indices of the upper diagonal
 #' @export
@@ -409,6 +445,12 @@ get.upper.indices <- function(n,
                               keep.diag = TRUE,
                               distributed = mat.vectorization.distributed())
 {
+    if(length(i1) == 0L || length(i2) == 0L)
+        return(data.table::data.table(i = integer(0),
+                                      j = integer(0),
+                                      I = integer(0),
+                                      IS = integer(0),
+                                      IS = integer(0)))
     if(!distributed || comm.size() == 1L)
     {
         UI <- data.table::CJ(i = i1, j = i2)
@@ -417,13 +459,10 @@ get.upper.indices <- function(n,
     else
     {
         ## Finding the two biggest divisors of comm.size()
-        grid <- compute.process.grid()
-        dv1 <- divide.size(n, grid[1])
-        dv2 <- divide.size(n, grid[2])
-        ids <- reverse.mat.index(comm.rank() + 1L, grid[1])
+        Is <- divide.load.matrix(n)
         get.upper.indices(n = n,
-                          i1 = dv1[ids[1]],
-                          i2 = dv2[ids[2]],
+                          i1 = Is[[1]],
+                          i2 = Is[[2]],
                           keep.diag = keep.diag,
                           distributed = FALSE)
     }
@@ -443,10 +482,10 @@ vec.to.vech <- function(n,
     IUT <- get.upper.indices(n, keep.diag = keep.diag)
     dims <- c(nn12(n, keep.diag = keep.diag), n ^ 2)
     if(!keep.diag)
-        fmat(data = IUT[i < j, .(i = IS, j = I, x = 1)],
+        fmat(data = IUT[i < j, .(i = as.integer(IS), j = as.integer(I), x = 1)],
              dims = dims)
     else
-        fmat(data = IUT[i <= j, .(i = IS, j = I, x = 1)],
+        fmat(data = IUT[i <= j, .(i = as.integer(IS), j = as.integer(I), x = 1)],
              dims = dims)
 }
 
@@ -500,15 +539,18 @@ bdiag.to.vec.local <- function(vdim, #vector of matrix dimensions
                                N = last(vds),
                                ND = sum(vdim ^ 2),
                                start = c(0L, vds[-length(vds)]),
+                               bdims = c(0, cumsum(vdim ^ 2)[-length(vdim)]),
                                ...,
                                logger = jlogger::JLoggerFactory("Matrix vectorization"))
 {
-    jlogger::jlog.debug(logger, "Creating a bdiag transition matrix of dimension", nn12(N), ND, "with:", length(vds), "blocks")
-    IUT <- data.table(dm = vdim, start = start)
-    IUT <- IUT[, CJ(j = start + indexation(N = dm), i = start + indexation(N = dm)), by = start]
-    IUT[, IS := mat.index(i, j, N)]
+    jlogger::jlog.debug(logger, "Creating a bdiag transition matrix of dimension", nn12(N), ND, "with:", length(vdim), "blocks")
     dims <- c(N ^ 2, ND)
-    fmat(data = IUT[, .(i = IS, j = .I, x = 1)], dims = dims)
+    if(length(vdim) == 0L)
+        return(empty.mat(fmat, dims = dims))
+    IUT <- data.table(dm = vdim, start = start, bdims = bdims)
+    IUT <- IUT[, CJ(j = start + indexation(N = dm), i = start + indexation(N = dm)), by = .(start, bdims)]
+    IUT[, `:=`(IS = mat.index(i, j, N), IBD = bdims + 1:.N), by = start]
+    fmat(data = IUT[, .(i = as.integer(IS), j = as.integer(IBD), x = 1)], dims = dims)
 }
 
 #' @export
@@ -539,6 +581,9 @@ commutation.matrix <- function(n,
                                fmat = default.matrix.builder(),
                                distributed = mat.vectorization.distributed())
 {
+    dims <- c(n * p, n * p)
+    if(length(i) == 0L || length(j) == 0L)
+        return(empty.mat(fmat, dims = dims))
     if(!distributed || comm.size() == 1L)
     {
         findex <- mat.index
@@ -550,18 +595,15 @@ commutation.matrix <- function(n,
         }
         IUT[, J := findex(i, j, n)]
         IUT[, I := findex(j, i, p)]
-        fmat(data = IUT[, .(i = I, j = J, x = 1)], dims = c(n * p, n * p))
+        fmat(data = IUT[, .(i = as.integer(I), j = as.integer(J), x = 1)], dims = dims)
     }
     else
     {
-        grid <- compute.process.grid()
-        dv1 <- divide.size(n, grid[1])
-        dv2 <- divide.size(p, grid[2])
-        ids <- reverse.mat.index(comm.rank() + 1L, grid[1])
+        Is <- divide.load.matrix(n, p)
         commutation.matrix(n = n,
                            p = p,
-                           i = dv1[ids[1]],
-                           j = dv1[ids[2]],
+                           i = Is[[1]],
+                           j = Is[[2]],
                            half.vec = half.vec,
                            fmat = fmat,
                            distributed = FALSE)

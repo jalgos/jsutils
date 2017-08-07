@@ -1109,11 +1109,11 @@ vecdim <- function(x)
 }
 
 
-safe.cov2cor <- function(M,
-                         sqDl = sqrt(posD(diag(M))),
-                         sqDr = sqDl,
-                         tol.inv = 10 * .Machine$double.eps,
-                         diag.fun = Matrix::Diagonal)
+do.safe.cov2cor <- function(M,
+                            sqDl = sqrt(posD(diag(M))),
+                            sqDr = sqDl,
+                            tol.inv = 10 * .Machine$double.eps,
+                            diag.fun = Matrix::Diagonal)
 {
     Dr <- diag.fun(x = sqDr)
     D1r <- diag.fun(x = ifelse(abs(sqDr) > tol.inv, 1 / sqDr, 0))
@@ -1133,7 +1133,7 @@ safe.cov2cor <- function(M,
 setGeneric("safe.cov2cor", function(M, ...) standardGeneric("safe.cov2cor"))
 
 #' @export
-setMethod("safe.cov2cor", "genMatrix", safe.cov2cor)
+setMethod("safe.cov2cor", "genMatrix", do.safe.cov2cor)
 
 #' Sparsity Ratio
 #'

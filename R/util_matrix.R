@@ -842,15 +842,15 @@ setGeneric("%^%", mat.exp)
 #' Building Matrices
 #'
 #' Builds a sparseMatrix from a data.table containing a triplet representation of a matrix. The function will only use the i, j, x columns
-#' @param D triplet representation, needs to have i, j, x columns
+#' @param data triplet representation, needs to have i, j, x columns
 #' @param ... Parameters to be forwarded to sparseMatrix
 #' @return a Matrix of class Matrix
 #' @export
-dsparseMatrix <- function(D,
+dsparseMatrix <- function(data,
                           ...)
 {
-    D <- data.table::as.data.table(D)
-    Matrix::sparseMatrix(i = D[, i], j = D[, j], x = D[, x], ...)
+    data <- data.table::as.data.table(data)
+    Matrix::sparseMatrix(i = data[, i], j = data[, j], x = data[, x], ...)
 }
 
 ## Rotation matrix 2d

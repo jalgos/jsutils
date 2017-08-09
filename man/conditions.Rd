@@ -16,7 +16,7 @@
 \alias{no.convergence.error}
 \title{Custom Conditions}
 \usage{
-condition(subclass, mess, parent.class = "condition", call = sys.call(-1),
+condition(subclass, mess, parent.class = character(0), call = sys.call(-1),
   ...)
 
 is.condition(x)

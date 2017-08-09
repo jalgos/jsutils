@@ -4,10 +4,10 @@
 \alias{dsparseMatrix}
 \title{Building Matrices}
 \usage{
-dsparseMatrix(D, ...)
+dsparseMatrix(data, ...)
 }
 \arguments{
-\item{D}{triplet representation, needs to have i, j, x columns}
+\item{data}{triplet representation, needs to have i, j, x columns}
 
 \item{...}{Parameters to be forwarded to sparseMatrix}
 }

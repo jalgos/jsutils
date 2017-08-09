@@ -63,11 +63,11 @@ NULL
 #' @export
 condition <- function(subclass,
                       mess,
-                      parent.class = "condition",
+                      parent.class = character(0),
                       call = sys.call(-1),
                       ...)
 {
-    structure(class = c(subclass, "condition"),
+    structure(class = c(subclass, c(parent.class, "condition")),
               list(message = mess, call = call),
               ...)
 }
@@ -129,5 +129,5 @@ maxiter.error <- function()
 no.convergence.error <- function()
 {
     custom.error(subclass = "no.convergence",
-                 mess = "Model doesn't seem to converge")
+                 mess = "Model training didn't converge")
 }

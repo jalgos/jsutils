@@ -6,8 +6,10 @@
 \title{Removing Least Significant Covariance Coefficients}
 \usage{
 \S4method{trim.cov.matrix}{ANY}(S, sqDl = sqrt(posD(diag(S))), sqDr = sqDl,
-  ..., mtype = "", tol = 0, tol.inv = 10 * .Machine$double.eps,
-  logger = NULL)
+  Dr = Matrix::Diagonal(x = sqDr), D1r = Matrix::Diagonal(x =
+  inv.values(sqDr, tol.inv)), Dl = Matrix::Diagonal(x = sqDl),
+  D1l = Matrix::Diagonal(x = inv.values(sqDl, tol.inv)), ..., mtype = "",
+  tol = 0, tol.inv = 10 * .Machine$double.eps, logger = NULL)
 }
 \arguments{
 \item{S}{The covariance matrix}

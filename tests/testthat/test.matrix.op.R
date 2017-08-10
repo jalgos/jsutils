@@ -1,4 +1,5 @@
 library(Matrix)
+library(hugesparse)
 context("Matrix operations")
 
 N <- 200
@@ -70,4 +71,19 @@ test_that("Partial kronecker with no projection",
     expect_equal_matrices(M1 %x% M2,
                           partial.kronecker(M1,
                                             M2))
+})
+
+test_that("trim.cov.matrix works",
+{
+    N <- 100L
+    S <- random.cov.matrix(N)
+    tol <- .2
+    SE <- trim.cov.matrix(S,
+                          tol = tol)
+    D <- Matrix::Diagonal(x = sqrt(Matrix::diag(S)))
+    D1 <- Matrix::Diagonal(x = 1 / sqrt(Matrix::diag(S)))
+    C <- D1 %*% S %*% D1
+    C[abs(C) < tol] <- 0
+    ST <- D %*% C %*% D
+    expect_equal_matrices(ST, SE)
 })

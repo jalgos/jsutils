@@ -387,7 +387,7 @@ matrix.mat.to.data.table <- function(M,
     else
         D
 }
-    
+
 sym.mat.to.data.table <- function(M,
                                   one.based = TRUE,
                                   ...)
@@ -399,7 +399,7 @@ sym.mat.to.data.table <- function(M,
     }
     else if(nrow(D[i < j]) == 0)
     {
-       D <- rbind(D, D[i > j, list(i = j, j = i, x)])
+        D <- rbind(D, D[i > j, list(i = j, j = i, x)])
     }
     D
 }
@@ -568,7 +568,7 @@ dt.partial.kronecker <- function(M1,
         matrix(complex(real = as.matrix(RM), imaginary = as.matrix(IM)), nrow = nrow(IM), ncol = ncol(RM))
     }
 }
-    
+
 #### Memory safe kronecker product #######
 
 #' Covariance matrix to correlation matrix
@@ -941,24 +941,31 @@ setGeneric("trim.cov.matrix", function(S, ...) standardGeneric("trim.cov.matrix"
 #' @export
 setGeneric("drop0", Matrix::drop0)
 
+#' @export
+inv.values <- function(values,
+                        tol.inv)
+{
+    ifelse(abs(values) > tol.inv, 1 / values, 0)
+}
+
 gen.trim.cov.matrix <- function(S,
                                 sqDl = sqrt(posD(diag(S))),
                                 sqDr = sqDl,
+                                Dr = Matrix::Diagonal(x = sqDr),
+                                D1r = Matrix::Diagonal(x = inv.values(sqDr, tol.inv)),
+                                Dl = Matrix::Diagonal(x = sqDl),
+                                D1l = Matrix::Diagonal(x = inv.values(sqDl, tol.inv)),
                                 ...,
                                 mtype = "",                               
                                 tol = 0,
                                 tol.inv = 10 * .Machine$double.eps,
                                 logger = NULL)
 {
-    jlog.debug(logger, "Dropping near 0 correlations from matrix:", mtype, "tolerance equals:", tol)
-    Dr <- Matrix::Diagonal(x = sqDr)
-    D1r <- Matrix::Diagonal(x = ifelse(abs(sqDr) > tol.inv, 1 / sqDr, 0))
-    Dl <- Matrix::Diagonal(x = sqDl)
-    D1l <- Matrix::Diagonal(x = ifelse(abs(sqDl) > tol.inv, 1 / sqDl, 0))
+    jlogger::jlog.debug(logger, "Dropping near 0 correlations from matrix:", mtype, "tolerance equals:", tol)
     C <- D1l %*% S %*% D1r
-    jlog.debug(logger, "Current mb size:", format(object.size(S), "Mb"), "for", mtype)
+    jlogger::jlog.debug(logger, "Current mb size:", format(object.size(S), "Mb"), "for", mtype, "sparsity ratio:", jsutils::sparsity.ratio(S))
     S <- Dl %*% drop0(C, tol) %*% Dr ## Reusing S saves memory for huge matrices
-    jlog.debug(logger, "After trimming mb size:", format(object.size(S), "Mb"), "for", mtype)
+    jlogger::jlog.debug(logger, "After trimming mb size:", format(object.size(S), "Mb"), "for", mtype, "sparsity ratio:", jsutils::sparsity.ratio(S))
     S
 }
 
@@ -966,6 +973,30 @@ gen.trim.cov.matrix <- function(S,
 #' @template trim.matrix
 #' @export
 setMethod("trim.cov.matrix", "ANY", gen.trim.cov.matrix)
+
+dhs.trim.cov.matrix <- function(S,
+                                sqDl = mat.to.triplet(S, shallow = TRUE)[i == j, sqrt(posD(x))],
+                                sqDr = sqDl,
+                                Dr = distributedhugesparse::DHugeMatrix(data = mat.to.triplet(S, shallow = TRUE)[i == j, .(i, j, x = sqDr)]),
+                                D1r = distributedhugesparse::DHugeMatrix(data = mat.to.triplet(S, shallow = TRUE)[i == j, .(i, j, x = inv.values(sqDr, tol.inv))]),
+                                Dl = distributedhugesparse::DHugeMatrix(data = mat.to.triplet(S, shallow = TRUE)[i == j, .(i, j, x = sqDl)]),
+                                D1l = distributedhugesparse::DHugeMatrix(data = mat.to.triplet(S, shallow = TRUE)[i == j, .(i, j, x = inv.values(sqDl, tol.inv))]),
+                                ...,
+                                tol.inv = 10 * .Machine$double.eps)
+{
+    callNextMethod(S,
+                   sqDl = sqDl,
+                   sqDr = sqDr,
+                   Dr = Dr,
+                   D1r = D1r,
+                   Dl = Dl,
+                   D1l = D1l,
+                   ...)
+}
+
+
+    #' @export
+setMethod("trim.cov.matrix", "DHugeMatrix", dhs.trim.cov.matrix)
 
 
 ## Matrix operations reimplemented in cpp
@@ -993,7 +1024,7 @@ df.partial.kronecker <- function(DM1,
                       Ir,
                       dm2)
 }
-                                 
+
 
 partial.kronecker <- function(M1,
                               M2,
@@ -1116,9 +1147,9 @@ do.safe.cov2cor <- function(M,
                             diag.fun = Matrix::Diagonal)
 {
     Dr <- diag.fun(x = sqDr)
-    D1r <- diag.fun(x = ifelse(abs(sqDr) > tol.inv, 1 / sqDr, 0))
+    D1r <- diag.fun(x = inv.values(sqDr, tol.inv))
     Dl <- diag.fun(x = sqDl)
-    D1l <- diag.fun(x = ifelse(abs(sqDl) > tol.inv, 1 / sqDl, 0))
+    D1l <- diag.fun(x = inv.values(sqDl, tol.inv))
     D1l %*% M %*% D1r
 }
 

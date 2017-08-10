@@ -225,3 +225,4 @@ List partial_kronecker(const List& trl,
   
     return rc_sparse_rep_to_list<un_rc_sparse_rep, un_vec_rep>(prod);
 }
+

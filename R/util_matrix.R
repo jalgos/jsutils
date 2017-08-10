@@ -978,9 +978,9 @@ dhs.trim.cov.matrix <- function(S,
                                 sqDl = mat.to.triplet(S, shallow = TRUE)[i == j, sqrt(posD(x))],
                                 sqDr = sqDl,
                                 Dr = distributedhugesparse::DHugeMatrix(data = mat.to.triplet(S, shallow = TRUE)[i == j, .(i, j, x = sqDr)]),
-                                D1r = distributedhugesparse::DHugeMatrix(data = mat.to.triplet(S, shallow = TRUE)[i == j, .(i, j, x = inv.values(sqDr, tol.inv))]),
+                                D1r = distributedhugesparse::DHugeMatrix(data = mat.to.triplet(Dr, shallow = TRUE)[, .(i, j, x = inv.values(x, tol.inv))]),
                                 Dl = distributedhugesparse::DHugeMatrix(data = mat.to.triplet(S, shallow = TRUE)[i == j, .(i, j, x = sqDl)]),
-                                D1l = distributedhugesparse::DHugeMatrix(data = mat.to.triplet(S, shallow = TRUE)[i == j, .(i, j, x = inv.values(sqDl, tol.inv))]),
+                                D1l = distributedhugesparse::DHugeMatrix(data = mat.to.triplet(Dl, shallow = TRUE)[i == j, .(i, j, x = inv.values(x, tol.inv))]),
                                 ...,
                                 tol.inv = 10 * .Machine$double.eps)
 {

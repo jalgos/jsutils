@@ -328,9 +328,9 @@ mat.index <- function(i, j, n) (j - 1) * n + i
 reverse.mat.index <- function(I, n)
 {
     if(n == 1)
-        c(1L, I)
+        list(i = 1L, j = I)
     else
-        c((I - 1L) %% n + 1L, (I - 1L) %/% n + 1L)
+        list(i = (I - 1L) %% n + 1L, j = (I - 1L) %/% n + 1L)
 }
 
 #' @describeIn mat.index Computes the half vectorization index corresponding to a given row column combination in a matrix
@@ -422,15 +422,15 @@ divide.load.matrix <- function(nr,
     dv2 <- divide.size(nc, grid[2])
     dvb2 <- c(0, cumsum(dv2)[-length(dv2)])
     ids <- reverse.mat.index(comm.rank() + 1L, grid[1])
-    u1 <- ids[1]
-    u2 <- ids[2]
+    u1 <- ids$i
+    u2 <- ids$j
     if(dv1[u1] > 0L)
-        i1 <- dvb1[ids[1]] + 1:dv1[ids[1]]
+        i1 <- dvb1[u1] + 1:dv1[u1]
     else
         i1 <- integer(0)
     
     if(dv2[u2] > 0L)
-        i2 <- dvb2[ids[2]] + 1:dv2[ids[2]]
+        i2 <- dvb2[u2] + 1:dv2[u2]
     else
         i2 <- integer(0)
     list(i1, i2)

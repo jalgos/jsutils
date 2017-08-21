@@ -7,9 +7,10 @@
 \usage{
 \S4method{trim.cov.matrix}{ANY}(S, sqDl = sqrt(posD(diag(S))), sqDr = sqDl,
   Dr = Matrix::Diagonal(x = sqDr), D1r = Matrix::Diagonal(x =
-  inv.values(sqDr, tol.inv)), Dl = Matrix::Diagonal(x = sqDl),
-  D1l = Matrix::Diagonal(x = inv.values(sqDl, tol.inv)), ..., mtype = "",
-  tol = 0, tol.inv = 10 * .Machine$double.eps, logger = NULL)
+  inv.values(diag(Dr), tol.inv)), Dl = Matrix::Diagonal(x = sqDl),
+  D1l = Matrix::Diagonal(x = inv.values(diag(Dl), tol.inv)), ...,
+  mtype = "", tol = 0, tol.inv = 10 * .Machine$double.eps,
+  logger = NULL)
 }
 \arguments{
 \item{S}{The covariance matrix}

@@ -4,7 +4,7 @@
 \alias{array.index}
 \title{Array Index}
 \usage{
-array.index(..., LI = list(...), dim)
+array.index(..., LI = list(...), dim, one.based = TRUE)
 }
 \arguments{
 \item{...}{integer vectors describing the coordinates}
@@ -12,6 +12,8 @@ array.index(..., LI = list(...), dim)
 \item{LI}{a list of the individual coordinates}
 
 \item{dim}{Dimension of the array}
+
+\item{one.based}{should the indices start at one}
 }
 \description{
 Computes the index in the vectorization of a multidimensional array corresponding to the individual coordinates

@@ -483,10 +483,12 @@ setGeneric("array.to.data.table", array.to.data.table)
 #' @param ... integer vectors describing the coordinates
 #' @param LI a list of the individual coordinates
 #' @param dim Dimension of the array
+#' @param one.based should the indices start at one
 #' @export
 array.index <- function(...,
                         LI = list(...),
-                        dim)
+                        dim,
+                        one.based = TRUE)
 {
     nd <- length(dim)
     if(nd == 0) return(integer(0L))
@@ -499,7 +501,7 @@ array.index <- function(...,
         cind <- LI[[i]]
         inds <- inds + (cind - one.based) * ndo 
     }
-    inds + 1L
+    inds + one.based
 }
 
 ## give the indexes in the order first

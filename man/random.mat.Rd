@@ -9,6 +9,7 @@
 \alias{random.sparse.matrix}
 \alias{random.sparse.cov.matrix}
 \alias{random.orthonormal.matrix}
+\alias{random.orthogonal}
 \title{Generating random matrices}
 \usage{
 random.matrix(n, p = n, rgen = rnorm, ...)
@@ -24,6 +25,8 @@ random.sparse.matrix(n, p = n, N, rgen = rnorm)
 random.sparse.cov.matrix(N, ...)
 
 random.orthonormal.matrix(n)
+
+random.orthogonal(p, q = p, vals = 1 + 1:p)
 }
 \arguments{
 \item{n}{Number of rows}
@@ -35,6 +38,12 @@ random.orthonormal.matrix(n)
 \item{...}{Parameters to be passed to the random number generator and to lower level functions}
 
 \item{tot.vol}{Scaling that control the total volatiliy of the covariance matrix created}
+
+\item{q}{number of variables}
+
+\item{vals}{Values for each factor}
+
+\item{p}{number of factors}
 }
 \section{Functions}{
 \itemize{
@@ -51,5 +60,7 @@ random.orthonormal.matrix(n)
 \item \code{random.sparse.cov.matrix}: Creates a random sparse covariance matrix. Sparsity is hard to control exactly. The target is approximate. Uses random.sparse.matrix
 
 \item \code{random.orthonormal.matrix}: Creates a random orthonormal.matrix. Effectively draws an anti symmetric matrix and uses the Cayley parametrization to create the member of SOn(R)
+
+\item \code{random.orthogonal}: Creates a random orthogonal matrix.
 }}
 

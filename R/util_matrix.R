@@ -10,6 +10,9 @@ setGeneric("tcrossprod", tcrossprod)
 #' @export
 setGeneric("crossprod", crossprod)
 
+## DITTO
+#' @export
+setGeneric("diag", diag)
 
 ## DITTO
 #' @export
@@ -64,7 +67,7 @@ matrix.scal <- function(M1, M2, normalized = TRUE)
 #' 
 #' Generic for vectors
 #' @export
-setMethod("norm", c("vector", "ANY"), function(x, type, ...) norm(Matrix(x), type))
+setMethod("norm", c("vector", "ANY"), function(x, type, ...) Matrix::norm(Matrix(x), type))
 
 
 #' Trace of a matrix

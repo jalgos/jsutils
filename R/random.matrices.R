@@ -92,4 +92,17 @@ random.orthonormal.matrix <- function(n)
     A <- random.anti.sym.matrix(n)
     jsmath::reverse.cayley(A)
 }
-                                      
+
+#' @describeIn random.mat Creates a random orthogonal matrix.
+#' @param p number of factors
+#' @param q number of variables
+#' @param vals Values for each factor
+#' @export
+random.orthogonal <- function(p,
+                              q = p,
+                              vals = 1 + 1:p)
+{
+    D <- Matrix::Diagonal(x = vals) 
+    jsutils::t(qr.Q(qr(random.matrix(q, p))) %*% D)    
+}
+

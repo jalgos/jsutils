@@ -28,3 +28,7 @@ random.date <- function(n,
 {
     date.ref + rdist(n, ...)
 }
+
+#' Centered Exponantially Distributed Sample
+#' @export
+rexpc <- function(...) rexp(...) - 1

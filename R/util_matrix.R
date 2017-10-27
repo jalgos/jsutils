@@ -820,7 +820,7 @@ gen.inverse <- function(a,
                         b,
                         fsolve = solve)
 {
-    fsolve(crossprod(a), crossprod(a, b))
+    fsolve(jsutils::crossprod(a), jsutils::crossprod(a, b))
 }
 
 ########

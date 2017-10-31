@@ -226,3 +226,28 @@ List partial_kronecker(const List& trl,
     return rc_sparse_rep_to_list<un_rc_sparse_rep, un_vec_rep>(prod);
 }
 
+//[[Rcpp::export]]
+List triplet_prod_preordered(const IntegerVector& i1,
+			     const IntegerVector& j1,
+			     const NumericVector& x1,
+			     const IntegerVector& i2,
+			     const IntegerVector& j2,
+			     const NumericVector& x2)
+{
+    
+    int ccol = j1[0];
+    for(ccol
+    for(int ct = 0; ct < rn; ct ++)
+    {
+	Rcpp::checkUserInterrupt();
+	un_rc_sparse_rep::iterator rrow = rtriplet.find(j1[ct]);
+	if(rrow == rtriplet.end())
+	    continue;
+	un_vec_rep& prod_row = prod[i1[ct]];
+	for(un_vec_rep::iterator it = rrow->second.begin(); it != rrow->second.end(); it++)
+	{
+	    prod_row[it->first] += it->second * x1[ct];
+	}
+    }
+    return rc_sparse_rep_to_list<un_rc_sparse_rep, un_vec_rep>(prod);
+}

@@ -2,6 +2,7 @@
 #include <Rcpp.h>
 #include <map>
 #include <unordered_map>
+#include "jsutils.h"
 
 using namespace Rcpp;
 // rc_sparse_rep for row or column sparse representation
@@ -226,28 +227,77 @@ List partial_kronecker(const List& trl,
     return rc_sparse_rep_to_list<un_rc_sparse_rep, un_vec_rep>(prod);
 }
 
+// We assume that matrices are ordered by the colum/ row if LHS and row/ colum if RHS
 //[[Rcpp::export]]
-List triplet_prod_preordered(const IntegerVector& i1,
-			     const IntegerVector& j1,
-			     const NumericVector& x1,
-			     const IntegerVector& i2,
-			     const IntegerVector& j2,
-			     const NumericVector& x2)
+SEXP triplet_prod_preordered(const SEXP& i1,
+			     const SEXP& j1,
+			     const SEXP& x1,
+			     const SEXP& i2,
+			     const SEXP& j2,
+			     const SEXP& x2)
 {
-    
-    int ccol = j1[0];
-    for(ccol
-    for(int ct = 0; ct < rn; ct ++)
+    int cur1 = 0;
+    int cur2 = 0;
+    int n1 = LENGTH(i1) - 1;
+    int n2 = LENGTH(i2) - 1;
+    int ci1 = INTEGER(i1)[cur1];
+    int ci2 = INTEGER(i2)[cur2];
+    int cj1 = INTEGER(j1)[cur1];
+    int cj2 = INTEGER(j2)[cur2];
+    rc_sparse_rep prod;
+    while(true)
     {
-	Rcpp::checkUserInterrupt();
-	un_rc_sparse_rep::iterator rrow = rtriplet.find(j1[ct]);
-	if(rrow == rtriplet.end())
-	    continue;
-	un_vec_rep& prod_row = prod[i1[ct]];
-	for(un_vec_rep::iterator it = rrow->second.begin(); it != rrow->second.end(); it++)
+	
+	while(cj1 != ci2)
 	{
-	    prod_row[it->first] += it->second * x1[ct];
+	    if(cj1 > ci2)
+	    {
+		cur2++;
+		if(cur2 > n2)
+		    break;				
+	    }
+	    else
+	    {
+		cur1++;
+		if(cur1 > n1)
+		    break;	    
+	    }	    
+	    ci2 = INTEGER(i2)[cur2];
+	    cj1 = INTEGER(j1)[cur1];		
+	   
 	}
+
+	int down2 = cur2;
+	while(true)
+	{
+	    cur2 = down2;	
+	    ci1 = INTEGER(i1)[cur1];
+	    rc_sparse_rep::iterator it_prod_row = prod.insert(prod.begin(), std::make_pair(ci1, vec_rep()));
+	    vec_rep::iterator it_prod_val = it_prod_row->second.begin();	    
+	    ci2 = INTEGER(i2)[cur2];
+	    while(cj1 == ci2)
+	    {
+		cj2 = INTEGER(j2)[cur2];			
+		it_prod_val = it_prod_row->second.insert(it_prod_val, std::make_pair(cj2, 0));
+		     
+		it_prod_val->second += REAL(x1)[cur1] * REAL(x2)[cur2];
+		cur2++;
+		if(cur2 > n2)
+		    break;;
+		ci2 = INTEGER(i2)[cur2];
+	    }
+	    cur1++;
+	    if(cur1 > n1)
+		break;
+	    int prevcj1 = cj1;
+	    cj1 = INTEGER(j1)[cur1];
+	    if(cj1 != prevcj1)
+		break;
+	}
+	
+	if(cur1 > n1 || cur2 > n2)
+	    break;
     }
-    return rc_sparse_rep_to_list<un_rc_sparse_rep, un_vec_rep>(prod);
+    
+    return rc_sparse_rep_to_list<rc_sparse_rep, vec_rep>(prod);
 }

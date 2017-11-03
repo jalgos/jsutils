@@ -130,3 +130,19 @@ BEGIN_RCPP
     return __result;
 END_RCPP
 }
+// triplet_prod_preordered
+SEXP triplet_prod_preordered(const SEXP& i1, const SEXP& j1, const SEXP& x1, const SEXP& i2, const SEXP& j2, const SEXP& x2);
+RcppExport SEXP jsutils_triplet_prod_preordered(SEXP i1SEXP, SEXP j1SEXP, SEXP x1SEXP, SEXP i2SEXP, SEXP j2SEXP, SEXP x2SEXP) {
+BEGIN_RCPP
+    Rcpp::RObject __result;
+    Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< const SEXP& >::type i1(i1SEXP);
+    Rcpp::traits::input_parameter< const SEXP& >::type j1(j1SEXP);
+    Rcpp::traits::input_parameter< const SEXP& >::type x1(x1SEXP);
+    Rcpp::traits::input_parameter< const SEXP& >::type i2(i2SEXP);
+    Rcpp::traits::input_parameter< const SEXP& >::type j2(j2SEXP);
+    Rcpp::traits::input_parameter< const SEXP& >::type x2(x2SEXP);
+    __result = Rcpp::wrap(triplet_prod_preordered(i1, j1, x1, i2, j2, x2));
+    return __result;
+END_RCPP
+}

@@ -20,11 +20,16 @@ Pr <- Matrix::sparseMatrix(j = sample(1:ncpr, npr), i = sample(1:(p * q), npr), 
 
 triplet.prod <- function(M1,
                          M2,
-                         trfun)
+                         trfun,
+                         preorder = FALSE)
 {
     DM1 <- mat.to.data.table(M1)
     DM2 <- mat.to.data.table(M2)
-    
+    if(preorder)
+    {
+        setkey(DM1, j)
+        setkey(DM2, i)
+    }
     dsparseMatrix(trfun(DM1[, i],
                         DM1[, j],
                         DM1[, x],
@@ -44,6 +49,12 @@ test_that("triplet hashmap works",
 {
     expect_equal_matrices(M1 %*% M2,
                           triplet.prod(M1, M2, triplet.prod.hash))
+})
+
+test_that("triplet preordered with data.table works",
+{
+    expect_equal_matrices(M1 %*% M2,
+                          triplet.prod(M1, M2, triplet_prod_preordered, preorder = TRUE))
 })
 
 test_that("Partial kronecker works",

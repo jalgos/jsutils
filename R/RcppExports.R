@@ -41,3 +41,7 @@ partial_kronecker <- function(trl, trr, projl, projr, dim2) {
     .Call('jsutils_partial_kronecker', PACKAGE = 'jsutils', trl, trr, projl, projr, dim2)
 }
 
+triplet_prod_preordered <- function(i1, j1, x1, i2, j2, x2) {
+    .Call('jsutils_triplet_prod_preordered', PACKAGE = 'jsutils', i1, j1, x1, i2, j2, x2)
+}
+

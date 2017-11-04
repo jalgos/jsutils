@@ -1,5 +1,6 @@
 //[[Rcpp::plugins(cpp11)]]
 #include <Rcpp.h>
+#include "jsutils.h"
 
 //[[Rcpp::export]]
 void inplace(SEXP target, SEXP src)

@@ -1092,44 +1092,6 @@ kronecker.proj <- function(M1,
     
 }
 
-#' @name triplet.product
-#' @title Triplet Product
-#' @details Two implementation of matrix products that uses maps (red / black tree and hashmap) to perform a matrix multiplication. This is a more efficient implementation for very sparse huge matrices. \cr
-#' The hashmap version is almost always preferrable.
-#' @name triplet.product
-#' @param i1 row indices in LHS Matrix
-#' @param j1 column indices in LHS Matrix
-#' @param x1 values in LHS Matrix
-#' @param i2 row indices in RHS Matrix
-#' @param j2 column indices in RHS Matrix
-#' @param x2 values in RHS Matrix
-NULL
-
-#' @describeIn triplet.product Uses a read / black tree map to represent matrix data.
-#' @export
-triplet.prod.rb <- function(i1,
-                            j1,
-                            x1,
-                            i2,
-                            j2,
-                            x2)
-{
-    triplet_prod(i1, j1, x1, i2, j2, x2)
-}
-
-#' @describeIn triplet.product Uses a hashmap to represent the data
-#' @export
-triplet.prod.hash <- function(i1,
-                              j1,
-                              x1,
-                              i2,
-                              j2,
-                              x2)
-{
-    triplet_prod_un(i1, j1, x1, i2, j2, x2)
-}
-
-
 ###
 
 #' Get The Dimension Of an Algebraic Vector

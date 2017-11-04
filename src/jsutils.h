@@ -8,5 +8,6 @@
 
 #define __TIME_MS__ boost::posix_time::to_iso_extended_string(boost::posix_time::microsec_clock::universal_time())
 #define JLOG(x) Rcpp::Rcout << __TIME_MS__ << ": " <<  x << std::endl;
+void inplace(SEXP target, SEXP src);
 
 #endif

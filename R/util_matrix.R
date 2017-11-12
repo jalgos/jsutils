@@ -62,6 +62,9 @@ matrix.scal <- function(M1, M2, normalized = TRUE)
     return(matrix.scal.raw(M1, M2) / N)
 }
 
+#' @export
+setGeneric("norm", function(x, type = "f", ...) Matrix::norm(x, type = type))
+
 ##Equivalent to Matrix's norm(M, "f")
 #' Norm
 #' 

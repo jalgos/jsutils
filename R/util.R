@@ -1,6 +1,3 @@
-#Making "A"+"B" = "AB"
-setGeneric("%+%", function(e1, e2) standardGeneric("%+%"))
-setMethod("%+%", c("ANY", "ANY"), function(e1, e2) return(paste0(as.character(e1), as.character(e2))))
 
 #' Useful settings
 #'
@@ -8,10 +5,9 @@ setMethod("%+%", c("ANY", "ANY"), function(e1, e2) return(paste0(as.character(e1
 #' @export
 jalgos.settings <- function()
 {
-    options(max.print = 1500)
-    options(width = 100)
     options(datatable.allow.cartesian = TRUE)
-    Sys.setenv(R_HISTSIZE = "300000") ## TODO look into 'track' package
+    options(digits.secs = 6)
+    Sys.setenv(R_HISTSIZE = "300000")
 
     DAYSECONDS <<- 24 * 60 * 60
 

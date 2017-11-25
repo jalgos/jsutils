@@ -18,7 +18,7 @@ License: Jalgos License
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
-Collate:
+Collate: 
     'RcppExports.R'
     'applies.R'
     'array_fun.R'
@@ -40,6 +40,7 @@ Collate:
     'util.packages.R'
     'util.random.R'
     'util.sendmail.R'
+    'util.strings.R'
     'util.tests.R'
     'util_geocoding.R'
     'util_markdown.R'

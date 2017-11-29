@@ -131,3 +131,17 @@ date.to.hexmode <- function(d)
 {
     as.hexmode(as.integer(as.POSIXct(d)))
 }
+
+#' Converts Date
+#'
+#' Converts various types of Date to a tractable one
+#' @param date date vector
+#' @param date.class class to be converted to
+#' @param origin origin for type conversion fonction
+#' @export
+convert.generic.date <- function(date,
+                                 date.class,
+                                 origin = "1970-01-01")
+{
+    do.call(paste0("as.", date.class), list(date, origin = origin))
+}

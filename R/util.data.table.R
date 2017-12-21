@@ -52,6 +52,31 @@ plus.join.test <- function()
     list(dt1 = dt1, dt2 = dt2, res = plus.join(dt1, dt2))
 }
 
+to.convention.names <- function(names)
+{
+    conv.names <- gsub("([A-Z]+)([A-Z][a-z])", "\\1.\\2", names)
+    conv.names <- gsub("([a-z\\d])([A-Z])", "\\1.\\2", conv.names)
+    conv.names <- gsub("-|_", ".", conv.names)
+
+    return(tolower(conv.names))
+}
+
+#' Set convention names
+#'
+#' Turn every column name of a data table to a convention format with lower case and point separated column names
+#'
+#' @param DT data.table
+#'
+#' @export
+set.convention.names <- function(DT,
+                                 ...,
+                                 logger = logger.fun.name.logger())
+{
+    conv.names <- to.convention.names(names(DT))
+    jlog.debug(logger, "Turning names", paste(names(DT), collapse = " ") %c% BY, "to", conv.names %c% BC)
+    setnames(DT, names(DT), conv.names)
+}
+
 ## Rendered obsolete by melt and dcast
 dtextract1 <- function(DT,
                        var,
@@ -524,4 +549,3 @@ inplace <- function(target, src)
 {
     invisible(.Call('jsutils_inplace', PACKAGE = 'jsutils', target, src))
 }
-

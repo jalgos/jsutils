@@ -70,10 +70,10 @@ to.convention.names <- function(names)
 #' @export
 set.convention.names <- function(DT,
                                  ...,
-                                 logger = logger.fun.name.logger())
+                                 logger = JLoggerFactory("Jalgos Utils"))
 {
     conv.names <- to.convention.names(names(DT))
-    jlog.debug(logger, "Turning names", paste(names(DT), collapse = " ") %c% BY, "to", conv.names %c% BC)
+    jlog.debug(logger, "Turning names", names(DT) %c% BY, "to", conv.names %c% BC)
     setnames(DT, names(DT), conv.names)
 }
 

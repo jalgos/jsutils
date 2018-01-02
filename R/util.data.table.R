@@ -52,13 +52,21 @@ plus.join.test <- function()
     list(dt1 = dt1, dt2 = dt2, res = plus.join(dt1, dt2))
 }
 
-to.convention.names <- function(names)
+to.convention.names <- function(names,
+                                unwanted.chars = c("é" = "e",
+                                                   "è" = "e"))
 {
     conv.names <- gsub("([A-Z]+)([A-Z][a-z])", "\\1.\\2", names)
     conv.names <- gsub("([a-z\\d])([A-Z])", "\\1.\\2", conv.names)
     conv.names <- gsub("-|_", ".", conv.names)
 
-    return(tolower(conv.names))
+    conv.names <- tolower(conv.names)
+    for(i in 1:length(unwanted.chars))
+    {
+        conv.names <- gsub(names(unwanted.chars)[i], unwanted.chars[i], conv.names)
+    }
+    
+    return(conv.names)
 }
 
 #' Set convention names

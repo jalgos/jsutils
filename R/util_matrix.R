@@ -10,6 +10,12 @@ setGeneric("tcrossprod", tcrossprod)
 #' @export
 setGeneric("crossprod", crossprod)
 
+#' @export
+setGeneric("%t*%", function(x, y) crossprod(x, y))
+
+#' @export
+setGeneric("%*t%", function(x, y) tcrossprod(x, y))
+
 ## DITTO
 #' @export
 setGeneric("diag", diag)
@@ -76,97 +82,6 @@ setMethod("norm", c("vector", "ANY"), function(x, type, ...) Matrix::norm(Matrix
 #' Trace of a matrix
 #' @export
 matrix.trace <- function(M) sum(diag(M))
-
-## More utility functions
-#' @name eigen.func
-#' @title Applying functions to the eigen value
-#' @param M Matrix on which we want to apply func
-#' @param func Function to apply to the eigen values of M
-#' @param D eigen values
-#' @param ... Parameters to pass on to func
-NULL
-
-do.funcM <- function(M,
-                     func,
-                     ...)
-{
-    n <- nrow(M)
-    E <- eigen(M, symmetric = TRUE)
-    V <- Matrix(E$vectors)
-    D <- E$values
-    tcrossprod(V %*% Diagonal(n, x = func(D, ...)), V)
-}
-
-#' Factors Handling
-#'
-#' Applies a function to the eigen decomposition of a matrix in this fashion: let M = Pdiag(V)P^-1 then the result is Q = Pdiag(f(V))P^-1 where f is a function that is applied to the vector of eigen values.
-#' @param M Matrix to be decomposed
-#' @param func Function to be applied to the eigen values
-#' @export
-setGeneric("funcM", function(M, ...) standardGeneric("funcM"))
-
-#' @export
-setMethod("funcM", "Matrix", do.funcM)
-
-#' @export
-setMethod("funcM", "matrix", do.funcM)
-
-#' @describeIn eigen.func The function applied is the square root. A tolerance can be given to consider negative values close to 0 to be 0
-#' @export
-sqrtM <- function(M,
-                  eps = .Machine$double.eps)
-{
-    funcM(M, function(D) sqrt(ifelse(D > -eps & D < 0, 0, D)))
-}
-
-#' @describeIn eigen.func Absolute value of the eigen values
-#' @export
-absM <- function(M) funcM(M, func = add.ellipsis(abs))
-
-#' @describeIn eigen.func Positive value
-#' @export
-posD <- function(D,
-                 ...)
-{
-    ifelse(D > 0, D, 0)
-}
-
-#' @describeIn eigen.func Positive value of the eigen values. In case of a symmetric matrix, it will turn it into a semi-definite positive matrix.
-#' @export
-posM <- function(M, ...) funcM(M, func = posD, ...)
-
-#' @describeIn eigen.func Exponential of the eigen values. Computes the exponential of a matrix. It is however not the most efficient manner.
-#' @export
-expM <- function(M, ...) funcM(M, func = add.ellipsis(exp))
-
-#' @describeIn eigen.func Computes the logarithm of a matrix. Best defined in the case of definite positive matrices
-#' @export
-logM <- function(M, ...) funcM(M, func = add.ellipsis(log))
-
-#' @name with.names
-#' @title More verbose factorization
-#' @param M matrix to factorize
-#' @details Base methods to factorize matrices, namely \code{eigen} and \code{svd} discard the names of the matrix in their results. These methods add them back.
-NULL
-
-#' @rdname with.names
-#' @export
-eigen.with.names <- function(M, ...)
-{
-    E <- eigen(M, ...)
-    rownames(E$vectors) <- rownames(M)
-    E
-}
-
-#' @rdname with.names
-#' @export
-svd.with.names <- function(M, ...)
-{
-    S <- svd(M, ...)
-    rownames(S$u) <- rownames(M)
-    rownames(S$v) <- colnames(M)
-    S
-}
 
 shift.mat <- function(X, N = 1, ...)
 {
@@ -1020,6 +935,19 @@ vecdim <- function(x)
     else stop('matrix is not a vector')
 }
 
+
+#' Number Of Records
+#'
+#' Returns the number of records in a data structure
+#' @param x Data structure
+#' @export
+setGeneric("nrecords", nrow)
+
+#' @export
+setMethod("nrecords", "vector", function(x) length(x))
+
+#' @export
+setMethod("nrecords", "matrix", nrow)
 
 do.safe.cov2cor <- function(M,
                             sqDl = sqrt(posD(diag(M))),

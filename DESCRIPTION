@@ -40,7 +40,7 @@ Collate:
     'util.packages.R'
     'util.random.R'
     'util.sendmail.R'
-    'util.strings.R'
+    'util.shortcut.operators.R'
     'util.tests.R'
     'util_geocoding.R'
     'util_markdown.R'

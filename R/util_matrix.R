@@ -229,7 +229,7 @@ setMethod("ginv", "Matrix", Matrix.ginv)
 #' @param a Matrix to invert
 #' @param b RHS of the equation a.v = b where v is the unknown
 #' @export
-setGeneric("gsolve", function(a, b, ...) ginv(a) %*% b)
+setGeneric("gsolve", function(a, b, ...) jsutils::ginv(a[]) %*% b)
 
 #' @rdname gsolve
 #' @export

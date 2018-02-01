@@ -97,6 +97,49 @@ dtextract1 <- function(DT,
     setnames(DF, var.value, var)
 }
 
+#' Matching columns
+#'
+#' Retrieve the column names that match a pattern AND does not match an other pattern
+#'
+#' @param DT a data table
+#' @param match.exp the regular expression to be matched by column names
+#' @param ig.match.exp the regular expression to be unmatched by column names
+#'
+#' @export
+matching.cols <- function(DT,
+                          match.exp,
+                          ig.match.exp = "^$")
+{
+    matchs <- names(DT)[match.exp %gl% names(DT)]
+    matchs <- matchs[!ig.match.exp %gl% matchs]
+
+    return(matchs)
+}
+
+#' Data.table matching columns
+#'
+#' Retrieve the data.table with columns that match a pattern AND does not match an other pattern
+#'
+#' @param DT a data table
+#' @param match.exp the regular expression to be matched by column names
+#' @param ig.match.exp the regular expression to be unmatched by column names
+#'
+#' @export
+DT.matching.cols <- function(DT,
+                             match.exp,
+                             ig.match.exp = "^$",
+                             ...,
+                             logger = emergency.logger())
+{
+    match.cols <- matching.cols(DT,
+                                match.exp = match.exp,
+                                ig.match.exp = ig.match.exp,
+                                ...)
+
+    return(DT[, .SD, .SDcols = match.cols])
+}
+
+
 ## DITTO
 cols.from.var <- function(DT,
                           var.name,

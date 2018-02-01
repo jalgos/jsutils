@@ -218,7 +218,7 @@ cartesian.data.table <- function(D1,
     
     setkey(D1, key)
     setkey(D2, key)
-    D <- D1[D2, allow.cartesian = TRUE]
+    D <- D1[D2, allow.cartesian = TRUE, nomatch = 0L]
     D[, key := NULL]
     D
 }

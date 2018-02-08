@@ -16,6 +16,16 @@ setGeneric("%t*%", function(x, y) crossprod(x, y))
 #' @export
 setGeneric("%*t%", function(x, y) tcrossprod(x, y))
 
+#' @export
+setGeneric("%x+%", function(x, y)
+{
+    nx <- nrow(x)
+    ny <- nrow(y)
+    Ix <- Matrix::Diagonal(nx)
+    Iy <- Matrix::Diagonal(ny)
+    x %x% Iy + Ix %x% Iy
+})
+
 ## DITTO
 #' @export
 setGeneric("diag", diag)
@@ -704,6 +714,9 @@ half.kronecker <- function(M)
 #' Total volatility contained in a covariance matrix. It's simply its trace
 #' @export
 setGeneric("total.vol", function(S) sum(diag(S)))
+
+#' @export
+setMethod("total.vol", "numeric", function(S) S)
 
 ########
 #' Non zero indices

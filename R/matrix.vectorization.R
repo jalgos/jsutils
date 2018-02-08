@@ -193,7 +193,8 @@ bdiag.to.vecs.distributed <- function(vdim,
 }
 
 #' @export
-bdiag.to.vech.distributed <- bdiag.to.vecs.distributed(fdim = nn12, fbdv = bdiag.to.vech.local)
+bdiag.to.vech.distributed <- bdiag.to.vecs.distributed(fdim = nn12,
+                                                       fbdv = bdiag.to.vech.local)
 
 #' Vectorization of block diagonal matrix
 #'
@@ -608,4 +609,30 @@ commutation.matrix <- function(n,
                            fmat = fmat,
                            distributed = FALSE)
     }
+}
+
+#' @describeIn vectorization Computes the matrix that will transform the concatenation of the vectorization (half for diagonal blocks) of each matrix block into the half vectorization of the resulting matrix
+#' @export
+block.to.vech <- function(n1,
+                          n2 = n1,
+                          I1 = data.table::CJ(i = 1:n1,
+                                              j = 1:n1)[i <= j],
+                          I2 = data.table::CJ(i = 1:n1,
+                                               j = 1:n2),
+                          I3 = data.table::CJ(i = 1:n2,
+                                               j = 1:n2)[i <= j],
+                          fmat = dsparseMatrix)
+{
+    ntot <- n1 + n2
+    nv1 <- nn12(n1)
+    nv2 <- n1 * n2
+    nntot <- nn12(ntot)
+    P <- rbind(I1[, .(J = index.sym(i, j, n1),
+                      K = index.sym(i, j, ntot))],
+               I2[, .(J = nv1 + mat.index(i, j, n1),
+                      K = index.sym(i, j + n1, ntot))],
+               I3[, .(J = nv1 + nv2 + index.sym(i, j, n2),
+                      K = index.sym(i + n1, j + n1, ntot))])
+    fmat(P[, .(i = K, j = J, x = 1)],
+         dims = c(nntot, nntot))
 }

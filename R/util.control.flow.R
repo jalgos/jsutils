@@ -131,3 +131,12 @@ no.convergence.error <- function()
     custom.error(subclass = "no.convergence",
                  mess = "Model training didn't converge")
 }
+
+Rprof.memory.summary <- function(filename) 
+{
+    MNP <- readLines("mnist.prof")
+    G <- grep.matches(pattern = ":(\\d*):(\\d*):(\\d*):(\\d*):(.*)", MNP)
+    MEMT <- as.data.table(t(sapply(G[[2]], function(X) as.integer(X[1:4]))))
+    setnames(MEMT, c("vsize.small", "vsize.large", "nodes", "duplications"))
+
+}

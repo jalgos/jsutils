@@ -40,6 +40,9 @@ setGeneric("svd", svd)
 #' @export
 setGeneric("eigen", eigen)
 
+#' @export
+setGeneric("qr", qr)
+
 ## DITTO
 #' @export
 setGeneric("isSymmetric", isSymmetric)
@@ -754,7 +757,7 @@ half.kronecker <- function(M)
 #'
 #' Total volatility contained in a covariance matrix. It's simply its trace
 #' @export
-setGeneric("total.vol", function(S) sum(diag(S)))
+setGeneric("total.vol", function(S) sum(jsutils::diag(S)))
 
 #' @export
 setMethod("total.vol", "numeric", function(S) S)

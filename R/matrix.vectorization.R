@@ -41,8 +41,13 @@ empty.mat <- function(fmat, ...)
          ...)
 }
 
+#' @export
 default.matrix.builder <- switch.local.distributed(hugesparse::HugeMatrix,
-                                                   distributedhugesparse::DHugeMatrix)
+                                                   distributedhugesparse::smart.dmat.constructor)
+
+#' @export
+default.diagonal.builder <- switch.local.distributed(Matrix::Diagonal,
+                                                     distributedhugesparse::DHMDiagonal)
 
 #' @title Triplet to (half) vectorization
 #' @name tripleting

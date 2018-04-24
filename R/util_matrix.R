@@ -17,6 +17,9 @@ setGeneric("%t*%", function(x, y) crossprod(x, y))
 setGeneric("%*t%", function(x, y) tcrossprod(x, y))
 
 #' @export
+setGeneric("%.A.%", function(A, x) x %*% A %*t% x)
+
+#' @export
 setGeneric("%x+%", function(x, y)
 {
     nx <- nrow(x)
@@ -1038,4 +1041,9 @@ setMethod("safe.cov2cor", "genMatrix", do.safe.cov2cor)
 #' @param M a matrix
 #' @export
 sparsity.ratio <- function(M)
-    nnzero(M) / prod(dim(M))
+{
+    nnzs <- nnzero(M)
+    if(nnzs == 0L)
+        return(0L)
+    nnzs / prod(dim(M))
+}

@@ -59,7 +59,7 @@ to.convention.names <- function(names,
 {
     conv.names <- gsub("([A-Z]+)([A-Z][a-z])", "\\1" %p% sep %p% "\\2", names)
     conv.names <- gsub("([a-z\\d])([A-Z])", "\\1" %p% sep %p% "\\2", conv.names)
-    conv.names <- gsub("-|_|.", sep, conv.names)
+    conv.names <- gsub("-|_|[.]", sep, conv.names)
 
     conv.names <- tolower(conv.names)
     for(i in 1:length(unwanted.chars))

@@ -4,7 +4,7 @@
 \alias{vec}
 \title{Full vectorization}
 \usage{
-vec(M, ...)
+vec(M, ..., mat.constr = safe.mat.constr)
 }
 \description{
 Vectorizes a matrix

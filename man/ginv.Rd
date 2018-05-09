@@ -13,7 +13,7 @@ ginv(X, tol = sqrt(.Machine$double.eps))
 \arguments{
 \item{X}{Matrix to invert}
 
-\item{tol}{espsilon bump to force full rank}
+\item{tol}{epsilon bump to force full rank}
 }
 \description{
 Computes the generalized inverse for any type of matrix: rectangular and not full rank.

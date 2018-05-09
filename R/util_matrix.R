@@ -16,6 +16,19 @@ setGeneric("%t*%", function(x, y) crossprod(x, y))
 #' @export
 setGeneric("%*t%", function(x, y) tcrossprod(x, y))
 
+#' @export
+setGeneric("%.A.%", function(A, x) x %*% A %*t% x)
+
+#' @export
+setGeneric("%x+%", function(x, y)
+{
+    nx <- nrow(x)
+    ny <- nrow(y)
+    Ix <- Matrix::Diagonal(nx)
+    Iy <- Matrix::Diagonal(ny)
+    x %x% Iy + Ix %x% Iy
+})
+
 ## DITTO
 #' @export
 setGeneric("diag", diag)
@@ -23,6 +36,15 @@ setGeneric("diag", diag)
 ## DITTO
 #' @export
 setGeneric("solve", solve)
+
+#' @export
+setGeneric("svd", svd)
+
+#' @export
+setGeneric("eigen", eigen)
+
+#' @export
+setGeneric("qr", qr)
 
 ## DITTO
 #' @export
@@ -205,9 +227,10 @@ cols <- function(M)
     else integer(0)
 }
 
-Matrix.ginv <- function(X, tol = sqrt(.Machine$double.eps)) 
+Matrix.ginv <- function(X,
+                        tol = sqrt(.Machine$double.eps)) 
 {
-    Id <- Diagonal(nrow(X))
+    Id <- Matrix::Diagonal(nrow(X))
     solve(X + tol * Id)
 }
 
@@ -215,7 +238,7 @@ Matrix.ginv <- function(X, tol = sqrt(.Machine$double.eps))
 #' 
 #' Computes the generalized inverse for any type of matrix: rectangular and not full rank.
 #' @param X Matrix to invert
-#' @param tol espsilon bump to force full rank
+#' @param tol epsilon bump to force full rank
 #' @export
 setGeneric("ginv", MASS::ginv)
 
@@ -233,7 +256,10 @@ setGeneric("gsolve", function(a, b, ...) jsutils::ginv(a[]) %*% b)
 
 #' @rdname gsolve
 #' @export
-setMethod("gsolve", c(a = "Matrix", b = "ANY"), function(a, b, eps = sqrt(.Machine$double.eps)) solve(a + eps * Diagonal(n = nrow(a)), b))
+setMethod("gsolve", c(a = "Matrix", b = "ANY"), function(a,
+                                                         b,
+                                                         eps = sqrt(.Machine$double.eps))
+    solve(a + eps * Matrix::Diagonal(n = nrow(a)), b))
 
 #' Partial Inversion Using Singular Values
 #'
@@ -244,15 +270,46 @@ setMethod("gsolve", c(a = "Matrix", b = "ANY"), function(a, b, eps = sqrt(.Machi
 #' @export
 psolve <- function(a,
                    b,
-                   var.thresh = .95)
+                   var.thresh = .95,
+                   val.tol,
+                   val.rel.tol)
 {
     S <- svd(a)
-    PVE <- cumsum(S$d) / sum(S$d)
-    ico <- which(PVE > var.thresh)[1]
-    IP <- 1:ico
-    M1 <- S$v[, IP] %*% Diagonal(x = 1 / S$d[1:ico]) %*% t(S$u[, IP])
+    if(defined(val.rel.tol))
+        val.tol <- val.rel.tol * norm(a, "I")
+    
+    if(defined(val.tol))
+    {
+        ico <- which(S$d < val.tol)[1]
+        if(is.na(ico))
+            ico <- nrow(a)
+        else
+            ico <- ico - 1
+    }
+    else
+    {
+        PVE <- cumsum(S$d) / sum(S$d)
+        ico <- which(PVE > var.thresh)[1]
+    }
+    
+    IP <- seq_len(ico)
+    M1 <- S$v[, IP] %*% Diagonal(x = 1 / S$d[1:ico]) %*t% S$u[, IP]
     if(missing(b)) return(M1)
     M1 %*% b
+}
+
+#' Semi Definite Positive Inverse
+#'
+#' Inverts a semi definite positive matrix
+#' @param a Matrix to invert
+#' @param b RHS of the equation a.v = b where v is the unknown
+#' @usage sdef.solve(a, b, val.rel.tol)
+#' @export sdef.solve
+sdef.solve <- function(a,
+                       b,
+                       val.rel.tol = 1E-10)
+{
+    psolve(a, b, val.rel.tol = val.rel.tol)
 }
 
 #' Matrix to data.table
@@ -703,7 +760,10 @@ half.kronecker <- function(M)
 #'
 #' Total volatility contained in a covariance matrix. It's simply its trace
 #' @export
-setGeneric("total.vol", function(S) sum(diag(S)))
+setGeneric("total.vol", function(S) sum(jsutils::diag(S)))
+
+#' @export
+setMethod("total.vol", "numeric", function(S) S)
 
 ########
 #' Non zero indices
@@ -981,4 +1041,9 @@ setMethod("safe.cov2cor", "genMatrix", do.safe.cov2cor)
 #' @param M a matrix
 #' @export
 sparsity.ratio <- function(M)
-    nnzero(M) / prod(dim(M))
+{
+    nnzs <- nnzero(M)
+    if(nnzs == 0L)
+        return(0L)
+    nnzs / prod(dim(M))
+}

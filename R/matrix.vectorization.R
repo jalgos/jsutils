@@ -4,9 +4,11 @@
 .mat.vectorization <- new.env()
 .mat.vectorization$distributed <- FALSE
 
-#' Set Distribution
-#'
-#' Gets/ sets the distribution behaviour of the matrix vectorization function
+#' @title Set Distribution
+#' @name set.distribution
+NULL
+
+#' @describeIn set.distribution Gets/ sets the distribution behaviour of the matrix vectorization function
 #' @param new.context New context to set (TRUE or FALSE) if not provided returns the current context
 #' @export
 mat.vectorization.distributed <- function(new.context)
@@ -17,6 +19,8 @@ mat.vectorization.distributed <- function(new.context)
     old.context
 }
 
+#' @describeIn set.distribution returns the proper function given the distributed context
+#' @export
 switch.local.distributed <- function(fun.local,
                                      fun.distributed)
 {
@@ -31,26 +35,31 @@ switch.local.distributed <- function(fun.local,
 
 empty.mat <- function(fmat, ...)
 {
-    fmat(data = data.table::data.table(i = integer(0), j = integer(0), x = numeric(0)), ...)
+    fmat(data = data.table::data.table(i = integer(0),
+                                       j = integer(0),
+                                       x = numeric(0)),
+         ...)
 }
 
-default.matrix.builder <- function()
-{
-    if(mat.vectorization.distributed())
-        distributedhugesparse::DHugeMatrix
-    else
-        hugesparse::HugeMatrix
-}
+#' @export
+default.matrix.builder <- switch.local.distributed(hugesparse::HugeMatrix,
+                                                   distributedhugesparse::smart.dmat.constructor)
 
-#' Triplet to half vectorization
-#'
-#' Transforms a triplet representation of a matrix into its half vectorization
+#' @export
+default.diagonal.builder <- switch.local.distributed(Matrix::Diagonal,
+                                                     distributedhugesparse::DHMDiagonal)
+
+#' @title Triplet to (half) vectorization
+#' @name tripleting
+NULL
+
+#' @describeIn tripleting Transforms a triplet representation of a matrix into its half vectorization
 #' @param DM Triplet representation i, j, x in a data.table
 #' @param nr Number of rows of the matrix
 #' @param M the matrix of which DM is the triplet representation
 #' @param keep.diag should the diagonal be kept in the half vectorization
 #' @export
-vech.triplet <- function(DM = mat.to.triplet(DM),
+vech.triplet <- function(DM = mat.to.triplet(M),
                          nr = nrow(M),
                          M,
                          keep.diag = TRUE)
@@ -61,6 +70,17 @@ vech.triplet <- function(DM = mat.to.triplet(DM),
     DM[F, .(i = index.sym(i, j, nr, keep.diag = keep.diag),
             j = rep(1, .N),
             x)]
+}
+
+#' @describeIn triplet Transforms a triplet representation of a matrix into its vectorization
+#' @export
+vec.triplet <- function(DM = mat.to.triplet(M),
+                        nr = nrow(M),
+                        M)
+{
+    DM[, .(i = mat.index(i, j, nr),
+           j = rep(1, .N),
+           x)]
 }
 
 safe.mat.constr <- function(data,
@@ -114,6 +134,15 @@ vech.reverse.triplet <- function(DV = mat.to.triplet(V),
     DV[, c("i", "j") := reverse.index.sym(i, nr, keep.diag = keep.diag)]
 }
 
+vec.reverse.triplet <- function(DV = mat.to.triplet(V),
+                                nr = findN(nrow(V), FALSE),
+                                nc = nr,
+                                V,
+                                mat.constr = safe.mat.constr)
+{
+    DV[, c("i", "j") := reverse.mat.index(i, nr)]
+}
+
 gen.vech.reverse <- function(V,
                              keep.diag = TRUE,
                              symmetric = TRUE,
@@ -137,6 +166,19 @@ gen.vech.reverse <- function(V,
     }
 }
 
+gen.vec.reverse <- function(V,
+                            n = findN(vecdim(V), FALSE),
+                            p = n,
+                            ...,
+                            mat.constr = safe.mat.constr)
+{
+    if(is.vector(V)) V <- Matrix(V)
+
+    mat.constr(data = vec.reverse.triplet(mat.to.data.table(V),
+                                          nr = n),
+               dims = c(n, p))
+}
+
 #' @name vectorization
 #' @title Vectorization
 #' @param M Matrix to vectorize
@@ -151,7 +193,7 @@ NULL
 
 #' @export
 bdiag.to.vech.local <- function(vdim, #vector of matrix dimensions
-                                fmat = default.matrix.builder(),
+                                fmat = default.matrix.builder,
                                 vds = cumsum(vdim),
                                 N = last(vds),
                                 ND = sum(nn12(vdim)),
@@ -193,7 +235,8 @@ bdiag.to.vecs.distributed <- function(vdim,
 }
 
 #' @export
-bdiag.to.vech.distributed <- bdiag.to.vecs.distributed(fdim = nn12, fbdv = bdiag.to.vech.local)
+bdiag.to.vech.distributed <- bdiag.to.vecs.distributed(fdim = nn12,
+                                                       fbdv = bdiag.to.vech.local)
 
 #' Vectorization of block diagonal matrix
 #'
@@ -373,7 +416,7 @@ assign.matrix.vect <- function(M, i, j, values)
 #' @export
 vech.to.vec <- function(n,
                         keep.diag = TRUE,
-                        fmat = default.matrix.builder())
+                        fmat = default.matrix.builder)
 {
     if(n < 0L)
     {
@@ -472,7 +515,7 @@ get.upper.indices <- function(n,
 #' @export
 vec.to.vech <- function(n,
                         keep.diag = TRUE,
-                        fmat = default.matrix.builder())
+                        fmat = default.matrix.builder)
 {
     if ( n < 0L )
     {
@@ -491,21 +534,27 @@ vec.to.vech <- function(n,
 
 ## Full Vectorization
 gen.vec <- function(M,
-                    ...)
+                    ...,
+                    mat.constr = safe.mat.constr)
 {
-    if(is(M, "denseMatrix")) M <- as.matrix(M)
-    N <- prod(dim(M))
-    dim(M) <- c(N, 1)#Keep it sparse
-    M    
+    size <- prod(dim(M))
+    dms <- c(size, 1)
+    
+    DM <- mat.to.triplet(M)
+    DM <- vec.triplet(DM,
+                      nr = nrow(M))
+
+    mat.constr(data = DM,
+               dims = dms)
 }
 
-gen.vec.reverse <- function(V,
+mat.vec.reverse <- function(V,
                             n = findN(nrow(V), FALSE),
                             p = n,
                             ...)
 {
-    if(is.vector(V)) V <- Matrix(V, length(V))
-    V <- Matrix(V)
+    if(is.vector(V)) V <- Matrix::Matrix(V, length(V))
+    if(!is(V, "Matrix")) V <- Matrix::Matrix(V)
     dim(V) <- c(n, p)
     V
 }
@@ -531,10 +580,16 @@ setGeneric("vec", gen.vec)
 #' @export
 setGeneric("vec.reverse", gen.vec.reverse)
 
+#' @export
+setMethod("vec.reverse", "matrix", mat.vec.reverse)
+
+#' @export
+setMethod("vec.reverse", "Matrix", mat.vec.reverse)
+
 
 #' @export
 bdiag.to.vec.local <- function(vdim, #vector of matrix dimensions
-                               fmat = default.matrix.builder(),
+                               fmat = default.matrix.builder,
                                vds = cumsum(vdim),
                                N = last(vds),
                                ND = sum(vdim ^ 2),
@@ -578,7 +633,7 @@ commutation.matrix <- function(n,
                                i = indexation(N = n),
                                j = indexation(N = p),
                                half.vec = FALSE,
-                               fmat = default.matrix.builder(),
+                               fmat = default.matrix.builder,
                                distributed = mat.vectorization.distributed())
 {
     dims <- c(n * p, n * p)
@@ -608,4 +663,30 @@ commutation.matrix <- function(n,
                            fmat = fmat,
                            distributed = FALSE)
     }
+}
+
+#' @describeIn vectorization Computes the matrix that will transform the concatenation of the vectorization (half for diagonal blocks) of each matrix block into the half vectorization of the resulting matrix
+#' @export
+block.to.vech <- function(n1,
+                          n2 = n1,
+                          I1 = data.table::CJ(i = 1:n1,
+                                              j = 1:n1)[i <= j],
+                          I2 = data.table::CJ(i = 1:n1,
+                                               j = 1:n2),
+                          I3 = data.table::CJ(i = 1:n2,
+                                               j = 1:n2)[i <= j],
+                          fmat = dsparseMatrix)
+{
+    ntot <- n1 + n2
+    nv1 <- nn12(n1)
+    nv2 <- n1 * n2
+    nntot <- nn12(ntot)
+    P <- rbind(I1[, .(J = index.sym(i, j, n1),
+                      K = index.sym(i, j, ntot))],
+               I2[, .(J = nv1 + mat.index(i, j, n1),
+                      K = index.sym(i, j + n1, ntot))],
+               I3[, .(J = nv1 + nv2 + index.sym(i, j, n2),
+                      K = index.sym(i + n1, j + n1, ntot))])
+    fmat(P[, .(i = K, j = J, x = 1)],
+         dims = c(nntot, nntot))
 }

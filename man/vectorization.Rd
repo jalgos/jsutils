@@ -8,22 +8,27 @@
 \alias{get.upper.indices}
 \alias{vec.to.vech}
 \alias{commutation.matrix}
+\alias{block.to.vech}
 \title{Vectorization}
 \usage{
 findN(nv, half.vec = TRUE, check.integer = TRUE)
 
 nn12(n, keep.diag = TRUE)
 
-vech.to.vec(n, keep.diag = TRUE, fmat = default.matrix.builder())
+vech.to.vec(n, keep.diag = TRUE, fmat = default.matrix.builder)
 
 get.upper.indices(n, i1 = indexation(N = n), i2 = indexation(N = n),
   keep.diag = TRUE, distributed = mat.vectorization.distributed())
 
-vec.to.vech(n, keep.diag = TRUE, fmat = default.matrix.builder())
+vec.to.vech(n, keep.diag = TRUE, fmat = default.matrix.builder)
 
 commutation.matrix(n, p = n, i = indexation(N = n), j = indexation(N = p),
-  half.vec = FALSE, fmat = default.matrix.builder(),
+  half.vec = FALSE, fmat = default.matrix.builder,
   distributed = mat.vectorization.distributed())
+
+block.to.vech(n1, n2 = n1, I1 = data.table::CJ(i = 1:n1, j = 1:n1)[i <= j],
+  I2 = data.table::CJ(i = 1:n1, j = 1:n2), I3 = data.table::CJ(i = 1:n2, j =
+  1:n2)[i <= j], fmat = dsparseMatrix)
 }
 \arguments{
 \item{nv}{length of the vectorization}
@@ -60,5 +65,7 @@ https://en.wikipedia.org/wiki/Commutation_matrix
 \item \code{vec.to.vech}: Matrix to go from full vectorization to half vectorization
 
 \item \code{commutation.matrix}: Computes the commuation matrix, i.e matrix K such that K %*%  vec(A) = vec(t(A))
+
+\item \code{block.to.vech}: Computes the matrix that will transform the concatenation of the vectorization (half for diagonal blocks) of each matrix block into the half vectorization of the resulting matrix
 }}
 

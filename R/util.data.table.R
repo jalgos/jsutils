@@ -53,12 +53,13 @@ plus.join.test <- function()
 }
 
 to.convention.names <- function(names,
+                                sep = "_",
                                 unwanted.chars = c("é" = "e",
                                                    "è" = "e"))
 {
-    conv.names <- gsub("([A-Z]+)([A-Z][a-z])", "\\1.\\2", names)
-    conv.names <- gsub("([a-z\\d])([A-Z])", "\\1.\\2", conv.names)
-    conv.names <- gsub("-|_", ".", conv.names)
+    conv.names <- gsub("([A-Z]+)([A-Z][a-z])", "\\1" %p% sep %p% "\\2", names)
+    conv.names <- gsub("([a-z\\d])([A-Z])", "\\1" %p% sep %p% "\\2", conv.names)
+    conv.names <- gsub("-|_|.", sep, conv.names)
 
     conv.names <- tolower(conv.names)
     for(i in 1:length(unwanted.chars))
@@ -77,10 +78,15 @@ to.convention.names <- function(names,
 #'
 #' @export
 set.convention.names <- function(DT,
-                                 ...,
+                                 sep = "_",
+                                 unwanted.chars = c("é" = "e",
+                                                    "è" = "e"),
                                  logger = JLoggerFactory("Jalgos Utils"))
 {
-    conv.names <- to.convention.names(names(DT))
+    conv.names <- to.convention.names(names(DT),
+                                      sep = sep,
+                                      unwanted.chars = unwanted.chars)
+    
     jlog.debug(logger, "Turning names", names(DT) %c% BY, "to", conv.names %c% BC)
     setnames(DT, names(DT), conv.names)
 }

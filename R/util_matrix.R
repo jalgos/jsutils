@@ -20,6 +20,9 @@ setGeneric("%*t%", function(x, y) tcrossprod(x, y))
 setGeneric("%.A.%", function(A, x) x %*% A %*t% x)
 
 #' @export
+setGeneric("M+tM", function(x) x + jsutils::t(x))
+
+#' @export
 setGeneric("%x+%", function(x, y)
 {
     nx <- nrow(x)

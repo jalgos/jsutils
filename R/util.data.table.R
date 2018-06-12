@@ -52,6 +52,45 @@ plus.join.test <- function()
     list(dt1 = dt1, dt2 = dt2, res = plus.join(dt1, dt2))
 }
 
+to.convention.names <- function(names,
+                                sep = "_",
+                                unwanted.chars = c("é" = "e",
+                                                   "è" = "e"))
+{
+    conv.names <- gsub("([A-Z]+)([A-Z][a-z])", "\\1" %p% sep %p% "\\2", names)
+    conv.names <- gsub("([a-z\\d])([A-Z])", "\\1" %p% sep %p% "\\2", conv.names)
+    conv.names <- gsub("-|_|[.]", sep, conv.names)
+
+    conv.names <- tolower(conv.names)
+    for(i in 1:length(unwanted.chars))
+    {
+        conv.names <- gsub(names(unwanted.chars)[i], unwanted.chars[i], conv.names)
+    }
+    
+    return(conv.names)
+}
+
+#' Set convention names
+#'
+#' Turn every column name of a data table to a convention format with lower case and point separated column names
+#'
+#' @param DT data.table
+#'
+#' @export
+set.convention.names <- function(DT,
+                                 sep = "_",
+                                 unwanted.chars = c("é" = "e",
+                                                    "è" = "e"),
+                                 logger = JLoggerFactory("Jalgos Utils"))
+{
+    conv.names <- to.convention.names(names(DT),
+                                      sep = sep,
+                                      unwanted.chars = unwanted.chars)
+    
+    jlog.debug(logger, "Turning names", names(DT) %c% BY, "to", conv.names %c% BC)
+    setnames(DT, names(DT), conv.names)
+}
+
 ## Rendered obsolete by melt and dcast
 dtextract1 <- function(DT,
                        var,
@@ -63,6 +102,49 @@ dtextract1 <- function(DT,
     DF[, eval(var.name) := NULL]
     setnames(DF, var.value, var)
 }
+
+#' Matching columns
+#'
+#' Retrieve the column names that match a pattern AND does not match an other pattern
+#'
+#' @param DT a data table
+#' @param match.exp the regular expression to be matched by column names
+#' @param ig.match.exp the regular expression to be unmatched by column names
+#'
+#' @export
+matching.cols <- function(DT,
+                          match.exp,
+                          ig.match.exp = "^$")
+{
+    matchs <- names(DT)[match.exp %gl% names(DT)]
+    matchs <- matchs[!ig.match.exp %gl% matchs]
+
+    return(matchs)
+}
+
+#' Data.table matching columns
+#'
+#' Retrieve the data.table with columns that match a pattern AND does not match an other pattern
+#'
+#' @param DT a data table
+#' @param match.exp the regular expression to be matched by column names
+#' @param ig.match.exp the regular expression to be unmatched by column names
+#'
+#' @export
+DT.matching.cols <- function(DT,
+                             match.exp,
+                             ig.match.exp = "^$",
+                             ...,
+                             logger = emergency.logger())
+{
+    match.cols <- matching.cols(DT,
+                                match.exp = match.exp,
+                                ig.match.exp = ig.match.exp,
+                                ...)
+
+    return(DT[, .SD, .SDcols = match.cols])
+}
+
 
 ## DITTO
 cols.from.var <- function(DT,
@@ -524,4 +606,3 @@ inplace <- function(target, src)
 {
     invisible(.Call('jsutils_inplace', PACKAGE = 'jsutils', target, src))
 }
-

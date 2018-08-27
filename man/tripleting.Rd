@@ -5,7 +5,8 @@
 \alias{vech.triplet}
 \title{Triplet to (half) vectorization}
 \usage{
-vech.triplet(DM = mat.to.triplet(M), nr = nrow(M), M, keep.diag = TRUE)
+vech.triplet(DM = mat.to.triplet(M), nr = nrow(M), M,
+  keep.diag = TRUE)
 }
 \arguments{
 \item{DM}{Triplet representation i, j, x in a data.table}
@@ -15,6 +16,9 @@ vech.triplet(DM = mat.to.triplet(M), nr = nrow(M), M, keep.diag = TRUE)
 \item{M}{the matrix of which DM is the triplet representation}
 
 \item{keep.diag}{should the diagonal be kept in the half vectorization}
+}
+\description{
+Triplet to (half) vectorization
 }
 \section{Functions}{
 \itemize{

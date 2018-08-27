@@ -45,6 +45,9 @@ outlier.filter(X, qt = 0.01, down.qt = qt/2, up.qt = 1 - qt/2, ...)
 
 \item{up.qt}{Proportion to ommit in the upper tail}
 }
+\description{
+Handling non finite values
+}
 \section{Functions}{
 \itemize{
 \item \code{safe.sum}: Sum where non finite values are replaced with 0. Returns X + Y where non finite values in both vectors are replaced with 0

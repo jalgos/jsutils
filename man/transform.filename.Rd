@@ -3,7 +3,6 @@
 \name{transform.filename}
 \alias{transform.filename}
 \alias{replace.variables}
-\alias{replace.variables}
 \title{Templating filenames}
 \usage{
 \method{transform}{filename}(fn, subs = base.sub.list)

@@ -16,8 +16,8 @@
 \alias{no.convergence.error}
 \title{Custom Conditions}
 \usage{
-condition(subclass, mess, parent.class = character(0), call = sys.call(-1),
-  ...)
+condition(subclass, mess, parent.class = character(0),
+  call = sys.call(-1), ...)
 
 is.condition(x)
 
@@ -51,6 +51,9 @@ no.convergence.error()
 \item{...}{to be added to the structure}
 
 \item{x}{condition object}
+}
+\description{
+Custom Conditions
 }
 \section{Functions}{
 \itemize{

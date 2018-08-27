@@ -2,7 +2,6 @@
 % Please edit documentation in R/util_matrix.R
 \name{matrix.norm}
 \alias{matrix.norm}
-\alias{matrix.norm}
 \alias{matrix.norm.inf}
 \alias{matrix.scal}
 \title{Norms of a Matrix}
@@ -21,6 +20,9 @@ matrix.scal(M1, M2, normalized = TRUE)
 \item{M2}{a matrix}
 
 \item{normalized}{Should the scalar product be normalized to be expressed as a fraction of the norm of 'M1'.}
+}
+\description{
+Norms of a Matrix
 }
 \details{
 Simple wrappers around the norm function.

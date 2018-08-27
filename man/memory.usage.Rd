@@ -2,11 +2,11 @@
 % Please edit documentation in R/util.R
 \name{memory.usage}
 \alias{memory.usage}
-\alias{memory.usage}
 \alias{mb.object.size}
 \title{Memory usage}
 \usage{
-memory.usage(LOBJS = NULL, envir = .GlobalEnv, all = TRUE, nshow = 10)
+memory.usage(LOBJS = NULL, envir = .GlobalEnv, all = TRUE,
+  nshow = 10)
 
 mb.object.size(x)
 }

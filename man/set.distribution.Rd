@@ -13,6 +13,9 @@ switch.local.distributed(fun.local, fun.distributed)
 \arguments{
 \item{new.context}{New context to set (TRUE or FALSE) if not provided returns the current context}
 }
+\description{
+Set Distribution
+}
 \section{Functions}{
 \itemize{
 \item \code{mat.vectorization.distributed}: Gets/ sets the distribution behaviour of the matrix vectorization function

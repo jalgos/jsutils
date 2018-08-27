@@ -2,7 +2,6 @@
 % Please edit documentation in R/matrix.vectorization.R
 \name{mat.index}
 \alias{mat.index}
-\alias{mat.index}
 \alias{reverse.mat.index}
 \alias{index.sym}
 \alias{reverse.index.sym}
@@ -33,6 +32,9 @@ assign.matrix.vect(M, i, j, values)
 \item{M}{matrix}
 
 \item{values}{numeric vector}
+}
+\description{
+Matrix index to vectorization index
 }
 \section{Functions}{
 \itemize{

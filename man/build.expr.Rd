@@ -12,7 +12,8 @@ fun.expr(funstring, args, ...)
 
 assign.expr(var, exprst)
 
-make.list.expression(exprvec, parse = TRUE, expr.names = names(exprvec))
+make.list.expression(exprvec, parse = TRUE,
+  expr.names = names(exprvec))
 
 add.quotes(var)
 }

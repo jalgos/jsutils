@@ -13,6 +13,9 @@ negative.val(X)
 \arguments{
 \item{X}{Numeric vector}
 }
+\description{
+Positive and negative value
+}
 \section{Functions}{
 \itemize{
 \item \code{positive.val}: Positive value. Negative values are replaced with 0

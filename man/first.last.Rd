@@ -13,6 +13,9 @@ last(X)
 \arguments{
 \item{X}{a vector or a list}
 }
+\description{
+Easy access to first and last element
+}
 \section{Functions}{
 \itemize{
 \item \code{first}: first element

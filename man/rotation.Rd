@@ -16,6 +16,9 @@ rotate.vector(X, theta)
 \value{
 A 2 x 2 matrix that when multiplied to a vector produce the rotated vector
 }
+\description{
+Rotation
+}
 \section{Functions}{
 \itemize{
 \item \code{rotation.matrix}: Computes a two dimensional rotation matrix

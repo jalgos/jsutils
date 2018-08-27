@@ -2,7 +2,6 @@
 % Please edit documentation in R/util.packages.R
 \name{require.or.install}
 \alias{require.or.install}
-\alias{require.or.install}
 \alias{require.or.install.dev}
 \title{Install Missing Package}
 \usage{
@@ -27,6 +26,9 @@ require.or.install.dev(name, url.pattern = file.package.pattern, ...)
 \item{group}{Group to which the package belongs}
 
 \item{url}{Url of the package}
+}
+\description{
+Install Missing Package
 }
 \section{Functions}{
 \itemize{

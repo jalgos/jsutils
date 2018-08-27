@@ -4,8 +4,8 @@
 \alias{safe.system}
 \title{Call to System}
 \usage{
-safe.system(command, error.message = paste("Error running command:", command),
-  safe = TRUE, ...)
+safe.system(command, error.message = paste("Error running command:",
+  command), safe = TRUE, ...)
 }
 \arguments{
 \item{command}{Command to be executed}

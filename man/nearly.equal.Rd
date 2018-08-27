@@ -2,7 +2,6 @@
 % Please edit documentation in R/util.R
 \name{nearly.equal}
 \alias{nearly.equal}
-\alias{nearly.equal}
 \alias{nearly.in.set}
 \title{Equality for doubles}
 \usage{

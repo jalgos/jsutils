@@ -18,6 +18,9 @@ y.to.continue(yes.value = "^yes$", ...)
 
 \item{yes.value}{If the user input matches this pattern the function returns TRUE}
 }
+\description{
+Reading input from user
+}
 \details{
 User input terminates when the user presses 'Enter'
 }

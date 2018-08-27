@@ -10,6 +10,9 @@ rows(M)
 
 cols(M)
 }
+\description{
+Row numbers and column numbers
+}
 \section{Functions}{
 \itemize{
 \item \code{rows}: returns a vector containing all the row nmbers

@@ -2,7 +2,6 @@
 % Please edit documentation in R/util.data.table.R
 \name{convert.columns}
 \alias{convert.columns}
-\alias{convert.columns}
 \alias{convert.cols}
 \title{Converting column types}
 \usage{
@@ -20,6 +19,9 @@ convert.cols(D, col, type___, conv.map = util.type.conv.map, ...)
 \item{type___}{Type to convert to}
 
 \item{conv.map}{Map that gives the converting function for each type}
+}
+\description{
+Converting column types
 }
 \section{Functions}{
 \itemize{

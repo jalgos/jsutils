@@ -4,7 +4,8 @@
 \alias{not.null.names}
 \title{Alternative To NULL Dimensions}
 \usage{
-not.null.names(x, name.fun = names, length.fun = length, default = "")
+not.null.names(x, name.fun = names, length.fun = length,
+  default = "")
 }
 \arguments{
 \item{x}{The object on which name.fun and length.fun are to be applied}

@@ -22,13 +22,13 @@ get.upper.indices(n, i1 = indexation(N = n), i2 = indexation(N = n),
 
 vec.to.vech(n, keep.diag = TRUE, fmat = default.matrix.builder)
 
-commutation.matrix(n, p = n, i = indexation(N = n), j = indexation(N = p),
-  half.vec = FALSE, fmat = default.matrix.builder,
+commutation.matrix(n, p = n, i = indexation(N = n), j = indexation(N
+  = p), half.vec = FALSE, fmat = default.matrix.builder,
   distributed = mat.vectorization.distributed())
 
-block.to.vech(n1, n2 = n1, I1 = data.table::CJ(i = 1:n1, j = 1:n1)[i <= j],
-  I2 = data.table::CJ(i = 1:n1, j = 1:n2), I3 = data.table::CJ(i = 1:n2, j =
-  1:n2)[i <= j], fmat = dsparseMatrix)
+block.to.vech(n1, n2 = n1, I1 = data.table::CJ(i = 1:n1, j = 1:n1)[i <=
+  j], I2 = data.table::CJ(i = 1:n1, j = 1:n2), I3 = data.table::CJ(i =
+  1:n2, j = 1:n2)[i <= j], fmat = dsparseMatrix)
 }
 \arguments{
 \item{nv}{length of the vectorization}
@@ -46,6 +46,9 @@ block.to.vech(n1, n2 = n1, I1 = data.table::CJ(i = 1:n1, j = 1:n1)[i <= j],
 \item{V}{The vectorization}
 
 \item{symmetric}{Is the matrix symmetric}
+}
+\description{
+Vectorization
 }
 \details{
 Function to compute the matrix that will transform M(i, j, k, l) into M(i, l, k, j)

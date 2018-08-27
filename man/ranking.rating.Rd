@@ -19,6 +19,9 @@ rank.normalize(X, rank.norm)
 
 \item{rank.norm}{Rank to use to recenter ratings}
 }
+\description{
+Rankings ratings
+}
 \details{
 Tools to rescale and recenter ratings. It is usually useful to rescale ratings according to the maximum value that occurs or according to the nth biggest value
 }

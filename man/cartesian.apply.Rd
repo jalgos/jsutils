@@ -7,8 +7,8 @@
 \alias{dt.cart.apply}
 \title{Cartesian Apply}
 \usage{
-cart.apply(L1, L2 = L1, funapp, ..., fapply = lapply, fapply2 = fapply,
-  unlist = FALSE)
+cart.apply(L1, L2 = L1, funapp, ..., fapply = lapply,
+  fapply2 = fapply, unlist = FALSE)
 
 half.cart.apply(L1, L2 = L1, funapp, ..., fapply = lapply,
   fapply2 = fapply, unlist = FALSE)
@@ -31,6 +31,9 @@ dt.cart.apply(funapp, Largs, ...)
 \item{unlist}{Should the result be unlisted}
 
 \item{Largs}{List of arguments to produce the grid on which the function will be applied}
+}
+\description{
+Cartesian Apply
 }
 \details{
 To be used when a function needs to be applied to all the combinations of a set of lists of parameters

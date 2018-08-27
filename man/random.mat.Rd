@@ -45,6 +45,9 @@ random.orthogonal(p, q = p, vals = 1 + 1:p)
 
 \item{p}{number of factors}
 }
+\description{
+Generating random matrices
+}
 \section{Functions}{
 \itemize{
 \item \code{random.matrix}: Generates a random matrix of independently drawn realisations of a random variable

@@ -3,6 +3,9 @@
 \name{resize.reserve}
 \alias{resize.reserve}
 \title{Resizing, reserving}
+\description{
+Resizing, reserving
+}
 \details{
 Some objects are meant to be growing as some algorithms run. These functions provides feature to handle these cases
 }

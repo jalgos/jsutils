@@ -300,7 +300,7 @@ setGeneric("vech.reverse", function(V, ...) standardGeneric("vech.reverse"))
 #' @import Matrix
 #' @importClassesFrom Matrix Matrix
 #' @exportClass genMatrix
-setClassUnion("genMatrix", c("matrix", "Matrix"))
+suppressWarnings(setClassUnion("genMatrix", c("matrix", "Matrix")))
 
 #' @rdname vech
 #' @export

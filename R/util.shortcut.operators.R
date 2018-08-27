@@ -21,7 +21,7 @@ setGeneric("%gi%", function(e1, e2) grep(as.character(e1), as.character(e2), inv
 
 ## shortcut to grepl
 #' @export
-setGeneric("%gli%", function(e1, e2) grepl(as.character(e1), as.character(e2), invert = TRUE))
+setGeneric("%gli%", function(e1, e2) !grepl(as.character(e1), as.character(e2)))
 
 ## shortcut to grep value = TRUE
 #' @export

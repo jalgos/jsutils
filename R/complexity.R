@@ -82,7 +82,7 @@ example2 <- function()
                        N2)
     {        
         list(a = random.sparse.matrix(n = n, N = N1),
-             b = random.sparse.matrix(nr = n, nc = m, N = N2))
+             b = random.sparse.matrix(n = n, p = m, N = N2))
     }
     fun.complexity(par.down = c(n = 10, N1 = 25, m = 1, N2 = 10),
                    par.up = c(n = 1000, N1 = 100000, m = 1000, N2 = 100000),

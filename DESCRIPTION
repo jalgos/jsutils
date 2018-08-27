@@ -7,13 +7,6 @@ Description: A bundle of functions to perform tasks commonly faced in the Jalgos
 Depends:
     R (>= 3.2.0)
 Imports:
-    Matrix,
-    data.table,
-    stringr,
-    xtable,
-    MASS,
-    uuid,
-    Rcpp
 License: Jalgos License
 Encoding: UTF-8
 LazyData: true

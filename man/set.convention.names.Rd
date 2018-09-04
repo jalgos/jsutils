@@ -4,8 +4,8 @@
 \alias{set.convention.names}
 \title{Set convention names}
 \usage{
-set.convention.names(DT, sep = "_", unwanted.chars = c(é = "e", è = "e"),
-  logger = JLoggerFactory("Jalgos Utils"))
+set.convention.names(DT, sep = "_", unwanted.chars = c(é = "e", è =
+  "e"), logger = JLoggerFactory("Jalgos Utils"))
 }
 \arguments{
 \item{DT}{data.table}

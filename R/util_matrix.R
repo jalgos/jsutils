@@ -562,7 +562,7 @@ dt.partial.kronecker <- function(M1,
 cor.dec <- function(S,
                     tol = 10 * .Machine$double.eps)
 {
-    sqD <- sqrt(posD(diag(S)))
+    sqD <- sqrt(jsmath::posD(diag(S)))
     D <- Diagonal(x = sqD)
     D1 <- Diagonal(x = ifelse(abs(sqD) > tol, 1 / sqD, 0))
     C <- D1 %*% S %*% D1
@@ -935,7 +935,7 @@ inv.values <- function(values,
 }
 
 gen.trim.cov.matrix <- function(S,
-                                sqDl = sqrt(posD(diag(S))),
+                                sqDl = sqrt(jsmath::posD(diag(S))),
                                 sqDr = sqDl,
                                 Dr = Matrix::Diagonal(x = sqDr),
                                 D1r = Matrix::Diagonal(x = inv.values(diag(Dr), tol.inv)),
@@ -961,7 +961,7 @@ gen.trim.cov.matrix <- function(S,
 setMethod("trim.cov.matrix", "ANY", gen.trim.cov.matrix)
 
 dhs.trim.cov.matrix <- function(S,
-                                sqDl = mat.to.triplet(S, shallow = TRUE)[i == j, sqrt(posD(x))],
+                                sqDl = mat.to.triplet(S, shallow = TRUE)[i == j, sqrt(jsmath::posD(x))],
                                 sqDr = sqDl,
                                 Dr = distributedhugesparse::DHugeMatrix(data = mat.to.triplet(S, shallow = TRUE)[i == j, .(i, j, x = sqDr)]),
                                 D1r = distributedhugesparse::DHugeMatrix(data = mat.to.triplet(Dr, shallow = TRUE)[, .(i, j, x = inv.values(x, tol.inv))]),
@@ -1013,7 +1013,7 @@ setMethod("nrecords", "vector", function(x) length(x))
 setMethod("nrecords", "matrix", nrow)
 
 do.safe.cov2cor <- function(M,
-                            sqDl = sqrt(posD(diag(M))),
+                            sqDl = sqrt(jsmath::posD(diag(M))),
                             sqDr = sqDl,
                             tol.inv = 10 * .Machine$double.eps,
                             diag.fun = Matrix::Diagonal)

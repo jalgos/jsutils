@@ -675,4 +675,9 @@ try.catch <- function(expr,
                  ...)
 }
 
-
+#' Global To Local Buffer
+#'
+#' Transform a global Buffer into a local buffer to process 0. Mostly for testing purposes.
+#' @param obj object to gather
+#' @export
+setGeneric("to.local", function(obj) standardGeneric("to.local"))

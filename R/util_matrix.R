@@ -981,8 +981,55 @@ dhs.trim.cov.matrix <- function(S,
 }
 
 
-    #' @export
+#' @export
 setMethod("trim.cov.matrix", "DHugeMatrix", dhs.trim.cov.matrix)
+
+#' @export
+setGeneric("trim.matrix", function(M, ...) standardGeneric("trim.matrix"))
+
+triplet.trim.matrix <- function(M,
+                                tol = .Machine$double.eps * 2,
+                                cby,
+                                ...)
+{
+    M[, rel := x / max(abs(x)), by = c(cby)]
+    M[abs(rel) > tol][, rel := NULL]
+}
+
+select.trim.range <- function(M)
+{
+    if(nrow(M) < ncol(M))
+        "i"
+    else
+        "j"
+}
+
+matrix.trim.matrix <- function(M,
+                               mat.builder,
+                               ...)
+{
+    DT <- trim.matrix(mat.to.triplet(M),
+                      cby = select.trim.range(M),
+                      ...)
+    mat.builder(DT,
+                dims = dim(M),
+                dimnames = dimnames(M))
+}
+
+#' @export
+setMethod("trim.matrix", "data.table", triplet.trim.matrix)
+
+#' @export
+setMethod("trim.matrix", "matrix", function(M, ...)
+    matrix.trim.matrix(M, mat.builder = dsparseMatrix, ...))
+
+#' @export
+setMethod("trim.matrix", "Matrix", function(M, ...)
+    matrix.trim.matrix(M, mat.builder = dsparseMatrix, ...))
+
+#' @export
+setMethod("trim.matrix", "HugeMatrix", function(M, ...)
+    matrix.trim.matrix(M, mat.builder = HugeMatrix, ...))
 
 ###
 

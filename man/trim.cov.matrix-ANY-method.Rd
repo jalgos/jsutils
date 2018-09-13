@@ -5,12 +5,10 @@
 \alias{trim.cov.matrix,ANY-method}
 \title{Removing Least Significant Covariance Coefficients}
 \usage{
-\S4method{trim.cov.matrix}{ANY}(S, sqDl = sqrt(jsmath::posD(diag(S))),
-  sqDr = sqDl, Dr = Matrix::Diagonal(x = sqDr),
-  D1r = Matrix::Diagonal(x = inv.values(diag(Dr), tol.inv)),
-  Dl = Matrix::Diagonal(x = sqDl), D1l = Matrix::Diagonal(x =
-  inv.values(diag(Dl), tol.inv)), ..., mtype = "", tol = 0,
-  tol.inv = 10 * .Machine$double.eps, logger = NULL)
+\S4method{trim.cov.matrix}{ANY}(S, Dr = sqDr$diag, D1r = sqDr$inv.diag,
+  Dl = sqDl$diag, D1l = sqDl$inv.diag, sqDl = sq.diag.inv(S, tol.inv
+  = tol.inv), sqDr = sqDl, ..., mtype = "", tol = 0, tol.inv = 10 *
+  .Machine$double.eps, logger = NULL)
 }
 \arguments{
 \item{S}{The covariance matrix}

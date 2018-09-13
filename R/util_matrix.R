@@ -929,18 +929,31 @@ setGeneric("drop0", Matrix::drop0)
 
 #' @export
 inv.values <- function(values,
-                        tol.inv)
+                       tol.inv)
 {
     ifelse(abs(values) > tol.inv, 1 / values, 0)
 }
 
+#' @export
+sq.diag.inv <- function(S,
+                        ...,
+                        fun.diag = Matrix::Diagonal,
+                        tol.inv = 10 * .Machine$double.eps)
+{
+    sqS <- jsmath::posD(diag(S))
+    Ds <- fun.diag(x = sqS)
+    D1s <- fun.diag(x = inv.values(sqS, tol.inv))
+    list(diag = Ds,
+         inv.diag = D1s)
+}
+
 gen.trim.cov.matrix <- function(S,
-                                sqDl = sqrt(jsmath::posD(diag(S))),
+                                Dr = sqDr$diag,
+                                D1r = sqDr$inv.diag,
+                                Dl = sqDl$diag,
+                                D1l = sqDl$inv.diag,
+                                sqDl = sq.diag.inv(S, tol.inv = tol.inv),
                                 sqDr = sqDl,
-                                Dr = Matrix::Diagonal(x = sqDr),
-                                D1r = Matrix::Diagonal(x = inv.values(diag(Dr), tol.inv)),
-                                Dl = Matrix::Diagonal(x = sqDl),
-                                D1l = Matrix::Diagonal(x = inv.values(diag(Dl), tol.inv)),
                                 ...,
                                 mtype = "",                               
                                 tol = 0,

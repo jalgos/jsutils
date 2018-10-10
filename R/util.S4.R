@@ -123,6 +123,13 @@ traits.apply <- function(OBJ = NULL,
     ANS
 }
 
+get.direct.superclasses <- function(obj)
+{
+    ct <- getClassDef(class(obj))@contains
+    dst <- sapply(ct, function(x) x@distance)
+    names(dst[dst == 1])
+}
+
 #' @describeIn traits.dispatch Dispatches a method when both objects are a composition of several traits and the sub methods need to be called on each combination of traits
 #' @param traits.traj1 Traits of obj1
 #' @param traits.traj2 Traits of obj2

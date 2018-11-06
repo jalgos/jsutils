@@ -4,7 +4,7 @@
 \alias{print.call.stack}
 \title{Print Call Stack}
 \usage{
-\method{print}{call.stack}(..., logger = NULL)
+print.call.stack(..., logger = NULL)
 }
 \arguments{
 \item{...}{not used}

@@ -14,7 +14,8 @@ log.frames <- function(logger,
 #'
 #' Prints the entire call stack. Meant to be called upon an error occurring. Especially handy for the pbdR context where 'options(error = browser)' is unavailable.
 #' @param ... not used
-#' @export
+#' @usage print.call.stack(..., logger = NULL)
+#' @export print.call.stack
 print.call.stack <- function(...,
                              logger = NULL)
 {

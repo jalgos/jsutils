@@ -68,7 +68,7 @@ vech.triplet <- function(DM = mat.to.triplet(M),
     else F <- DM[, i < j]
     N <- sum(F)
     DM[F, .(i = index.sym(i, j, nr, keep.diag = keep.diag),
-            j = rep(1, .N),
+            j = rep(1L, .N),
             x)]
 }
 
@@ -78,8 +78,9 @@ vec.triplet <- function(DM = mat.to.triplet(M),
                         nr = nrow(M),
                         M)
 {
+    nr <- as.integer(nr)
     DM[, .(i = mat.index(i, j, nr),
-           j = rep(1, .N),
+           j = rep(1L, .N),
            x)]
 }
 
@@ -322,7 +323,7 @@ assign.array.vect <- function(M, I, values, dimn = dim(M))
 
 ## For half vectorization
 ## n (n + 1) = 2X
-## (n + 1/2)² - 1 / 4 = 2X
+## (n + 1 / 2)² - 1 / 4 = 2X
 ## n = sqrt(2X + 1 / 4) - 1 / 2
 ## TODO add the keep.diag option
 
@@ -332,12 +333,15 @@ findN <- function(nv,
                   half.vec = TRUE,
                   check.integer = TRUE)
 {
-    if(half.vec) n <- sqrt(2 * nv + 1/4) - 1/2
+    if(half.vec) n <- sqrt(2 * nv + 1 / 4) - 1 / 2
     else n <- sqrt(nv)
     if(check.integer & abs(round(n) - n) > sqrt(.Machine$double.eps))
     {
         stop("The number supplied does not correspond to a vectorization")
     }
+    
+    if(check.integer)
+        n <- as.integer(n)
     n
 }
 
@@ -349,7 +353,7 @@ findN <- function(nv,
 
 #' @describeIn vectorization Computes the length of the half vectorization. n (n + 1) / 2 if we keep the diagonal and n (n - 1) / 2
 #' @export
-nn12 <- function(n, keep.diag = TRUE)  n * (n - 1 + 2 * keep.diag) / 2
+nn12 <- function(n, keep.diag = TRUE)  as.integer((n * (n - 1L + 2L * keep.diag)) %/% 2L)
 
 #' @name mat.index
 #' @title Matrix index to vectorization index
@@ -364,7 +368,7 @@ NULL
 
 #' @describeIn mat.index Computes the vectorization index corresponding to a given row column combination in a matrix
 #' @export
-mat.index <- function(i, j, n) (j - 1) * n + i
+mat.index <- function(i, j, n) (j - 1L) * n + i
 
 #' @describeIn mat.index Computes the corresponding i, j indices from a full vectorization index
 #' @export
@@ -384,7 +388,7 @@ index.sym <- function(i, j, n, keep.diag = TRUE)
     i <- pmin(i, j)
     j <- pmax(j, o)
     adj <- !keep.diag
-    as.integer((i - 1) * (n - adj) + (j - 1) - i * (i - 1) / 2  - adj + 1)
+    as.integer((i - 1L) * (n - adj) + (j - 1L) - i * (i - 1L) / 2  - adj + 1L)
 }
 
 #' @describeIn mat.index Computes the row index and column index corresponding to a given vectorization index

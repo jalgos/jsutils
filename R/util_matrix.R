@@ -940,7 +940,7 @@ sq.diag.inv <- function(S,
                         fun.diag = Matrix::Diagonal,
                         tol.inv = 10 * .Machine$double.eps)
 {
-    sqS <- jsmath::posD(diag(S))
+    sqS <- sqrt(jsmath::posD(diag(S)))
     Ds <- fun.diag(x = sqS)
     D1s <- fun.diag(x = inv.values(sqS, tol.inv))
     list(diag = Ds,
@@ -968,34 +968,38 @@ gen.trim.cov.matrix <- function(S,
     S
 }
 
+mark.minified <- function(D)
+{
+    data.table::setattr(D, "minified", TRUE)
+    D
+}
+
+#' @export
+is.minified <- function(D)
+{
+    mattr <- attr(D, "minified")
+    !is.null(mattr) && mattr
+}
+
+HM.minify.triplet <- function(D)
+{
+    if(is.minified(D))
+        return(D)
+    MD <- D[, .(x = sum(x)), by = list(i, j)]
+    mark.minified(MD)
+    MD
+}
+
+#' @export
+setGeneric("minify.triplet", function(D, ...) standardGeneric("minify.triplet"))
+
+#' @export
+setMethod("minify.triplet", "data.table", HM.minify.triplet)
+
 #' @template trim.matrix.gen
 #' @template trim.matrix
 #' @export
 setMethod("trim.cov.matrix", "ANY", gen.trim.cov.matrix)
-
-dhs.trim.cov.matrix <- function(S,
-                                sqDl = mat.to.triplet(S, shallow = TRUE)[i == j, sqrt(jsmath::posD(x))],
-                                sqDr = sqDl,
-                                Dr = distributedhugesparse::DHugeMatrix(data = mat.to.triplet(S, shallow = TRUE)[i == j, .(i, j, x = sqDr)]),
-                                D1r = distributedhugesparse::DHugeMatrix(data = mat.to.triplet(Dr, shallow = TRUE)[, .(i, j, x = inv.values(x, tol.inv))]),
-                                Dl = distributedhugesparse::DHugeMatrix(data = mat.to.triplet(S, shallow = TRUE)[i == j, .(i, j, x = sqDl)]),
-                                D1l = distributedhugesparse::DHugeMatrix(data = mat.to.triplet(Dl, shallow = TRUE)[i == j, .(i, j, x = inv.values(x, tol.inv))]),
-                                ...,
-                                tol.inv = 10 * .Machine$double.eps)
-{
-    callNextMethod(S,
-                   sqDl = sqDl,
-                   sqDr = sqDr,
-                   Dr = Dr,
-                   D1r = D1r,
-                   Dl = Dl,
-                   D1l = D1l,
-                   ...)
-}
-
-
-#' @export
-setMethod("trim.cov.matrix", "DHugeMatrix", dhs.trim.cov.matrix)
 
 #' @export
 setGeneric("trim.matrix", function(M, ...) standardGeneric("trim.matrix"))
@@ -1005,6 +1009,7 @@ triplet.trim.matrix <- function(M,
                                 cby,
                                 ...)
 {
+    M <- minify.triplet(M)
     M[, rel := x / max(abs(x)), by = c(cby)]
     M[abs(rel) > tol][, rel := NULL]
 }

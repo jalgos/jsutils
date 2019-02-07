@@ -10,11 +10,20 @@ NULL
 #' @describeIn build.expr Builds the expression that is the application of a function to some parameters
 #' @examples fun.expr("atan2", c(x = 3, y = 4))
 #' @export
-fun.expr <- function(funstring, args, ...)
+fun.expr <- function(funstring,
+                     args,
+                     ...,
+                     protect.names = FALSE)
 {
     nms <- names(args)
     sepa <- rep("", length(args))
+    nmv <- nms != "" 
     sepa[nms != ""] <- "="
+    nms[nms != ""] <- '"' %p% nms[nms != ""] %p% '"'
+    if(protect.names)
+    {
+        args <- '`' %p% args %p% '`'
+    }
     args <- paste(paste(nms, sepa, args, sep = ""), collapse = ",")
     paste(c(funstring, "(", args, ")"), collapse = "")
 }

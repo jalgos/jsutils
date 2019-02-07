@@ -931,7 +931,7 @@ setGeneric("drop0", Matrix::drop0)
 inv.values <- function(values,
                        tol.inv)
 {
-    ifelse(abs(values) > tol.inv, 1 / values, 0)
+    as.numeric(ifelse(abs(values) > tol.inv, 1 / values, 0))
 }
 
 #' @export
@@ -1004,13 +1004,20 @@ setMethod("trim.cov.matrix", "ANY", gen.trim.cov.matrix)
 #' @export
 setGeneric("trim.matrix", function(M, ...) standardGeneric("trim.matrix"))
 
+rel.val <- function(x)
+{
+    if(length(x) == 0)
+        return(numeric(0))
+    x / max(abs(x))
+}
+
 triplet.trim.matrix <- function(M,
                                 tol = .Machine$double.eps * 2,
                                 cby,
                                 ...)
 {
     M <- minify.triplet(M)
-    M[, rel := x / max(abs(x)), by = c(cby)]
+    M[, rel := jsutils:::rel.val(x), by = c(cby)]
     M[abs(rel) > tol][, rel := NULL]
 }
 

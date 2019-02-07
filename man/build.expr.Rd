@@ -8,7 +8,7 @@
 \alias{add.quotes}
 \title{Building expressions}
 \usage{
-fun.expr(funstring, args, ...)
+fun.expr(funstring, args, ..., protect.names = FALSE)
 
 assign.expr(var, exprst)
 

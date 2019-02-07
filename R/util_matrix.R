@@ -968,6 +968,7 @@ gen.trim.cov.matrix <- function(S,
     S
 }
 
+#' @export mark.minified
 mark.minified <- function(D)
 {
     data.table::setattr(D, "minified", TRUE)

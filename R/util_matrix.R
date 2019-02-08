@@ -835,8 +835,11 @@ setGeneric("%^%", mat.exp)
 dsparseMatrix <- function(data,
                           ...)
 {
-    data <- data.table::as.data.table(data)
-    Matrix::sparseMatrix(i = data[, i], j = data[, j], x = data[, x], ...)
+
+    Matrix::sparseMatrix(i = data$i,
+                         j = data$j,
+                         x = data$x,
+                         ...)
 }
 
 ## Rotation matrix 2d

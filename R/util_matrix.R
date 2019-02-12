@@ -277,7 +277,7 @@ psolve <- function(a,
                    val.tol,
                    val.rel.tol)
 {
-    S <- svd(a)
+    S <- jsutils::svd(a)
     if(defined(val.rel.tol))
         val.tol <- val.rel.tol * norm(a, "I")
     
@@ -296,7 +296,7 @@ psolve <- function(a,
     }
     
     IP <- seq_len(ico)
-    M1 <- S$v[, IP] %*% Diagonal(x = 1 / S$d[1:ico]) %*t% S$u[, IP]
+    M1 <- Diagonal(x = 1 / S$d[1:ico]) %.A.% S$u[, IP]
     if(missing(b)) return(M1)
     M1 %*% b
 }
@@ -1025,6 +1025,27 @@ triplet.trim.matrix <- function(M,
     M[abs(rel) > tol][, rel := NULL]
 }
 
+maxnw <- function(x)
+{
+    if(length(x) == 0)
+        return(numeric(0))
+    else
+        max(x)
+}
+
+dtriplet.trim.matrix <- function(M,
+                                 tol = .Machine$double.eps * 2,
+                                 cby,
+                                 ...)
+{
+    M <- minify.triplet(M)
+    RV <- M[, j = .(x = jsutils:::maxnw(abs(x))),
+            jreduce = .(mby = jsutils:::maxnw(abs(x))),
+            keyby = c(cby)]
+    M[RV, rel := x / mby, on = cby]
+    M[abs(rel) > tol][, rel := NULL]
+}
+
 select.trim.range <- function(M)
 {
     if(nrow(M) < ncol(M))
@@ -1047,6 +1068,9 @@ matrix.trim.matrix <- function(M,
 
 #' @export
 setMethod("trim.matrix", "data.table", triplet.trim.matrix)
+
+    #' @export
+setMethod("trim.matrix", "ddata.table", dtriplet.trim.matrix)
 
 #' @export
 setMethod("trim.matrix", "matrix", function(M, ...)

@@ -49,6 +49,12 @@ setGeneric("eigen", eigen)
 #' @export
 setGeneric("qr", qr)
 
+#' @export
+setGeneric("qr.Q", qr.Q)
+
+#' @export
+setGeneric("qr.R", qr.R)
+
 ## DITTO
 #' @export
 setGeneric("isSymmetric", isSymmetric)
@@ -1146,6 +1152,8 @@ setMethod("safe.cov2cor", "genMatrix", do.safe.cov2cor)
 sparsity.ratio <- function(M)
 {
     nnzs <- nnzero(M)
+    if(is.na(nnzs))
+        stop("NA number of non zero elements")
     if(nnzs == 0L)
         return(0L)
     nnzs / prod(dim(M))

@@ -426,7 +426,7 @@ setMethod("mat.to.data.table", "matrix", matrix.mat.to.data.table)
 
 #' @rdname mat.to.data.table
 #' @export
-setMethod("mat.to.data.table", "diagonalMatrix", function(M, one.based = TRUE, ...)  mtdt.add.row.col.names(data.table::data.table(i = 1:nrow(M) - !one.based, j = 1:nrow(M) - !one.based, x = diag(M)), M, one.based))
+setMethod("mat.to.data.table", "diagonalMatrix", function(M, one.based = TRUE, ...)  mtdt.add.row.col.names(data.table::data.table(i = seq_len(nrow(M)) - !one.based, j = seq_len(nrow(M)) - !one.based, x = diag(M)), M, one.based))
 
 #' @rdname mat.to.data.table
 #' @export

@@ -10,3 +10,15 @@ wide.screen <- function(howWide = Sys.getenv("COLUMNS"))
 {
     options(width = as.integer(howWide))
 }
+
+
+#' @export format.pct
+format.pct <- function(value,
+                       multiplier = 100,
+                       digits = 2,
+                       color = "BRIGHT.CYAN")
+{
+    color.string(format(value * multiplier,
+                        digits = digits),
+                 color)
+}

@@ -4,7 +4,7 @@
 \alias{psolve}
 \title{Partial Inversion Using Singular Values}
 \usage{
-psolve(a, b, var.thresh = 0.95, val.tol, val.rel.tol)
+psolve(a, b, ...)
 }
 \arguments{
 \item{a}{Matrix to invert}

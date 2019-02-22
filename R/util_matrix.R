@@ -270,18 +270,12 @@ setMethod("gsolve", c(a = "Matrix", b = "ANY"), function(a,
                                                          eps = sqrt(.Machine$double.eps))
     solve(a + eps * Matrix::Diagonal(n = nrow(a)), b))
 
-#' Partial Inversion Using Singular Values
-#'
-#' Inverts a matrix by truncating the eigen values that contribute to 95% of the whole volatility.
-#' @param a Matrix to invert
-#' @param b RHS of the equation a.v = b where v is the unknown
-#' @param var.thresh quantity of volatility to be taken into account for inverstion
-#' @export
-psolve <- function(a,
-                   b,
-                   var.thresh = .95,
-                   val.tol,
-                   val.rel.tol)
+do.psolve <- function(a,
+                      b,
+                      var.thresh = .95,
+                      val.tol,
+                      val.rel.tol,
+                      diag.fun = Matrix::Diagonal)
 {
     S <- jsutils::svd(a)
     if(defined(val.rel.tol))
@@ -302,10 +296,27 @@ psolve <- function(a,
     }
     
     IP <- seq_len(ico)
-    M1 <- Diagonal(x = 1 / S$d[1:ico]) %.A.% S$u[, IP]
+    D <- diag.fun(n = ico,
+                  x = 1 / S$d[1:ico]) 
+    M1 <- D %.A.% S$u[, IP]
     if(missing(b)) return(M1)
     M1 %*% b
 }
+
+#' Partial Inversion Using Singular Values
+#'
+#' Inverts a matrix by truncating the eigen values that contribute to 95% of the whole volatility.
+#' @param a Matrix to invert
+#' @param b RHS of the equation a.v = b where v is the unknown
+#' @param var.thresh quantity of volatility to be taken into account for inverstion
+#' @export
+setGeneric("psolve",
+           function(a, b, ...) standardGeneric("psolve"))
+
+#' @export
+setMethod("psolve",
+          c("ANY", "ANY"),
+          function(a, b, ...) do.psolve(a, b, ...))
 
 #' Semi Definite Positive Inverse
 #'

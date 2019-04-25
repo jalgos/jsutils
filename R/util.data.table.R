@@ -606,3 +606,15 @@ inplace <- function(target, src)
 {
     invisible(.Call('jsutils_inplace', PACKAGE = 'jsutils', target, src))
 }
+
+#' rbind apply 
+#'
+#' equivalent to rbindlist(lapply(...))
+#' @param vect apply function on this vector
+#' @param fun function to apply on vect. Should return a data.table
+#' @param fill rbind argument
+#' @export
+rbind.apply <- function(vect, fun, fill = FALSE, ...)
+{
+    rbindlist(lapply(vect, fun, ...), fill = fill)
+}

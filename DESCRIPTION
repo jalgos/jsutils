@@ -11,8 +11,7 @@ License: Jalgos License
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.0
-Collate: 
-    'RcppExports.R'
+Collate:
     'applies.R'
     'array_fun.R'
     'complexity.R'

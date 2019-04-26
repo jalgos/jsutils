@@ -618,3 +618,52 @@ rbind.apply <- function(vect, fun, fill = FALSE, ...)
 {
     rbindlist(lapply(vect, fun, ...), fill = fill)
 }
+
+#' Roll merge in 2D
+#'
+#' Divide the tables in a 2D grid, and match the points that are in the closest grid cells. While not all the points in DT1 are matched with a point in DT2, keep looking in further cells
+#' @param DT1 data.table
+#' @param DT2 data.table
+#' @param cols1 2 column names to use for the merge in DT1
+#' @param cols2 2 column names to use for the merge in DT2
+#' @param grid.size aggregation size. A big value reduce the accuracy of the merge
+#' @export
+roll.merge.2d <- function(DT1, DT2, cols1, cols2, grid.size, ...)
+{
+    xmin <- min(DT1[, min(Inf, ceiling(get(cols1[1]) / grid.size))],
+                DT2[, min(Inf, ceiling(get(cols2[1]) / grid.size))])
+    xmax <- max(DT1[, max(-Inf, ceiling(get(cols1[1]) / grid.size))],
+                DT2[, max(-Inf, ceiling(get(cols2[1]) / grid.size))])
+    DT1[, buck := ceiling(get(cols1[1]) / grid.size) +
+              (xmax - xmin) * ceiling(get(cols1[2]) / grid.size)]
+    DT2[, centered.buck := ceiling(get(cols2[1]) / grid.size) +
+              (xmax - xmin) * ceiling(get(cols2[2]) / grid.size)]
+
+    it <- 0
+    
+    MERGED <- data.table()
+    DT1.LEFT <- DT1[]
+
+    while(nrow(DT1.LEFT) != 0)
+    {
+        bucket.shift <- data.table(-it:it)
+        bucket.shift <- cartesian.data.table(bucket.shift[, .(x = V1)],
+                                             bucket.shift[, .(y = V1)])
+        bucket.shift <- bucket.shift[abs(x) == it | abs(y) == it]
+        bucket.shift[, shift.value := x + xmax * y]
+
+        MERGED <- rbind(MERGED,
+                        rbind.apply(bucket.shift[, shift.value],
+                                    function(s)
+                        {
+                            DT2[, buck := centered.buck + s]
+                            DT1.LEFT[DT2, on = "buck",
+                                     nomatch = 0L,
+                                     allow.cartesian = TRUE]
+                        }, fill = TRUE), fill = TRUE)
+        DT1.LEFT <- DT1.LEFT[!buck %in% MERGED[, buck]]
+        it <- it + 1
+    }
+
+    return(MERGED)
+}

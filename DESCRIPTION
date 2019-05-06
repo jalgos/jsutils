@@ -10,8 +10,9 @@ Imports:
 License: Jalgos License
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 Collate:
+    'RcppExports.R'
     'applies.R'
     'array_fun.R'
     'complexity.R'

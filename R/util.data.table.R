@@ -601,11 +601,8 @@ setGeneric("merge", merge)
 #' Modifies a list in place
 #' @param target List to modify
 #' @param src Elements to assign to the list
-#' @export
-inplace <- function(target, src)
-{
-    invisible(.Call('jsutils_inplace', PACKAGE = 'jsutils', target, src))
-}
+#' @export inplace
+NULL
 
 #' rbind apply 
 #'

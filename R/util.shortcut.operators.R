@@ -38,3 +38,11 @@ setGeneric("%-%", function(e1, e2) setdiff(e1, e2))
 ## shortcut to `c`
 #' @export
 setGeneric("%+%", function(e1, e2) c(e1, e2))
+
+## shortcut to intersect
+#' @export
+setGeneric("%i%", function(e1, e2) intersect(e1, e2))
+
+## shortcut to union
+#' @export
+setGeneric("%u%", function(e1, e2) union(e1, e2))

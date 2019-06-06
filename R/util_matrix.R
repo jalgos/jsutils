@@ -332,6 +332,19 @@ sdef.solve <- function(a,
     psolve(a, b, val.rel.tol = val.rel.tol)
 }
 
+#' @export nofail.solve
+nofail.solve <- function(...,
+                         alt.solve = psolve,
+                         logger = NULL)
+{
+    tryCatch(jsutils::solve(...),
+             error = function(cond)
+    {
+        jlog.error(logger, "Solving linear model failed with error:", cond$message)
+        alt.solve(...)
+    })
+}
+
 #' Matrix to data.table
 #'
 #' Adds two columns i.names and j.names to the triplet represantation of a Matrix

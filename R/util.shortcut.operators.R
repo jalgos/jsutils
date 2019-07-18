@@ -3,6 +3,11 @@
 setGeneric("%p%", function(e1, e2)
     return(paste0(as.character(e1), as.character(e2))))
 
+## shortcut to collapse
+#' @export
+setGeneric("%col%", function(e1, e2)
+    return(paste0(as.character(e1), collapse = as.character(e2))))
+
 ## shortcut to grep
 #' @export
 setGeneric("%g%", function(e1, e2) grep(as.character(e1), as.character(e2)))

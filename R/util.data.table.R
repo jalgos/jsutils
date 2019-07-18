@@ -596,9 +596,10 @@ setGeneric("merge", merge)
 
 ## Util for ddata.table
 
-#' In place assignation
+#' @name inplace
+#' @title In place assignation
 #'
-#' Modifies a list in place
+#' @description Modifies a list in place
 #' @param target List to modify
 #' @param src Elements to assign to the list
 #' @export inplace

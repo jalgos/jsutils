@@ -160,9 +160,21 @@ double.traits.apply <- function(method,
 ## Traits composition
 ######################
 
+## Traits don't work if they are VIRTUAL
+
 #' @name mixing-traits
 #' @title Adding And Removing Traits
 NULL
+
+downtrait <- function(Class,
+                      object)
+{
+    nob <- as(object, Class)
+    if(class(nob) != Class) ## Means Class is virtual
+        NULL
+    else
+        nob
+}
 
 construct.composite <- function(Class,
                                 object,
@@ -172,12 +184,14 @@ construct.composite <- function(Class,
                                 ...)
 {
     lparts <- lapply(superclasses,
-                     function(class)
-        as(object, class))
+                     downtrait,
+                     object)
+    
     names(lparts) <- superclasses
     if(!is.null(new.part))
         lparts[[class(new.part)]] <- new.part
     lparts <- lparts[contained.classes]
+    lparts <- lparts[!sapply(lparts, is.null)]
     names(lparts) <- NULL
     do.call(new,
             c(list(Class = Class),
@@ -195,7 +209,7 @@ add.s4 <- function(superclasses,
                    trait,
                    ...)
 {
-    sort(c(superclasses, trait))
+    sort(union(superclasses, trait))
 }
 
 mix.trait <- function(object,
@@ -210,13 +224,19 @@ mix.trait <- function(object,
     contained.classes <- fmodify.class(superclasses,
                                        trait,
                                        ...)
+    
+    if(identical(as.character(superclasses), as.character(contained.classes)))
+        return(object)
+        
     new.class <- paste(contained.classes, collapse = " + ")
     
     tryCatch(getClass(new.class),
              error = function(cond)
     {
+         ## Adding classes to global environment may be a problem, `methods` maintainers advise against messing up to much with internal stuff but this is the point of writing this piece of code
         setClass(new.class,
-                 contains = contained.classes)
+                 contains = contained.classes,
+                 where = .GlobalEnv)
     })
     
     new.part <- fcreate(trait,
@@ -230,6 +250,12 @@ mix.trait <- function(object,
                         superclasses = superclasses,
                         new.part = new.part,
                         ...)
+}
+
+create.obj <- function(...)
+{
+    tryCatch(new(...),
+             error = function(cond) NULL)
 }
 
 #' Mixing Traits
@@ -247,7 +273,7 @@ add.trait <- function(object,
     mix.trait(object,
               trait = trait,
               fmodify.class = add.s4,
-              fcreate = new,
+              fcreate = create.obj,
               ...)
 }
 

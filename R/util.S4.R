@@ -155,3 +155,136 @@ double.traits.apply <- function(method,
         }
     }
 }
+
+######################
+## Traits composition
+######################
+
+## Traits don't work if they are VIRTUAL
+
+#' @name mixing-traits
+#' @title Adding And Removing Traits
+NULL
+
+downtrait <- function(Class,
+                      object)
+{
+    nob <- as(object, Class)
+    if(class(nob) != Class) ## Means Class is virtual
+        NULL
+    else
+        nob
+}
+
+construct.composite <- function(Class,
+                                object,
+                                contained.classes,
+                                superclasses,
+                                new.part = NULL,
+                                ...)
+{
+    lparts <- lapply(superclasses,
+                     downtrait,
+                     object)
+    
+    names(lparts) <- superclasses
+    if(!is.null(new.part))
+        lparts[[class(new.part)]] <- new.part
+    lparts <- lparts[contained.classes]
+    lparts <- lparts[!sapply(lparts, is.null)]
+    names(lparts) <- NULL
+    do.call(new,
+            c(list(Class = Class),
+              lparts))
+}
+
+remove.s4 <- function(superclasses,
+                      trait,
+                      ...)
+{
+    sort(setdiff(superclasses, trait))
+}
+
+add.s4 <- function(superclasses,
+                   trait,
+                   ...)
+{
+    sort(union(superclasses, trait))
+}
+
+mix.trait <- function(object,
+                      trait,
+                      fmodify.class,
+                      fcreate = function(...) NULL,
+                      ...)
+{
+    superclasses <- get.direct.superclasses(object)
+    if(is.null(superclasses))
+        superclasses <- class(object)
+    contained.classes <- fmodify.class(superclasses,
+                                       trait,
+                                       ...)
+    
+    if(identical(as.character(superclasses), as.character(contained.classes)))
+        return(object)
+        
+    new.class <- paste(contained.classes, collapse = " + ")
+    
+    tryCatch(getClass(new.class),
+             error = function(cond)
+    {
+         ## Adding classes to global environment may be a problem, `methods` maintainers advise against messing up to much with internal stuff but this is the point of writing this piece of code
+        setClass(new.class,
+                 contains = contained.classes,
+                 where = .GlobalEnv)
+    })
+    
+    new.part <- fcreate(trait,
+                        ...)
+    if(length(superclasses) > length(contained.classes))
+        superclasses <- contained.classes
+    
+    construct.composite(Class = new.class,
+                        object = object,
+                        contained.classes = contained.classes,
+                        superclasses = superclasses,
+                        new.part = new.part,
+                        ...)
+}
+
+create.obj <- function(...)
+{
+    tryCatch(new(...),
+             error = function(cond) NULL)
+}
+
+#' Mixing Traits
+#'
+#' @describeIn mixing-traits An interface to add a new traits to an object. The function will get all the parent traits of the current object and create a new class adding `new.trait` to the list of direct superclasses. It will create a composite object making sure the constructor of the trait is called with `...`
+#' @param object The object that needs to be improved
+#' @param trait Name of the trait (an S4 class) that needs to be added or remove from the class definition of the object
+#' @param ... Additional parameters that will be passed on to the initializer of the new.trait
+#' @return An object that inherits from its old parent traits as well as the new trait provided
+#' @export
+add.trait <- function(object,
+                      trait,
+                      ...)
+{
+    mix.trait(object,
+              trait = trait,
+              fmodify.class = add.s4,
+              fcreate = create.obj,
+              ...)
+}
+
+#' @describeIn mixing-traits Removes a trait from an object.
+#' @export
+remove.trait <- function(object,
+                         trait,
+                         ...)
+{
+    mix.trait(object,
+              trait = trait,
+              fmodify.class = remove.s4,
+              ...)
+}

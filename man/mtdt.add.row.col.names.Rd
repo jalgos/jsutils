@@ -11,7 +11,7 @@ mtdt.add.row.col.names(D, M, one.based = TRUE)
 
 \item{M}{Matrix}
 
-\item{one.based}{indices strart at 1 or 0?}
+\item{one.based}{indices start at 1 or 0?}
 }
 \description{
 Adds two columns i.names and j.names to the triplet represantation of a Matrix

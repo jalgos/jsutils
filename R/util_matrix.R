@@ -350,7 +350,7 @@ nofail.solve <- function(...,
 #' Adds two columns i.names and j.names to the triplet represantation of a Matrix
 #' @param D triplet representation
 #' @param M Matrix
-#' @param one.based indices strart at 1 or 0?
+#' @param one.based indices start at 1 or 0?
 #' @export
 mtdt.add.row.col.names <- function(D,
                                    M,
@@ -366,7 +366,7 @@ mtdt.add.row.col.names <- function(D,
         D[, j.names := colnames(M)[j + !one.based]]
     }
     
-    D    
+    D
 }
 
 Matrix.mat.to.data.table <- function(M,

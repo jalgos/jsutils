@@ -237,6 +237,18 @@ mix.trait <- function(object,
         setClass(new.class,
                  contains = contained.classes,
                  where = .GlobalEnv)
+        
+        setMethod("initialize",
+                  new.class,
+                  function(.Object,
+                           ...)
+        {
+            selectMethod("initialize",
+                         signature = "ANY")(.Object,
+                             ...)
+        },
+        where = .GlobalEnv)
+
     })
     
     new.part <- fcreate(trait,

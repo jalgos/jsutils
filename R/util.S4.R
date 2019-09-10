@@ -228,7 +228,7 @@ mix.trait <- function(object,
     if(identical(as.character(superclasses), as.character(contained.classes)))
         return(object)
         
-    new.class <- paste(contained.classes, collapse = " + ")
+    new.class <- paste(contained.classes, collapse = ".")
     
     tryCatch(getClass(new.class),
              error = function(cond)

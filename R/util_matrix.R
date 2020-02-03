@@ -390,10 +390,13 @@ Matrix.mat.to.data.table <- function(M,
 matrix.mat.to.data.table <- function(M,
                                      one.based = TRUE,
                                      with.names = FALSE,
+                                     remove.zeroes = TRUE,
                                      ...)
 {
     D <- data.table::data.table(i = as.vector(row(M)) - !one.based, j = as.vector(col(M)) - !one.based, x = as.vector(M))
-    D <- D[x != 0] ## It should make later computations faster    
+    
+    if(remove.zeroes)
+        D <- D[x != 0] ## It should make later computations faster    
     if(with.names)
         mtdt.add.row.col.names(D,
                                M,

@@ -395,7 +395,7 @@ matrix.mat.to.data.table <- function(M,
 {
     D <- data.table::data.table(i = as.vector(row(M)) - !one.based, j = as.vector(col(M)) - !one.based, x = as.vector(M))
     
-    if(remove.zeroes)
+    if(remove.zeros)
         D <- D[x != 0] ## It should make later computations faster    
     if(with.names)
         mtdt.add.row.col.names(D,

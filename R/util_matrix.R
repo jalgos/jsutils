@@ -390,7 +390,7 @@ Matrix.mat.to.data.table <- function(M,
 matrix.mat.to.data.table <- function(M,
                                      one.based = TRUE,
                                      with.names = FALSE,
-                                     remove.zeroes = TRUE,
+                                     remove.zeros = TRUE,
                                      ...)
 {
     D <- data.table::data.table(i = as.vector(row(M)) - !one.based, j = as.vector(col(M)) - !one.based, x = as.vector(M))

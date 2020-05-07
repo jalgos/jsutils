@@ -1118,7 +1118,10 @@ setMethod("trim.matrix", "Matrix", function(M, ...)
 
 #' @export
 setMethod("trim.matrix", "HugeMatrix", function(M, ...)
-    matrix.trim.matrix(M, mat.builder = HugeMatrix, ...))
+    matrix.trim.matrix(M,
+                       mat.builder = function(data, ...)
+        hugesparse::HugeMatrix(data = data, ...),
+        ...))
 
 ###
 

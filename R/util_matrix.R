@@ -35,9 +35,8 @@ setGeneric("%x+%", function(x, y)
     x %x% Iy + Ix %x% Iy
 })
 
-## DITTO
 #' @export
-setGeneric("diag", diag)
+diag <- Matrix::diag
 
 ## DITTO
 #' @export

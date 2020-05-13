@@ -23,6 +23,6 @@ Applies a bivariate function recursively to a list and the result of the previou
 The first to argument of the function should be of type of the object in the list provided.
 }
 \examples{
-\\code{D = data.table(x = 1:10, u = letters[1:10])}
-\\code{over(list(D, D, D, D), rbind)}
+\code{D = data.table(x = 1:10, u = letters[1:10])}
+\code{over(list(D, D, D, D), rbind)}
 }

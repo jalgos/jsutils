@@ -84,7 +84,6 @@ BEGIN_RCPP
 END_RCPP
 }
 
-
 static const R_CallMethodDef CallEntries[] = {
     {"_jsutils_hash_string_vector", (DL_FUNC) &_jsutils_hash_string_vector, 1},
     {"_jsutils_hash_string_vector_std", (DL_FUNC) &_jsutils_hash_string_vector_std, 1},

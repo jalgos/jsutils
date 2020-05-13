@@ -4,8 +4,15 @@
 \alias{mem.safe.kronecker}
 \title{Memory Safe Kronecker Product}
 \usage{
-mem.safe.kronecker(S1, S2, krsize.limit = krmem.limit * 2^26,
-  krmem.limit = Inf, keep.diag = FALSE, ..., logger = NULL)
+mem.safe.kronecker(
+  S1,
+  S2,
+  krsize.limit = krmem.limit * 2^26,
+  krmem.limit = Inf,
+  keep.diag = FALSE,
+  ...,
+  logger = NULL
+)
 }
 \arguments{
 \item{S1}{First matrix}

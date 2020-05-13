@@ -4,8 +4,12 @@
 \alias{split.write.csv}
 \title{Split Write csv}
 \usage{
-\method{split}{write.csv}(TAB, split.size, export.folder = "output",
-  logger = get.util.data.logger())
+\method{split}{write.csv}(
+  TAB,
+  split.size,
+  export.folder = "output",
+  logger = get.util.data.logger()
+)
 }
 \arguments{
 \item{TAB}{Data.table, usually big, to be splitted and exported as csv files}

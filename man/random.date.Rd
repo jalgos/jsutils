@@ -4,8 +4,12 @@
 \alias{random.date}
 \title{Random Dates}
 \usage{
-random.date(n, date.ref = as.POSIXct(Sys.time()), rdist = function(...,
-  sd = 1e+07) rnorm(..., sd = sd), ...)
+random.date(
+  n,
+  date.ref = as.POSIXct(Sys.time()),
+  rdist = function(..., sd = 1e+07) rnorm(..., sd = sd),
+  ...
+)
 }
 \arguments{
 \item{n}{Sample size}

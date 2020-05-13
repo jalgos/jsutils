@@ -16,9 +16,14 @@ traits.apply(OBJ = NULL,
                       post.objs = list(),
                       tra.logger = JF.logger())
 
-double.traits.apply(method, ...,
+double.traits.apply(
+  method,
+  ...,
   traits.traj1 = get.direct.superclasses(largs[[obj1]]),
-  traits.traj2 = get.direct.superclasses(largs[[obj2]]), obj1, obj2)
+  traits.traj2 = get.direct.superclasses(largs[[obj2]]),
+  obj1,
+  obj2
+)
 }
 \arguments{
 \item{OBJ}{To be used in case each call to the submethods is supposed to transform the input. In this case OBJ must be set to the object on which the dispatch occurs}

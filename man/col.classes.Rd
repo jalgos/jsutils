@@ -4,8 +4,12 @@
 \alias{col.classes}
 \title{Column classes}
 \usage{
-col.classes(D, cols = names(D), class.fun = function(X) class(X)[1],
-  apply.fun = sapply)
+col.classes(
+  D,
+  cols = names(D),
+  class.fun = function(X) class(X)[1],
+  apply.fun = sapply
+)
 }
 \arguments{
 \item{D}{table}

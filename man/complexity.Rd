@@ -6,13 +6,25 @@
 \alias{average.time.map}
 \title{Measuring function runtime}
 \usage{
-average.time.fun(fun, par, nrep, nms = names(par),
-  prefun = function(...) list(...), ...,
-  logger = jlogger::JLoggerFactory("Complexity"))
+average.time.fun(
+  fun,
+  par,
+  nrep,
+  nms = names(par),
+  prefun = function(...) list(...),
+  ...,
+  logger = jlogger::JLoggerFactory("Complexity")
+)
 
-average.time.map(par.down, par.up, par.nchunks,
-  par.names = names(par.down), filter = TRUE, ...,
-  logger = jlogger::JLoggerFactory("Complexity"))
+average.time.map(
+  par.down,
+  par.up,
+  par.nchunks,
+  par.names = names(par.down),
+  filter = TRUE,
+  ...,
+  logger = jlogger::JLoggerFactory("Complexity")
+)
 }
 \arguments{
 \item{fun}{Function for which you want to run the measure}

@@ -8,8 +8,14 @@
 \alias{grep.whole}
 \title{Text to data}
 \usage{
-grep.matches(pattern, text, npats = stringr::str_count(pattern, "\\\\(")
-  - stringr::str_count(pattern, "\\\\\\\\\\\\("), sep = "#", ...)
+grep.matches(
+  pattern,
+  text,
+  npats = stringr::str_count(pattern, "\\\\(") - stringr::str_count(pattern,
+    "\\\\\\\\\\\\("),
+  sep = "#",
+  ...
+)
 
 to.matches.or.null(text, ..., strip.newlines = TRUE, match.names)
 

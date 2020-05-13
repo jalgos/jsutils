@@ -5,8 +5,13 @@
 \alias{require.or.install.dev}
 \title{Install Missing Package}
 \usage{
-require.or.install(name, install.fun = install.git, vars = c(`$group` =
-  group, `$name` = name), ..., force = FALSE)
+require.or.install(
+  name,
+  install.fun = install.git,
+  vars = c(`$group` = group, `$name` = name),
+  ...,
+  force = FALSE
+)
 
 require.or.install.dev(name, url.pattern = file.package.pattern, ...)
 }

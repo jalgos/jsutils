@@ -9,11 +9,24 @@
 \usage{
 dtgrep(D, vals, akeys, fgrep = grep, keep.match.col = FALSE, ...)
 
-grep.merge(D1, D2, keys = character(0), akeys = character(0),
-  fgrep = grep, ...)
+grep.merge(
+  D1,
+  D2,
+  keys = character(0),
+  akeys = character(0),
+  fgrep = grep,
+  ...
+)
 
-amerge(D1, D2, keys = character(0), akeys = character(0),
-  fgrep = grep, similarity.fun, ...)
+amerge(
+  D1,
+  D2,
+  keys = character(0),
+  akeys = character(0),
+  fgrep = grep,
+  similarity.fun,
+  ...
+)
 }
 \arguments{
 \item{D}{A data.table}

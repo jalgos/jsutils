@@ -4,8 +4,7 @@
 \alias{critical.mail}
 \title{Critical mail}
 \usage{
-critical.mail(from = guess.user(), to, subject, msg, ...,
-  logger = NULL)
+critical.mail(from = guess.user(), to, subject, msg, ..., logger = NULL)
 }
 \arguments{
 \item{from}{Email from}

@@ -16,5 +16,5 @@ Transform the command line arguments into a named character vector
 Will split occurence such as (--)?option=value into a named character vector of value where the names are the option names.
 }
 \examples{
-\\code{divide.args('RScript --my.number=10 my.fit.param1=up --all.extract=1.56')}
+\code{divide.args('RScript --my.number=10 my.fit.param1=up --all.extract=1.56')}
 }

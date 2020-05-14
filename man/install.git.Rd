@@ -4,10 +4,14 @@
 \alias{install.git}
 \title{Install Git}
 \usage{
-install.git(name, group,
+install.git(
+  name,
+  group,
   url = sprintf("git@www.datasaiyan.com:\%s/\%s.git", group, name),
-  install.fun = function(ploc, ...) install.packages(ploc, repos = NULL,
-  ...), branch, ...)
+  install.fun = function(ploc, ...) install.packages(ploc, repos = NULL, ...),
+  branch,
+  ...
+)
 }
 \arguments{
 \item{name}{Name of the package}

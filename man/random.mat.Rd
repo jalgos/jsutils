@@ -31,7 +31,7 @@ random.orthogonal(p, q = p, vals = 1 + 1:p)
 \arguments{
 \item{n}{Number of rows}
 
-\item{p}{Number of columns}
+\item{p}{number of factors}
 
 \item{rgen}{Distribution to draw from. Defaults to a normal with 0 mean and variance 1}
 
@@ -42,8 +42,6 @@ random.orthogonal(p, q = p, vals = 1 + 1:p)
 \item{q}{number of variables}
 
 \item{vals}{Values for each factor}
-
-\item{p}{number of factors}
 }
 \description{
 Generating random matrices

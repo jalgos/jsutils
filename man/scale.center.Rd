@@ -11,8 +11,11 @@ center(X, cent = mean(X, na.rm = TRUE))
 
 scale(X, scaling = sd(X, na.rm = TRUE))
 
-scale.and.center(X, cent = mean(X, na.rm = TRUE), scaling = sd(X, na.rm
-  = TRUE))
+scale.and.center(
+  X,
+  cent = mean(X, na.rm = TRUE),
+  scaling = sd(X, na.rm = TRUE)
+)
 }
 \arguments{
 \item{X}{numeric vector}

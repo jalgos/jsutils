@@ -216,7 +216,8 @@ mix.trait <- function(object,
                       trait,
                       fmodify.class,
                       fcreate = function(...) NULL,
-                      ...)
+                      ...,
+                      trait.separator = ".")
 {
     superclasses <- get.direct.superclasses(object)
     if(is.null(superclasses))
@@ -225,10 +226,12 @@ mix.trait <- function(object,
                                        trait,
                                        ...)
     
-    if(identical(as.character(superclasses), as.character(contained.classes)))
+    if(identical(as.character(superclasses),
+                 as.character(contained.classes)))
         return(object)
         
-    new.class <- paste(contained.classes, collapse = ".")
+    new.class <- paste(contained.classes,
+                       collapse = trait.separator)
     
     tryCatch(getClass(new.class),
              error = function(cond)

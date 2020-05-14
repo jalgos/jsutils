@@ -4,8 +4,7 @@
 \alias{change.double.cols}
 \title{Change column suffixes}
 \usage{
-change.double.cols(TAB, ter1, ter2, termination2 = "\\\\.1",
-  termination1 = "")
+change.double.cols(TAB, ter1, ter2, termination2 = "\\\\.1", termination1 = "")
 }
 \arguments{
 \item{TAB}{data.table}

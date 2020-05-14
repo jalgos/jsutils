@@ -7,11 +7,25 @@
 \alias{dt.cart.apply}
 \title{Cartesian Apply}
 \usage{
-cart.apply(L1, L2 = L1, funapp, ..., fapply = lapply,
-  fapply2 = fapply, unlist = FALSE)
+cart.apply(
+  L1,
+  L2 = L1,
+  funapp,
+  ...,
+  fapply = lapply,
+  fapply2 = fapply,
+  unlist = FALSE
+)
 
-half.cart.apply(L1, L2 = L1, funapp, ..., fapply = lapply,
-  fapply2 = fapply, unlist = FALSE)
+half.cart.apply(
+  L1,
+  L2 = L1,
+  funapp,
+  ...,
+  fapply = lapply,
+  fapply2 = fapply,
+  unlist = FALSE
+)
 
 dt.cart.apply(funapp, Largs, ...)
 }

@@ -4,8 +4,14 @@
 \alias{expect_equal_matrices}
 \title{Matrix Equality Expectation}
 \usage{
-expect_equal_matrices(M1, M2, compare.dimnames = TRUE,
-  tol = .Machine$double.eps, agg = TRUE, ...)
+expect_equal_matrices(
+  M1,
+  M2,
+  compare.dimnames = TRUE,
+  tol = .Machine$double.eps,
+  agg = TRUE,
+  ...
+)
 }
 \arguments{
 \item{M1}{Matrix of any form that can be converted to a triplet with function \code{mat.to.triplet}}

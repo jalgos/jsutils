@@ -4,8 +4,12 @@
 \alias{vech.reverse.triplet}
 \title{Half vectorization triplet to matrix triplet}
 \usage{
-vech.reverse.triplet(DV = mat.to.triplet(V), nr = findN(nrow(V)) +
-  !keep.diag, V, keep.diag = TRUE)
+vech.reverse.triplet(
+  DV = mat.to.triplet(V),
+  nr = findN(nrow(V)) + !keep.diag,
+  V,
+  keep.diag = TRUE
+)
 }
 \arguments{
 \item{DV}{triplet representation of the half vectorization}

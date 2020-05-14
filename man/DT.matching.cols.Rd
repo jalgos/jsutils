@@ -4,8 +4,13 @@
 \alias{DT.matching.cols}
 \title{Data.table matching columns}
 \usage{
-DT.matching.cols(DT, match.exp, ig.match.exp = "^$", ...,
-  logger = emergency.logger())
+DT.matching.cols(
+  DT,
+  match.exp,
+  ig.match.exp = "^$",
+  ...,
+  logger = emergency.logger()
+)
 }
 \arguments{
 \item{DT}{a data table}

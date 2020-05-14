@@ -4,8 +4,13 @@
 \alias{vec.reverse}
 \title{Full vectorization}
 \usage{
-vec.reverse(V, n = findN(vecdim(V), FALSE), p = n, ...,
-  mat.constr = safe.mat.constr)
+vec.reverse(
+  V,
+  n = findN(vecdim(V), FALSE),
+  p = n,
+  ...,
+  mat.constr = safe.mat.constr
+)
 }
 \description{
 Builds the matrix corresponding to a vectorization

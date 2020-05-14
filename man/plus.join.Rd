@@ -4,8 +4,14 @@
 \alias{plus.join}
 \title{Plus Join}
 \usage{
-plus.join(D1, D2, col.plus = setdiff(intersect(names(D1), names(D2)),
-  by), by, all = TRUE, ...)
+plus.join(
+  D1,
+  D2,
+  col.plus = setdiff(intersect(names(D1), names(D2)), by),
+  by,
+  all = TRUE,
+  ...
+)
 }
 \arguments{
 \item{D1}{first data.table}

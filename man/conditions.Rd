@@ -16,8 +16,13 @@
 \alias{no.convergence.error}
 \title{Custom Conditions}
 \usage{
-condition(subclass, mess, parent.class = character(0),
-  call = sys.call(-1), ...)
+condition(
+  subclass,
+  mess,
+  parent.class = character(0),
+  call = sys.call(-1),
+  ...
+)
 
 is.condition(x)
 
@@ -83,7 +88,7 @@ Custom Conditions
 }}
 
 \examples{
-## Custom conditions are caught with \\code{tryCatch} or \\code{withCallingHandlers} as follows:
+## Custom conditions are caught with \code{tryCatch} or \code{withCallingHandlers} as follows:
 tryCatch(stop(condition("mycondition", "Hello Worms!")),
          mycondition = function(cond) print("Yiiiihaaaa!"))
 }

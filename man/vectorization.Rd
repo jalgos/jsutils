@@ -17,18 +17,34 @@ nn12(n, keep.diag = TRUE)
 
 vech.to.vec(n, keep.diag = TRUE, fmat = default.matrix.builder)
 
-get.upper.indices(n, i1 = indexation(N = n), i2 = indexation(N = n),
-  keep.diag = TRUE, distributed = mat.vectorization.distributed())
+get.upper.indices(
+  n,
+  i1 = indexation(N = n),
+  i2 = indexation(N = n),
+  keep.diag = TRUE,
+  distributed = mat.vectorization.distributed()
+)
 
 vec.to.vech(n, keep.diag = TRUE, fmat = default.matrix.builder)
 
-commutation.matrix(n, p = n, i = indexation(N = n), j = indexation(N
-  = p), half.vec = FALSE, fmat = default.matrix.builder,
-  distributed = mat.vectorization.distributed())
+commutation.matrix(
+  n,
+  p = n,
+  i = indexation(N = n),
+  j = indexation(N = p),
+  half.vec = FALSE,
+  fmat = default.matrix.builder,
+  distributed = mat.vectorization.distributed()
+)
 
-block.to.vech(n1, n2 = n1, I1 = data.table::CJ(i = 1:n1, j = 1:n1)[i <=
-  j], I2 = data.table::CJ(i = 1:n1, j = 1:n2), I3 = data.table::CJ(i =
-  1:n2, j = 1:n2)[i <= j], fmat = dsparseMatrix)
+block.to.vech(
+  n1,
+  n2 = n1,
+  I1 = data.table::CJ(i = 1:n1, j = 1:n1)[i <= j],
+  I2 = data.table::CJ(i = 1:n1, j = 1:n2),
+  I3 = data.table::CJ(i = 1:n2, j = 1:n2)[i <= j],
+  fmat = dsparseMatrix
+)
 }
 \arguments{
 \item{nv}{length of the vectorization}

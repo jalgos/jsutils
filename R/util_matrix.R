@@ -1066,9 +1066,11 @@ rel.val <- function(x)
 triplet.trim.matrix <- function(M,
                                 tol = .Machine$double.eps * 2,
                                 cby,
+                                do.minify.triplet = TRUE,
                                 ...)
 {
-    M <- minify.triplet(M)
+    if(do.minify.triplet)
+        M <- minify.triplet(M)
     M[, rel := jsutils:::rel.val(x), by = c(cby)]
     M[abs(rel) > tol][, rel := NULL]
 }
@@ -1084,9 +1086,11 @@ maxnw <- function(x)
 dtriplet.trim.matrix <- function(M,
                                  tol = .Machine$double.eps * 2,
                                  cby,
+                                 do.minify.triplet = TRUE,
                                  ...)
 {
-    M <- minify.triplet(M)
+    if(do.minify.triplet)
+        M <- minify.triplet(M)
     RV <- M[, j = .(x = jsutils:::maxnw(abs(x))),
             jreduce = .(mby = jsutils:::maxnw(abs(x))),
             keyby = c(cby)]

@@ -35,8 +35,11 @@ setGeneric("%x+%", function(x, y)
     x %x% Iy + Ix %x% Iy
 })
 
-#' @export
-diag <- Matrix::diag
+#' @exportMethod diag
+setGeneric("diag",
+           function(x,
+                    ...)
+    Matrix::diag(x, ...))
 
 ## DITTO
 #' @export
@@ -102,15 +105,25 @@ matrix.scal <- function(M1, M2, normalized = TRUE)
 }
 
 #' @export
-setGeneric("norm", function(x, type = "f", ...) Matrix::norm(x, type = type))
+setGeneric("norm",
+           function(x, type = "f", ...) Matrix::norm(x, type = type))
 
 ##Equivalent to Matrix's norm(M, "f")
 #' Norm
 #' 
 #' Generic for vectors
 #' @export
-setMethod("norm", c("vector", "ANY"), function(x, type, ...) Matrix::norm(Matrix(x), type))
+setMethod("norm",
+          c("vector", "ANY"),
+          function(x, type, ...) base::norm(x, type))
 
+#' Norm
+#' 
+#' Generic for vectors
+#' @export
+setMethod("norm",
+          c("matrix", "ANY"),
+          function(x, type, ...) base::norm(x, type))
 
 #' Trace of a matrix
 #' @export

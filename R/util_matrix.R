@@ -115,7 +115,7 @@ setGeneric("norm",
 #' @export
 setMethod("norm",
           c("vector", "ANY"),
-          function(x, type, ...) base::norm(x, type))
+          function(x, type, ...) base::norm(as.matrix(x), type))
 
 #' Norm
 #' 

@@ -6,8 +6,9 @@
 #' @param default.value The result of the function in case the list provided is empty
 #' @return FUN(X[1], FUN(X[2], FUN(. . ., FUN(X[N-1], X[N]), `...`), . . .), `...`), `...`). If the list has only one element it will return X[1]
 #' @details The first to argument of the function should be of type of the object in the list provided.
-#' @examples \code{D = data.table(x = 1:10, u = letters[1:10])}
-#' \code{over(list(D, D, D, D), rbind)}
+#' #@examples 
+#' #\code{D = data.table(x = 1:10, u = letters[1:10])}
+#' #\code{over(list(D, D, D, D), rbind)}
 #' @export
 over <- function(L, FUN, default.value = NULL, ...)
 {

@@ -30,12 +30,12 @@ check:
   only:
     - branches
 
-test:
-  stage: test
-  script:
-    - Rscript ci/test.R
-  only:
-    - branches
+# test:
+#   stage: test
+#   script:
+#     - Rscript ci/test.R
+#   only:
+#     - branches
 
 release:
   stage: release

@@ -146,7 +146,6 @@ shift.mat <- function(X, N = 1, ...)
 #' @export
 setMethod("shift", signature = c("matrix"), shift.mat)
 
-#' Shifting Matrices
 #' @export
 setMethod("shift", signature = c("Matrix"), shift.mat)
 
@@ -251,24 +250,16 @@ cols <- function(M)
     else integer(0)
 }
 
-Matrix.ginv <- function(X,
-                        tol = sqrt(.Machine$double.eps)) 
-{
-    Id <- Matrix::Diagonal(nrow(X))
-    solve(X + tol * Id)
-}
+# Matrix.ginv <- function(X,
+#                         tol = sqrt(.Machine$double.eps)) 
+# {
+#     Id <- Matrix::Diagonal(nrow(X))
+#     solve(X + tol * Id)
+# }
 
-#' Generalized inverse
-#' 
-#' Computes the generalized inverse for any type of matrix: rectangular and not full rank.
-#' @param X Matrix to invert
-#' @param tol epsilon bump to force full rank
-#' @export
-setGeneric("ginv", MASS::ginv)
-
-#' @rdname ginv
-#' @export
-setMethod("ginv", "Matrix", Matrix.ginv)
+# #' @rdname ginv
+# #' @export
+# setMethod("ginv", "Matrix", Matrix.ginv)
 
 #' Generalized inverse
 #' 

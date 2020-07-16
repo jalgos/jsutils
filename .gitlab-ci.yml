@@ -1,0 +1,45 @@
+image: reg.jalgos.ai/r-jalgos:4.0.2
+
+stages:
+  - build
+  - check
+  - test
+  - release
+
+variables:
+  _R_CHECK_CRAN_INCOMING_: "false"
+  _R_CHECK_FORCE_SUGGESTS_: "true"
+
+default:
+  before_script:
+    - rm -rf lib
+    - mkdir -p lib
+    - Rscript ci/dependencies.R
+
+build:
+  stage: build
+  script:
+    - Rscript ci/build.R
+  only:
+    - branches
+
+check:
+  stage: check
+  script:
+    - Rscript ci/check.R
+  only:
+    - branches
+
+test:
+  stage: test
+  script:
+    - Rscript ci/test.R
+  only:
+    - branches
+
+release:
+  stage: release
+  script:
+    - ci/bump_version
+  only:
+    - master

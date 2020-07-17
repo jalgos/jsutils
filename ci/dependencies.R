@@ -7,5 +7,5 @@ jspackages <- .("utils" = .(c('jconfig', version = "1.0.5"),
                             c('jlogger', version = "1.0.6")))
 
 jsroot::dependencies(jspackages = jspackages,
-                     cran.packages = c('RJSONIO', 'data.table', 'Matrix', 'track'),
+                     cran.packages = c('RJSONIO', 'data.table', 'Matrix', 'MASS', 'track'),
                      quiet = FALSE)

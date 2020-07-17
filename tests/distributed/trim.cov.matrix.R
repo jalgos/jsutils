@@ -15,4 +15,4 @@ test.trim.cov.matrix <- function()
     jlog.info(ltester, "Testing trim cov matrix. Passed!")
 }
 
-test.trim.cov.matrix()
+# test.trim.cov.matrix()

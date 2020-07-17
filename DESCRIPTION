@@ -10,6 +10,7 @@ Imports:
     jlogger (>= 1.0.6),
     Rcpp (>= 1.0.4),
     Matrix,
+    MASS,
     data.table,
     track
 License: Jalgos License

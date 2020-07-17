@@ -250,19 +250,28 @@ cols <- function(M)
     else integer(0)
 }
 
-# Matrix.ginv <- function(X,
-#                         tol = sqrt(.Machine$double.eps)) 
-# {
-#     Id <- Matrix::Diagonal(nrow(X))
-#     solve(X + tol * Id)
-# }
-
-# #' @rdname ginv
-# #' @export
-# setMethod("ginv", "Matrix", Matrix.ginv)
+Matrix.ginv <- function(X,
+                        tol = sqrt(.Machine$double.eps)) 
+{
+    Id <- Matrix::Diagonal(nrow(X))
+    solve(X + tol * Id)
+}
 
 #' Generalized inverse
-#' 
+#'
+#' Computes the generalized inverse for any type of matrix: rectangular and not full rank.
+#' @param X Matrix to invert
+#' @param tol epsilon bump to force full rank
+#' @importFrom MASS ginv
+#' @export
+setGeneric("ginv", MASS::ginv)
+
+#' @rdname ginv
+#' @export
+setMethod("ginv", "Matrix", Matrix.ginv)
+
+#' Generalized inverse
+#'
 #' Computes a solution of the a.v = b for any type of matrix: rectangular and not full rank.
 #' @param a Matrix to invert
 #' @param b RHS of the equation a.v = b where v is the unknown

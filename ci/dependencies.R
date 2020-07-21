@@ -9,3 +9,9 @@ jspackages <- .("utils" = .(c('jconfig', version = "1.0.5"),
 jsroot::dependencies(jspackages = jspackages,
                      cran.packages = c('RJSONIO', 'data.table', 'Matrix', 'track'),
                      quiet = FALSE)
+
+install.packages(".", repos = NULL)
+jspackages <- .("utils" = .(c('hugesparse'),
+                            c('jsmath', version = "1.0.2")))
+jsroot::dependencies(jspackages = jspackages,
+                      quiet = FALSE)

@@ -8,7 +8,7 @@ Depends:
     R (>= 3.5.0)
 Imports:
     jlogger (>= 1.0.6),
-    Rcpp (>= 1.0.4),
+    Rcpp,
     Matrix,
     MASS,
     data.table,

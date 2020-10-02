@@ -1,44 +1,45 @@
-image: reg.jalgos.ai/r-jalgos:4.0.2
-
 stages:
+  - prepare
   - build
   - check
   - test
   - release
 
 variables:
-  _R_CHECK_CRAN_INCOMING_: "false"
-  _R_CHECK_FORCE_SUGGESTS_: "true"
+  IMAGE: "reg.jalgos.ai/r-jsutils:$CI_PIPELINE_ID"
 
-default:
-  before_script:
-    - rm -rf lib
-    - mkdir -p lib
-    - Rscript ci/dependencies.R
+prepare:
+  stage: prepare
+  script:
+    - docker build -t $IMAGE .
+    - docker push $IMAGE
+  only:
+    - branches
 
 build:
   stage: build
   script:
-    - Rscript ci/build.R
+    - docker run --rm $IMAGE Rscript ci/build.R
   only:
     - branches
 
 check:
   stage: check
   script:
-    - Rscript ci/check.R
+    - docker run --rm $IMAGE Rscript ci/check.R
   only:
     - branches
 
 test:
   stage: test
   script:
-    - Rscript ci/test.R
+    - docker run --rm $IMAGE Rscript ci/test.R
   only:
     - branches
 
 release:
   stage: release
+  image: $IMAGE
   script:
     - ci/bump_version
   only:

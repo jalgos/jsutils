@@ -4,8 +4,8 @@ echo "Becoming ${GITLAB_USER_NAME} (${GITLAB_USER_LOGIN}) <${GITLAB_USER_EMAIL}>
 git config --global user.name "${GITLAB_USER_NAME}"
 git config --global user.email "${GITLAB_USER_EMAIL}"
 
-#get highest tag number
-VERSION=`git describe --abbrev=0 --tags`
+#get version from DESCRIPTION file
+VERSION=`cat DESCRIPTION | grep Version: | sed -E "s/Version:\\s+//g"`
 
 #replace . with space so can split into an array
 VERSION_BITS=(${VERSION//./ })
@@ -25,13 +25,6 @@ echo "Updating $VERSION to $NEW_TAG"
 GIT_COMMIT=`git rev-parse HEAD`
 NEEDS_TAG=`git describe --contains $GIT_COMMIT 2>/dev/null`
 
-#only tag if no tag already
-if [ -z "$NEEDS_TAG" ]; then
-    git tag $NEW_TAG
-    echo "Tagged with $NEW_TAG"
-else
-    echo "Already a tag on this commit"
-fi
 
 export DATE=$(date +"%Y-%m-%d")
 sed "s|Version:.*|Version: ${NEW_TAG}|g" DESCRIPTION > DESCRIPTION_UP
@@ -43,5 +36,14 @@ cat DESCRIPTION
 
 git add DESCRIPTION
 git commit -m "release: $NEW_TAG"
+
+#only tag if no tag already
+if [ -z "$NEEDS_TAG" ]; then
+    git tag $NEW_TAG
+    echo "Tagged with $NEW_TAG"
+else
+    echo "Already a tag on this commit"
+fi
+
 git push "https://${GITLAB_USER_LOGIN}:${CI_GIT_TOKEN}@${CI_REPOSITORY_URL#*@}" HEAD:master -o ci.skip
 git push "https://${GITLAB_USER_LOGIN}:${CI_GIT_TOKEN}@${CI_REPOSITORY_URL#*@}" HEAD:master --tags

@@ -1,6 +1,6 @@
 Package: jsutils
 Title: Jalgos util functions
-Version: 1.0.3
+Version: 1.0.4
 Authors@R: c(person("Sébastien", "Lamy de la Chapelle", email = "sebastien@jalgos.com", role = c("aut", "cre")), person("Julien", "Murésianu", email = "julien@jalgos.com", role = c("aut")), person("Michael", "Pursey", email = "michael@jalgos.com", role = c("ctb")))
 Description: A bundle of functions to perform tasks commonly faced in the Jalgos
     projects
@@ -10,6 +10,7 @@ Imports:
     jlogger (>= 1.0.6),
     Rcpp (>= 1.0.4),
     Matrix,
+    MASS,
     data.table,
     track
 License: Jalgos License

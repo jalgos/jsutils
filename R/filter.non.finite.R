@@ -144,7 +144,7 @@ setMethod("non.finite.elements", c(x = "sparseMatrix"), function(x) non.finite.e
 #'
 #' Returns true for each entry if x is finite. Can take factors and characters as well
 #' @param x vector to check
-#' @export gen.non.finite
+#' @export gen.is.finite
 gen.is.finite <- function(x)
 {
     if(is.factor(x) || is.character(x))

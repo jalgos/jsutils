@@ -12,5 +12,5 @@ din(val, default)
 \item{default}{Value to return if null}
 }
 \description{
-Returns default if `val` is null
+Returns `default` if `val` is null
 }

@@ -25,7 +25,7 @@ format.pct <- function(value,
 
 #' Default Value if NULL provided
 #'
-#' Returns default if `val` is null
+#' Returns `default` if `val` is null
 #' @param val Value to test for nullity
 #' @param default Value to return if null
 #' @export din

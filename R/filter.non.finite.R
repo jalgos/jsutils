@@ -138,3 +138,17 @@ setGeneric("non.finite.elements", function(x) sum(!is.finite(x)))
 #' @rdname non.finite.elements
 #' @export
 setMethod("non.finite.elements", c(x = "sparseMatrix"), function(x) non.finite.elements(x@x))
+
+
+#' Check Finiteness For All Types
+#'
+#' Returns true for each entry if x is finite. Can take factors and characters as well
+#' @param x vector to check
+#' @export gen.is.finite
+gen.is.finite <- function(x)
+{
+    if(is.factor(x) || is.character(x))
+        return(!is.na(x))
+
+    return(is.finite(x))
+}

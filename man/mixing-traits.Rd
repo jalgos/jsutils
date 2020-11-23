@@ -3,10 +3,13 @@
 \name{mixing-traits}
 \alias{mixing-traits}
 \alias{add.trait}
+\alias{add.object}
 \alias{remove.trait}
 \title{Adding And Removing Traits}
 \usage{
 add.trait(object, trait, ...)
+
+add.object(obj1, obj2, ...)
 
 remove.trait(object, trait, ...)
 }
@@ -21,13 +24,13 @@ remove.trait(object, trait, ...)
 An object that inherits from its old parent traits as well as the new trait provided
 }
 \description{
-Adding And Removing Traits
-
-Mixing Traits
+Methods for adding / removing traits of objects
 }
 \section{Functions}{
 \itemize{
 \item \code{add.trait}: An interface to add a new traits to an object. The function will get all the parent traits of the current object and create a new class adding `new.trait` to the list of direct superclasses. It will create a composite object making sure the constructor of the trait is called with `...`
+
+\item \code{add.object}: Adds directly an object to another one
 
 \item \code{remove.trait}: Removes a trait from an object.
 }}

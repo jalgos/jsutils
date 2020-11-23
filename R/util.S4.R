@@ -213,9 +213,11 @@ add.s4 <- function(superclasses,
 }
 
 mix.trait <- function(object,
-                      trait,
+                      trait = class(new.part),
                       fmodify.class,
                       fcreate = function(...) NULL,
+                      new.part = fcreate(trait,
+                                         ...),
                       ...,
                       trait.separator = ".")
 {
@@ -247,15 +249,12 @@ mix.trait <- function(object,
                            ...)
         {
             selectMethod("initialize",
-                         signature = "ANY")(.Object,
-                             ...)
+                         signature = "ANY")(.Object, ...)
         },
         where = .GlobalEnv)
 
     })
     
-    new.part <- fcreate(trait,
-                        ...)
     if(length(superclasses) > length(contained.classes))
         superclasses <- contained.classes
     
@@ -273,8 +272,12 @@ create.obj <- function(...)
              error = function(cond) NULL)
 }
 
-#' Mixing Traits
+#' @name mixing-traits
+#' @title Mixing Traits
 #'
+#' @description Methods for adding / removing traits of objects
+NULL
+
 #' @describeIn mixing-traits An interface to add a new traits to an object. The function will get all the parent traits of the current object and create a new class adding `new.trait` to the list of direct superclasses. It will create a composite object making sure the constructor of the trait is called with `...`
 #' @param object The object that needs to be improved
 #' @param trait Name of the trait (an S4 class) that needs to be added or remove from the class definition of the object
@@ -292,6 +295,18 @@ add.trait <- function(object,
               ...)
 }
 
+#' @describeIn mixing-traits Adds directly an object to another one
+#' @export
+add.object <- function(obj1,
+                       obj2,
+                       ...)
+{
+    mix.trait(object = obj1,
+              new.part = obj2,
+              fmodify.class = add.s4,
+              ...)
+}
+
 #' @describeIn mixing-traits Removes a trait from an object.
 #' @export
 remove.trait <- function(object,
@@ -303,3 +318,16 @@ remove.trait <- function(object,
               fmodify.class = remove.s4,
               ...)
 }
+
+#' @export
+setGeneric("%+t%", function(e1, e2)
+    add.object(e1, e2))
+
+#' @export
+setGeneric("%-t%", function(e1, e2)
+    remove.trait(e1, e2))
+
+
+#' @exportMethod summary
+setGeneric("summary",
+           summary)

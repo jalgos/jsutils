@@ -45,3 +45,16 @@ test_that("removing a trait",
     expect_equal(zc@rox, 3)
     expect_equal(zc@u8, 1000L)
 })
+
+test_that("%+t% / %-t%",
+{
+    uu <- new("UU", doux = TRUE)
+    zzz <- new("ZZZ", rox = 3)
+    cho <- new("CHO", u8 = 1000L)
+    uuzc <- uu %+t% zzz %+t% cho
+    zc <- uuzc %-t% "UU"
+    expect_equal(class(zc),
+                 "CHO.ZZZ", check.attributes = FALSE)
+    expect_equal(zc@rox, 3)
+    expect_equal(zc@u8, 1000L)
+})

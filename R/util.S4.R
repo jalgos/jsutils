@@ -176,6 +176,14 @@ downtrait <- function(Class,
         nob
 }
 
+new2 <- function(Class,
+                 ...)
+{
+    ClassDef <- getClass(Class, where = topenv(parent.frame())) 
+    value <- .Call(methods:::C_new_object, ClassDef)
+    getMethod(initialize, signature = "ANY")(value, ...)
+}
+
 construct.composite <- function(Class,
                                 object,
                                 contained.classes,
@@ -193,7 +201,7 @@ construct.composite <- function(Class,
     lparts <- lparts[contained.classes]
     lparts <- lparts[!sapply(lparts, is.null)]
     names(lparts) <- NULL
-    do.call(new,
+    do.call(new2,
             c(list(Class = Class),
               lparts))
 }

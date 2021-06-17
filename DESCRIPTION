@@ -23,6 +23,7 @@ Collate:
     'array_fun.R'
     'complexity.R'
     'filter.non.finite.R'
+    'load.save.objects.R'
     'matrix.vectorization.R'
     'pkgname.R'
     'random.matrices.R'

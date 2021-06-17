@@ -6,12 +6,12 @@
 \alias{read.object}
 \title{Saving Loading Objects}
 \usage{
-save.object(OBJ, file, ..., logger = NULL)
+save.object(object, file, ..., logger = NULL)
 
 read.object(file, ..., logger = NULL)
 }
 \arguments{
-\item{OBJ}{object to save}
+\item{object}{object to save}
 
 \item{file}{full path of the saving destination}
 
@@ -24,8 +24,8 @@ Saving Loading Objects
 }
 \section{Functions}{
 \itemize{
-\item \code{save.object}: Uses `saveRDS` or `qs::qsave` based on the extension of file
+\item \code{save.object}: Uses `saveRDS`, `qs::qsave`, `arrow::write_parquet`, ... based on the extension of file
 
-\item \code{read.object}: Uses `readRDS` or `qs::qread` based on the extension of file
+\item \code{read.object}: Uses `readRDS`, `qs::qread`, `arrow::read_parquet`, ... based on the extension of file
 }}
 

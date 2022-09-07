@@ -13,32 +13,34 @@ save.object <- function(object,
                         ...,
                         logger = NULL)
 {
-    if(grepl("\\.rds", file, ignore.case = TRUE))
+
+    ext <- tools::file_ext(file)
+    jlog.debug(logger, "Saving file as an", ext, "file")
+
+    save.fun <- switch(ext,
+                       'rds' = saveRDS,
+                       'qs' = qs::qsave,
+                       'parquet' = arrow::write_parquet,
+                       'csv' = data.table::fwrite,
+                       'json' = RJSONIO::toJSON)
+    if(is.null(save.fun))
+        stop("Extension", ext, "not supported")
+    
+    is.s3.path <-  grepl("^s3\\/", file)
+    if(is.s3.path)
     {
-        jlog.debug(logger, "Saving object as an rds file in:", file)
-        saveRDS(object,
-                file,
-                ...)
+        jlog.debug(logger, "Saving file to s3")
+        s3.file <- file
+        file <- tempfile(fileext = ext)
     }
-    else if(grepl("\\.qs", file, ignore.case = TRUE))
+
+    save.fun(object,
+             file)
+
+    if(is.s3.path)
     {
-        jlog.debug(logger, "Saving object as a qs file in:", file)
-        qs::qsave(object,
-                  file,
-                  ...)
-                
-    }
-    else if(grepl("\\.parquet", file, ignore.case = TRUE))
-    {
-        jlog.debug(logger, "Saving object as a parquet file in:", file)
-        arrow::write_parquet(object,
-                             file,
-                             ...)
-    }
-    else
-    {
-        jlog.error(logger, "Extension not supported for file:", file)
-        stop("Extension not supported")
+        copy.mc.cmd(src = file, dest = s3.file, ...)
+        unlink(file)
     }
 }
 
@@ -48,28 +50,65 @@ read.object <- function(file,
                         ...,
                         logger = NULL)
 {
-    if(grepl("\\.rds", file, ignore.case = TRUE))
+    ext <- tools::file_ext(file)
+    jlog.debug(logger, "Reading file as an", ext, "file")
+
+    read.fun <- switch(ext,
+                       'rds' = readRDS,
+                       'qs' = qs::read,
+                       'parquet' = arrow::read_parquet,
+                       'csv' = data.table::fread,
+                       'json' = RJSONIO::fromJSON)
+    if(is.null(read.fun))
+        stop("Extension", ext, "not supported")
+    
+    is.s3.path <-  grepl("^s3\\/", file)
+    if(is.s3.path)
     {
-        jlog.debug(logger, "Reading file as an rds file from:", file)
-        readRDS(file,
-                ...)
+        jlog.debug(logger, "Loading file from s3")
+        tmp.file <- tempfile(fileext = ext)
+        copy.mc.cmd(src = file, dest = tmp.file, ...)
+        file <- tmp.file
     }
-    else if(grepl("\\.qs", file, ignore.case = TRUE))
-    {
-        jlog.debug(logger, "Reading file as a qs file from:", file)
-        qs::qread(file,
-                  ...)
-                
-    }
-    else if(grepl("\\.parquet", file, ignore.case = TRUE))
-    {
-        jlog.debug(logger, "Reading object as a parquet file in:", file)
-        arrow::read_parquet(file,
-                            ...)
-    }
-    else
-    {
-        jlog.error(logger, "Extension not supported for file:", file)
-        stop("Extension not supported")
-    }
+   
+    obj <- read.fun(file, ...)
+
+    if(is.s3.path)
+        unlink(file)
+
+    obj
+}
+
+
+#' @name copy.mc.cmd 
+#' @title Copy file from/to s3 storage
+#' @param src full path of the source file
+#' @param dest full path of the saving destination
+#' @param retrieved.output if mc output should be retrieved to R
+#' @param recursive should be TRUE of src is a directory
+#' @param quiet set to TRUE for removing logs
+#' @param ... 
+#' @param logger JLogger
+NULL
+
+#' @describeIn copy.mc.cmd copy file or directory from s3 storage to local storage or the opposite
+#' @export copy.mc.cmd
+copy.mc.cmd <- function(src,
+                        dest,
+                        ...,
+                        retrieved.output = FALSE,
+                        recursive = FALSE,
+                        quiet = FALSE,
+                        logger = ukpik.logger())
+{
+    cp.cmd <- paste(c('mc cp',
+                      if(recursive) '--recursive',
+                      src,
+                      dest),
+                    collapse = ' ')
+    jlog.debug(logger, "Running", cp.cmd %c% BW)
+    system(cp.cmd,
+           ignore.stdout = quiet,
+           ignore.stderr = quiet,
+           intern = retrieved.output)
 }
